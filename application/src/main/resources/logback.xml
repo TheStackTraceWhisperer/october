@@ -6,6 +6,9 @@
         </encoder>
     </appender>
 
+    <!-- Suppress Micronaut startup messages -->
+    <logger name="io.micronaut.runtime.Micronaut" level="WARN"/>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

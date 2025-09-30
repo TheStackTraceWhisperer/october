@@ -1,7 +1,10 @@
 package application;
 
+import engine.Engine;
 import engine.IApplication;
 import engine.Launcher;
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.runtime.Micronaut;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,22 +12,22 @@ import lombok.extern.slf4j.Slf4j;
 @Singleton
 public class Main implements IApplication {
 
-  public static void main(String[] args) {
-    Launcher.main(args);
-  }
+    public static void main(String[] args) {
+      Launcher.run(Main.class, args);
+    }
 
-  @Override
-  public void start() {
-    log.info("Starting application...");
-  }
+    @Override
+    public void start() {
+        log.info("Starting application...");
+    }
 
-  @Override
-  public void run() {
-    log.info("Application started...");
-  }
+    @Override
+    public void run() {
+        log.info("Application started...");
+    }
 
-  @Override
-  public void stop() {
-    log.info("Application stopped...");
-  }
+    @Override
+    public void stop() {
+        log.info("Application stopped...");
+    }
 }
