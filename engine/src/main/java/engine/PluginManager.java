@@ -12,7 +12,7 @@ import java.util.List;
 @Singleton
 @RequiredArgsConstructor
 public class PluginManager {
-  private final List<IPlugin> plugins;
+  final List<IPlugin> plugins;
   private final ApplicationEventPublisher<PluginStarted> pluginStartedApplicationEventPublisher;
   private final ApplicationEventPublisher<PluginStopped> pluginStoppedApplicationEventPublisher;
 
