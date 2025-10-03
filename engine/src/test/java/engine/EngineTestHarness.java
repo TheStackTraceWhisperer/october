@@ -8,8 +8,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 
 /**
@@ -51,15 +49,5 @@ public abstract class EngineTestHarness {
     public ApplicationLoopPolicy testLoopPolicy() {
       return ApplicationLoopPolicy.skip();
     }
-  }
-
-  @BeforeAll
-  void setUp() {
-    engine.init();
-  }
-
-  @AfterAll
-  void tearDown() {
-    engine.shutdown();
   }
 }
