@@ -1,5 +1,6 @@
 package engine;
 
+import engine.services.plugin.PluginService;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ class EngineIT {
     private Engine engine;
 
     @Inject
-    private PluginManager pluginManager;
+    private PluginService pluginService;
 
     @Test
     void testEngineStarts() {
@@ -26,7 +27,7 @@ class EngineIT {
     void testPluginManagerIsInjectedWithNoPlugins() {
         // In this test, the 'plugin' module is not on the classpath, so we expect
         // the PluginManager to be injected with an empty list of plugins.
-        assertThat(pluginManager).isNotNull();
-        assertThat(pluginManager.plugins).isEmpty();
+        assertThat(pluginService).isNotNull();
+        assertThat(pluginService.plugins).isEmpty();
     }
 }

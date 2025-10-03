@@ -31,6 +31,12 @@
     <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
     <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+    <lwjgl-bom.version>3.3.6</lwjgl-bom.version>
+    <slf4j-api.version>2.0.17</slf4j-api.version>
+    <logback-classic.version>1.5.18</logback-classic.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+    <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
+    <joml.version>1.10.5</joml.version>
   </properties>
 
   <dependencyManagement>
@@ -52,32 +58,42 @@
         <version>${project.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.joml</groupId>
+        <artifactId>joml</artifactId>
+        <version>${joml.version}</version>
+      </dependency>
+
       <!-- Micronaut -->
       <dependency>
         <groupId>io.micronaut</groupId>
         <artifactId>micronaut-inject</artifactId>
         <version>${micronaut.version}</version>
       </dependency>
+
       <dependency>
         <groupId>io.micronaut</groupId>
         <artifactId>micronaut-inject-java</artifactId>
         <version>${micronaut.version}</version>
         <scope>provided</scope>
       </dependency>
+
       <dependency>
         <groupId>io.micronaut</groupId>
         <artifactId>micronaut-context</artifactId>
         <version>${micronaut.version}</version>
       </dependency>
+
       <dependency>
         <groupId>io.micronaut</groupId>
         <artifactId>micronaut-runtime</artifactId>
         <version>${micronaut.version}</version>
       </dependency>
+
       <dependency>
         <groupId>jakarta.inject</groupId>
         <artifactId>jakarta.inject-api</artifactId>
-        <version>2.0.1</version>
+        <version>${jakarta.inject-api.version}</version>
       </dependency>
 
       <!-- Lombok -->
@@ -88,16 +104,26 @@
         <scope>provided</scope>
       </dependency>
 
+      <!-- LWJGL -->
+      <dependency>
+        <groupId>org.lwjgl</groupId>
+        <artifactId>lwjgl-bom</artifactId>
+        <version>${lwjgl-bom.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+
       <!-- Logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>2.0.17</version>
+        <version>${slf4j-api.version}</version>
       </dependency>
+
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.18</version>
+        <version>${logback-classic.version}</version>
       </dependency>
 
       <!-- Testing -->
@@ -107,30 +133,35 @@
         <version>${junit.jupiter.version}</version>
         <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
         <version>${junit.jupiter.version}</version>
         <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>io.micronaut.test</groupId>
         <artifactId>micronaut-test-junit5</artifactId>
         <version>${micronaut.test.version}</version>
         <scope>test</scope>
       </dependency>
+
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -140,7 +171,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>${maven-compiler-plugin.version}</version>
           <configuration>
             <annotationProcessorPaths>
               <path>

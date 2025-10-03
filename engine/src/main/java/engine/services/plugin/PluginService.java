@@ -1,4 +1,4 @@
-package engine;
+package engine.services.plugin;
 
 import api.events.PluginStarted;
 import api.events.PluginStopped;
@@ -11,22 +11,25 @@ import java.util.List;
 
 @Singleton
 @RequiredArgsConstructor
-public class PluginManager {
+public class PluginService {
   final List<IPlugin> plugins;
-  private final ApplicationEventPublisher<PluginStarted> pluginStartedApplicationEventPublisher;
-  private final ApplicationEventPublisher<PluginStopped> pluginStoppedApplicationEventPublisher;
 
+  @SuppressWarnings("rawtypes") // The raw ApplicationEventPublisher accepts all types of events
+  private final ApplicationEventPublisher eventPublisher;
+
+  @SuppressWarnings("unchecked")
   public void start() {
     plugins.forEach(p -> {
       p.start();
-      pluginStartedApplicationEventPublisher.publishEvent(new PluginStarted(p));
+      eventPublisher.publishEvent(new PluginStarted(p));
     });
   }
 
+  @SuppressWarnings("unchecked")
   public void stop() {
     plugins.forEach(p -> {
       p.stop();
-      pluginStoppedApplicationEventPublisher.publishEvent(new PluginStopped(p));
+      eventPublisher.publishEvent(new PluginStopped(p));
     });
   }
 

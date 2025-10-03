@@ -1,6 +1,7 @@
 package engine;
 
 import api.events.Ping;
+import engine.services.plugin.PluginService;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class EngineTest {
     private IApplication application;
 
     @Mock
-    private PluginManager pluginManager;
+    private PluginService pluginService;
 
     @Mock
     private ApplicationEventPublisher<Ping> publisher;
@@ -36,7 +37,7 @@ class EngineTest {
         // to verify that the engine correctly calls the start() methods of its collaborators.
         engine.start();
 
-        verify(pluginManager).start();
+        verify(pluginService).start();
         verify(application).start();
         verify(application).run();
         verify(application).stop();
