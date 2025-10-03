@@ -1,10 +1,7 @@
 package application;
 
-import engine.Engine;
 import engine.IApplication;
 import engine.Launcher;
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.runtime.Micronaut;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
