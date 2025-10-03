@@ -1,12 +1,12 @@
 package application;
 
 import engine.services.state.GameState;
+import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Singleton
+@Prototype
 @Named("initial")
 public class InitialState implements GameState {
 

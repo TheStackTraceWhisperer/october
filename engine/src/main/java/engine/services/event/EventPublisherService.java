@@ -1,5 +1,6 @@
-package engine;
+package engine.services.event;
 
+import engine.IService;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Singleton
 @RequiredArgsConstructor
-public class EventPublisher {
+public class EventPublisherService implements IService {
   private final ApplicationEventPublisher applicationEventPublisher;
 
   public <T> void publish(T event) {

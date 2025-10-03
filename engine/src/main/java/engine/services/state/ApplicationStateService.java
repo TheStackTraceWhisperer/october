@@ -1,17 +1,14 @@
 package engine.services.state;
 
-import engine.IApplication;
+import engine.IService;
 import io.micronaut.context.ApplicationContext;
 import jakarta.inject.Named;
-import jakarta.inject.Qualifier;
+import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
 import java.util.Stack;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A stack-based Finite State Machine (FSM) for managing the game's high-level states.
@@ -19,18 +16,23 @@ import java.util.function.Supplier;
 @Slf4j
 @Singleton
 @RequiredArgsConstructor
-public class ApplicationStateService {
+public class ApplicationStateService implements IService {
+  private final ApplicationContext applicationContext;
+
   @Named("initial")
-  private final Supplier<GameState> initialSupplier;
+  private final Provider<GameState> initialStateProvider;
 
   private final Stack<GameState> stateStack = new Stack<>();
 
-  public void start(ApplicationContext context) {
-    pushState(initialSupplier.get());
+  public void start() {
+    pushState(initialStateProvider.get());
   }
 
   public void stop() {
-
+    log.info("Stopping ApplicationStateService. Popping all states.");
+    while (!stateStack.isEmpty()) {
+      popState();
+    }
   }
 
   /**
@@ -44,14 +46,35 @@ public class ApplicationStateService {
     }
   }
 
+  public GameState peek() {
+    if (!stateStack.isEmpty()) {
+      return stateStack.peek();
+    } else {
+      return null;
+    }
+  }
+
   /**
    * Pushes a new state onto the stack, making it the active state.
    *
-   * @param state    The new state to activate.
+   * @param state The new state to activate.
    */
   public void pushState(GameState state) {
+    log.debug("Pushing state: {}", state.getClass().getSimpleName());
     stateStack.push(state);
     state.onEnter();
+  }
+
+  /**
+   * Pushes a new state onto the stack, making it the active state.
+   * A new instance of the state class will be created by the application context.
+   *
+   * @param stateClass The class of the new state to activate.
+   */
+  public void pushState(Class<? extends GameState> stateClass) {
+    log.debug("Creating and pushing state from class: {}", stateClass.getSimpleName());
+    GameState newState = applicationContext.createBean(stateClass);
+    pushState(newState);
   }
 
   /**
@@ -59,21 +82,38 @@ public class ApplicationStateService {
    */
   public void popState() {
     if (!stateStack.isEmpty()) {
-      stateStack.pop().onExit();
+      GameState poppedState = stateStack.pop();
+      log.debug("Popping state: {}", poppedState.getClass().getSimpleName());
+      poppedState.onExit();
+    } else {
+      log.warn("Attempted to pop state from an empty stack.");
     }
   }
 
   /**
    * Pops the current state and pushes a new one in a single, atomic operation.
    *
-   * @param state    The new state to activate.
+   * @param state The new state to activate.
    */
   public void changeState(GameState state) {
+    log.debug("Changing state to: {}", state.getClass().getSimpleName());
     if (!stateStack.isEmpty()) {
       stateStack.pop().onExit();
     }
     stateStack.push(state);
     state.onEnter();
+  }
+
+  /**
+   * Pops the current state and pushes a new one in a single, atomic operation.
+   * A new instance of the state class will be created by the application context.
+   *
+   * @param stateClass The class of the new state to activate.
+   */
+  public void changeState(Class<? extends GameState> stateClass) {
+    log.debug("Creating and changing state to class: {}", stateClass.getSimpleName());
+    GameState newState = applicationContext.createBean(stateClass);
+    changeState(newState);
   }
 
   /**

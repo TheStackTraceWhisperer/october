@@ -11,18 +11,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 @MicronautTest
 class MainIT {
 
-    @Inject
-    private Engine engine;
+  @Inject
+  private Engine engine;
 
-    @Inject
-    private ExamplePlugin examplePlugin;
+  @Inject
+  private ExamplePlugin examplePlugin;
 
-    @Test
-    void testContextStartsAndBeansAreInjected() {
-        // This is an integration test that starts the full Micronaut context.
-        // It verifies that the dependency injection container is working correctly
-        // and can inject beans from different modules.
-        assertThat(engine).isNotNull();
-        assertThat(examplePlugin).isNotNull();
-    }
+  @Test
+  void testContextStartsAndBeansAreInjected() {
+    // This is an integration test that starts the full Micronaut context.
+    // It verifies that the dependency injection container is working correctly
+    // and can inject beans from different modules.
+    assertThat(engine).isNotNull();
+    assertThat(examplePlugin).isNotNull();
+  }
 }

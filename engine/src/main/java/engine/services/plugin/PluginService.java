@@ -3,7 +3,8 @@ package engine.services.plugin;
 import api.events.PluginStarted;
 import api.events.PluginStopped;
 import api.plugin.IPlugin;
-import io.micronaut.context.event.ApplicationEventPublisher;
+import engine.IService;
+import engine.services.event.EventPublisherService;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 
@@ -11,25 +12,25 @@ import java.util.List;
 
 @Singleton
 @RequiredArgsConstructor
-public class PluginService {
-  final List<IPlugin> plugins;
+public class PluginService implements IService {
+  private final List<IPlugin> plugins;
+  private final EventPublisherService eventPublisherService;
 
-  @SuppressWarnings("rawtypes") // The raw ApplicationEventPublisher accepts all types of events
-  private final ApplicationEventPublisher eventPublisher;
+  public int pluginCount() {
+    return plugins.size();
+  }
 
-  @SuppressWarnings("unchecked")
   public void start() {
     plugins.forEach(p -> {
       p.start();
-      eventPublisher.publishEvent(new PluginStarted(p));
+      eventPublisherService.publish(new PluginStarted(p));
     });
   }
 
-  @SuppressWarnings("unchecked")
   public void stop() {
     plugins.forEach(p -> {
       p.stop();
-      eventPublisher.publishEvent(new PluginStopped(p));
+      eventPublisherService.publish(new PluginStopped(p));
     });
   }
 

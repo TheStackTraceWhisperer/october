@@ -1,5 +1,6 @@
 package engine.services.glfw;
 
+import engine.IService;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +10,14 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 @Slf4j
 @Singleton
 @RequiredArgsConstructor
-public class GlfwContextService {
+public class GlfwContextService implements IService {
   private boolean initialized = false;
   private GLFWErrorCallback errorCallback;
+
+  @Override
+  public int priority() {
+    return Integer.MIN_VALUE;
+  }
 
   public void start() {
     // Install an error callback that logs to our SLF4J logger.

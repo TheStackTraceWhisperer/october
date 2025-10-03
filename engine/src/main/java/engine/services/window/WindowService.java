@@ -1,8 +1,6 @@
 package engine.services.window;
 
-import jakarta.annotation.PreDestroy;
-import java.nio.IntBuffer;
-
+import engine.IService;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,20 +8,26 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** GLFW window wrapper that creates an OpenGL 4.6 core profile context. */
+/**
+ * GLFW window wrapper that creates an OpenGL 4.6 core profile context.
+ */
 @Singleton
 @RequiredArgsConstructor
-public final class WindowService {
+public final class WindowService implements IService {
   private static final Logger log = LoggerFactory.getLogger(WindowService.class);
 
   private final WindowDefaults defaults;
 
   @Getter
   private long handle = 0L;
+
+  @Override
+  public int priority() {
+    return Integer.MIN_VALUE + 1;
+  }
 
   public void start() {
     int width = defaults.width();
@@ -111,7 +115,9 @@ public final class WindowService {
     GLFW.glfwSwapBuffers(handle);
   }
 
-  /** Processes all pending events for the window. */
+  /**
+   * Processes all pending events for the window.
+   */
   public void pollEvents() {
     GLFW.glfwPollEvents();
   }

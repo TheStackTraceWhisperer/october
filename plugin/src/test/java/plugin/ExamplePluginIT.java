@@ -9,13 +9,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @MicronautTest
 class ExamplePluginIT {
 
-    @Inject
-    private ExamplePlugin examplePlugin;
+  @Inject
+  private ExamplePlugin examplePlugin;
 
-    @Test
-    void testPluginIsCreatedInContext() {
-        // This integration test verifies that the ExamplePlugin is correctly
-        // created as a Singleton bean in the Micronaut context.
-        assertThat(examplePlugin).isNotNull();
-    }
+  @Test
+  void testPluginIsCreatedInContext() {
+    // This integration test verifies that the ExamplePlugin is correctly
+    // created as a Singleton bean in the Micronaut context.
+    assertThat(examplePlugin).isNotNull();
+  }
 }

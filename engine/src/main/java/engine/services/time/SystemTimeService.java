@@ -1,16 +1,17 @@
 package engine.services.time;
 
 
+import engine.IService;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 
 @Singleton
-public class SystemTimeService {
+public class SystemTimeService implements IService {
 
   private static final double NANOS_PER_SECOND = 1_000_000_000.0;
 
-  private final long startTimeNanos = System.nanoTime();
-  private long lastFrameNanos = startTimeNanos;
+  private long startTimeNanos;
+  private long lastFrameNanos;
 
   @Getter
   private float deltaTimeSeconds;
@@ -18,6 +19,7 @@ public class SystemTimeService {
   @Getter
   private double totalTimeSeconds;
 
+  @Override
   public void update() {
     long currentFrameNanos = System.nanoTime();
 
@@ -31,4 +33,9 @@ public class SystemTimeService {
     lastFrameNanos = currentFrameNanos;
   }
 
+  @Override
+  public void start() {
+    startTimeNanos = System.nanoTime();
+    lastFrameNanos = startTimeNanos;
+  }
 }
