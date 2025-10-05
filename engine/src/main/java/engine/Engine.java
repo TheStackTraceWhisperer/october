@@ -36,9 +36,10 @@ public final class Engine implements Runnable {
 
       services.sort(Comparator.comparingInt(IService::priority));
 
-      services.forEach(service -> log.info("Service: {}", service.getClass().getSimpleName()));
-
-      services.forEach(IService::start);
+      services.forEach(iService -> {
+        log.debug("Starting service {}", iService.getClass().getSimpleName());
+        iService.start();
+      });
 
       log.info("September Engine initialized successfully");
       eventPublisherService.publish(new EngineStarted());
@@ -55,10 +56,8 @@ public final class Engine implements Runnable {
     while (loopPolicy.continueRunning(frames, windowService.getHandle()) && !applicationStateService.isEmpty()) {
       windowService.pollEvents();
       services.forEach(IService::update);
-      //systemTimeService.update();
       float dt = systemTimeService.getDeltaTimeSeconds();
       services.forEach(service -> service.update(dt));
-      //applicationStateService.update(dt);
       windowService.swapBuffers();
       frames++;
     }
@@ -68,10 +67,14 @@ public final class Engine implements Runnable {
     log.info("Shutting down September Engine");
 
     eventPublisherService.publish(new EngineStopped());
-    services.forEach(IService::stop);
-    //applicationStateService.stop();
-    //windowService.stop();
-    //glfwContextService.stop();
+
+    services.sort(Comparator.comparingInt(IService::priority).reversed());
+
+    services.forEach(iService -> {
+      log.debug("Stopping service {}", iService.getClass().getSimpleName());
+      iService.stop();
+    });
+
   }
 
   @Override
