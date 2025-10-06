@@ -4,7 +4,7 @@ package engine.services.state;
  * Represents a distinct state of the game, such as a main menu, playing, or paused.
  * Each state is responsible for its own logic and rendering.
  */
-public interface GameState {
+public interface ApplicationState {
   /**
    * Called once when the state becomes the active state.
    * Use this to set up systems, load scene data, and initialize the state.

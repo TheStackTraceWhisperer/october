@@ -1,6 +1,6 @@
 package engine;
 
-import engine.services.state.GameState;
+import engine.services.state.ApplicationState;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -27,7 +27,7 @@ public abstract class EngineTestHarness {
     @Primary
     @Singleton
     @Named("initial")
-    static class TestGameState implements GameState {
+    static class TestApplicationState implements ApplicationState {
       @Override
       public void onEnter() {
         log.info("Entering test harness game state. Asset loading would happen here.");

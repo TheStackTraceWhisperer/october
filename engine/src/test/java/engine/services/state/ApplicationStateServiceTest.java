@@ -79,7 +79,7 @@ class ApplicationStateServiceTest {
 
     // Mock GameState implementations for testing
 
-    static class TestState1 implements GameState {
+    static class TestState1 implements ApplicationState {
         boolean entered = false;
         boolean exited = false;
         float lastDelta = 0.0f;
@@ -100,7 +100,7 @@ class ApplicationStateServiceTest {
         }
     }
 
-    static class TestState2 implements GameState {
+    static class TestState2 implements ApplicationState {
         boolean entered = false;
         boolean exited = false;
 

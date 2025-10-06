@@ -1,8 +1,8 @@
 package api.ecs;
 
 public interface ISystem {
-  int priority();
-  void update(IWorld world);
-  void update(IWorld world, float dt);
+  default int priority() { return 0; };
+  default void update(IWorld world) {};
+  default void update(IWorld world, float dt) {};
   // TODO: Lifecycle
 }

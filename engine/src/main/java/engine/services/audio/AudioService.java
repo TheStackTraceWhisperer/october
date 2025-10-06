@@ -1,0 +1,221 @@
+package engine.services.audio;
+
+import engine.IService;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Singleton;
+import lombok.Getter;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
+
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.AL_ORIENTATION;
+import static org.lwjgl.openal.AL10.AL_POSITION;
+import static org.lwjgl.openal.AL10.alGetListenerf;
+import static org.lwjgl.openal.AL10.alListener3f;
+import static org.lwjgl.openal.AL10.alListenerf;
+import static org.lwjgl.openal.AL10.alListenerfv;
+import static org.lwjgl.openal.ALC10.alcCloseDevice;
+import static org.lwjgl.openal.ALC10.alcCreateContext;
+import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
+import static org.lwjgl.openal.ALC10.alcOpenDevice;
+
+/**
+ * Manages the OpenAL audio context and provides high-level audio services.
+ * This is analogous to how the Engine class manages the OpenGL context.
+ * <p>
+ * The AudioManager is responsible for:
+ * - Initializing and cleaning up the OpenAL context
+ * - Managing global audio settings (master volume, listener properties)
+ * - Providing factory methods for creating audio resources
+ */
+@Singleton
+public final class AudioService implements IService {
+  private long device;
+  private long context;
+  /**
+   * -- GETTER --
+   *  Checks if the AudioManager has been initialized.
+   *
+   * @return true if initialized, false otherwise
+   */
+  @Getter
+  private boolean initialized = false;
+
+  /**
+   * Initializes the OpenAL audio system.
+   * This must be called before any other audio operations.
+   * If initialization fails (e.g., no audio device available), audio features will be disabled.
+   */
+  @Override
+  public void start() {
+    if (initialized) {
+      throw new IllegalStateException("AudioManager is already initialized");
+    }
+
+    try {
+      // Open the default audio device
+      device = alcOpenDevice((CharSequence) null);
+      if (device == 0) {
+        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("No OpenAL device available - audio will be disabled");
+        return;
+      }
+
+      // Create an OpenAL context
+      context = alcCreateContext(device, (int[]) null);
+      if (context == 0) {
+        alcCloseDevice(device);
+        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("Failed to create OpenAL context - audio will be disabled");
+        return;
+      }
+
+      // Make the context current
+      if (!alcMakeContextCurrent(context)) {
+        alcDestroyContext(context);
+        alcCloseDevice(device);
+        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("Failed to make OpenAL context current - audio will be disabled");
+        return;
+      }
+
+      // Initialize OpenAL capabilities
+      ALCCapabilities alcCapabilities = ALC.createCapabilities(device);
+      ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+
+      if (!alCapabilities.OpenAL10) {
+        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("OpenAL 1.0 is not supported - audio will be disabled");
+        return;
+      }
+
+      initialized = true;
+
+      // Set up the audio listener at the origin
+      setListenerPosition(0.0f, 0.0f, 0.0f);
+      setListenerOrientation(0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
+      setMasterVolume(1.0f);
+    } catch (Exception e) {
+      org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("Audio initialization failed - audio will be disabled", e);
+      initialized = false;
+    }
+  }
+
+  /**
+   * Sets the master volume for all audio playback.
+   *
+   * @param volume Master volume level (0.0f = silent, 1.0f = full volume)
+   */
+  public void setMasterVolume(float volume) {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    alListenerf(AL_GAIN, Math.max(0.0f, volume));
+  }
+
+  /**
+   * Gets the current master volume.
+   *
+   * @return The current master volume level
+   */
+  public float getMasterVolume() {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    return alGetListenerf(AL_GAIN);
+  }
+
+  /**
+   * Sets the position of the audio listener (the "ear" in the 3D audio space).
+   *
+   * @param x X coordinate
+   * @param y Y coordinate
+   * @param z Z coordinate
+   */
+  public void setListenerPosition(float x, float y, float z) {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    alListener3f(AL_POSITION, x, y, z);
+  }
+
+  /**
+   * Sets the orientation of the audio listener.
+   *
+   * @param forwardX Forward vector X component
+   * @param forwardY Forward vector Y component
+   * @param forwardZ Forward vector Z component
+   * @param upX      Up vector X component
+   * @param upY      Up vector Y component
+   * @param upZ      Up vector Z component
+   */
+  public void setListenerOrientation(float forwardX, float forwardY, float forwardZ,
+                                     float upX, float upY, float upZ) {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    float[] orientation = {forwardX, forwardY, forwardZ, upX, upY, upZ};
+    alListenerfv(AL_ORIENTATION, orientation);
+  }
+
+  /**
+   * Creates a new AudioSource.
+   * The caller is responsible for closing the returned source.
+   *
+   * @return A new AudioSource instance
+   */
+  public AudioSource createSource() {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    return new AudioSource();
+  }
+
+  /**
+   * Creates a new AudioBuffer from raw audio data.
+   * The caller is responsible for closing the returned buffer.
+   *
+   * @param data       The audio data
+   * @param channels   Number of channels
+   * @param sampleRate Sample rate in Hz
+   * @return A new AudioBuffer instance
+   */
+  public AudioBuffer createBuffer(java.nio.ShortBuffer data, int channels, int sampleRate) {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    return new AudioBuffer(data, channels, sampleRate);
+  }
+
+  /**
+   * Loads an AudioBuffer from an OGG Vorbis file.
+   * The caller is responsible for closing the returned buffer.
+   *
+   * @param resourcePath The classpath path to the OGG file
+   * @return A new AudioBuffer instance
+   */
+  public AudioBuffer loadAudioBuffer(String resourcePath) {
+    if (!initialized) {
+      throw new IllegalStateException("AudioManager is not initialized");
+    }
+
+    return AudioBuffer.loadFromOggFile(resourcePath);
+  }
+
+  @Override
+  public void stop() {
+    if (initialized) {
+      // Clean up OpenAL context
+      alcMakeContextCurrent(0);
+      alcDestroyContext(context);
+      alcCloseDevice(device);
+
+      initialized = false;
+    }
+  }
+}

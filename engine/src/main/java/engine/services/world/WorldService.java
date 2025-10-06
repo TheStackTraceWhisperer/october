@@ -4,6 +4,8 @@ import api.ecs.ISystem;
 import engine.IService;
 import jakarta.inject.Singleton;
 
+import java.util.List;
+
 @Singleton
 public class WorldService implements IService {
   private final World world = new World();
@@ -51,5 +53,12 @@ public class WorldService implements IService {
     systemManager.removeSystem(system);
   }
 
+  public List<Integer> getEntitiesWith(Class<?>... componentClasses) {
+    return world.getEntitiesWith(componentClasses);
+  }
+
+  public void clearSystems() {
+    systemManager.clear();
+  }
 }
 

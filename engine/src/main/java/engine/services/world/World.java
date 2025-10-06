@@ -3,10 +3,11 @@ package engine.services.world;
 import api.ecs.IWorld;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class World implements IWorld {
-  EntityManager entityManager;
-  ComponentManager componentManager;
+  EntityManager entityManager = new EntityManager();
+  ComponentManager componentManager = new ComponentManager();
 
   @Override
   public int createEntity() {
@@ -41,6 +42,23 @@ public class World implements IWorld {
 
   @Override
   public List<Integer> getEntitiesWith(Class<?>... componentClasses) {
-    return List.of();
+    // Start with a list of all active entities.
+    List<Integer> activeEntities = entityManager.getActiveEntities();
+
+    if (componentClasses == null || componentClasses.length == 0) {
+      return activeEntities;
+    }
+
+    // Filter the list down to only those that have all the required components.
+    return activeEntities.stream()
+      .filter(entityId -> {
+        for (Class<?> componentClass : componentClasses) {
+          if (!componentManager.hasComponent(entityId, componentClass)) {
+            return false; // This entity doesn't have one of the required components.
+          }
+        }
+        return true; // This entity has all required components.
+      })
+      .collect(Collectors.toList());
   }
 }

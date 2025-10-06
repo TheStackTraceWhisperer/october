@@ -20,9 +20,9 @@ public class ApplicationStateService implements IService {
   private final ApplicationContext applicationContext;
 
   @Named("initial")
-  private final Provider<GameState> initialStateProvider;
+  private final Provider<ApplicationState> initialStateProvider;
 
-  private final Stack<GameState> stateStack = new Stack<>();
+  private final Stack<ApplicationState> stateStack = new Stack<>();
 
   public void start() {
     pushState(initialStateProvider.get());
@@ -46,7 +46,7 @@ public class ApplicationStateService implements IService {
     }
   }
 
-  public GameState peek() {
+  public ApplicationState peek() {
     if (!stateStack.isEmpty()) {
       return stateStack.peek();
     } else {
@@ -59,7 +59,7 @@ public class ApplicationStateService implements IService {
    *
    * @param state The new state to activate.
    */
-  public void pushState(GameState state) {
+  public void pushState(ApplicationState state) {
     log.debug("Pushing state: {}", state.getClass().getSimpleName());
     stateStack.push(state);
     state.onEnter();
@@ -71,9 +71,9 @@ public class ApplicationStateService implements IService {
    *
    * @param stateClass The class of the new state to activate.
    */
-  public void pushState(Class<? extends GameState> stateClass) {
+  public void pushState(Class<? extends ApplicationState> stateClass) {
     log.debug("Creating and pushing state from class: {}", stateClass.getSimpleName());
-    GameState newState = applicationContext.createBean(stateClass);
+    ApplicationState newState = applicationContext.createBean(stateClass);
     pushState(newState);
   }
 
@@ -82,7 +82,7 @@ public class ApplicationStateService implements IService {
    */
   public void popState() {
     if (!stateStack.isEmpty()) {
-      GameState poppedState = stateStack.pop();
+      ApplicationState poppedState = stateStack.pop();
       log.debug("Popping state: {}", poppedState.getClass().getSimpleName());
       poppedState.onExit();
     } else {
@@ -95,7 +95,7 @@ public class ApplicationStateService implements IService {
    *
    * @param state The new state to activate.
    */
-  public void changeState(GameState state) {
+  public void changeState(ApplicationState state) {
     log.debug("Changing state to: {}", state.getClass().getSimpleName());
     if (!stateStack.isEmpty()) {
       stateStack.pop().onExit();
@@ -110,9 +110,9 @@ public class ApplicationStateService implements IService {
    *
    * @param stateClass The class of the new state to activate.
    */
-  public void changeState(Class<? extends GameState> stateClass) {
+  public void changeState(Class<? extends ApplicationState> stateClass) {
     log.debug("Creating and changing state to class: {}", stateClass.getSimpleName());
-    GameState newState = applicationContext.createBean(stateClass);
+    ApplicationState newState = applicationContext.createBean(stateClass);
     changeState(newState);
   }
 

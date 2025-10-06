@@ -46,4 +46,8 @@ class SystemManager {
       system.update(world, dt);
     }
   }
+
+  public void clear() {
+    systems.clear();
+  }
 }
