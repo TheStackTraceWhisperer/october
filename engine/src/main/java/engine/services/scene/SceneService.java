@@ -48,7 +48,7 @@ public class SceneService implements IService {
     log.info("Loading scene: {}", path);
     worldService.getEntitiesWith().forEach(worldService::destroyEntity);
 
-    try (InputStream sceneStream = SceneManager.class.getResourceAsStream(path)) {
+    try (InputStream sceneStream = SceneService.class.getResourceAsStream(path)) {
       if (sceneStream == null) {
         throw new IOException("Scene file not found: " + path);
       }

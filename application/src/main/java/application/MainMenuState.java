@@ -6,19 +6,25 @@ import engine.services.rendering.RenderingService;
 import engine.services.resources.AssetCacheService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
+import engine.services.time.SystemTimeService;
+import engine.services.window.WindowService;
 import engine.services.world.WorldService;
 import engine.services.world.components.ColliderComponent;
 import engine.services.world.components.ControllableComponent;
 import engine.services.world.components.MovementStatsComponent;
 import engine.services.world.components.SpriteComponent;
 import engine.services.world.components.TransformComponent;
+import engine.services.world.systems.MovementSystem;
 import engine.services.world.systems.RenderSystem;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Named;
 
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryStack;
 
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +33,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MainMenuState implements ApplicationState {
 
+  private final Camera camera;
+  private final WindowService windowService;
   private final SceneService sceneService;
   private final WorldService worldService;
   private final AssetCacheService assetCacheService;
   private final RenderingService renderingService;
+  private final InputMappingService inputMappingService;
+  private final SystemTimeService systemTimeService;
 
 //  private final PlayingState playingState;
 //  private final GameStateManager gameStateManager;
@@ -87,13 +97,25 @@ public class MainMenuState implements ApplicationState {
     sceneService.initialize(getComponentRegistry());
     sceneService.load("/scenes/playing-scene.json");
 
-    Camera camera = new Camera(); // TODO: this would actually come from the scene
-    camera.setPosition(new Vector3f(0.0f, 0.0f, 5.0f));
+    try (MemoryStack stack = MemoryStack.stackPush()) {
+      IntBuffer pWidth = stack.mallocInt(1);
+      IntBuffer pHeight = stack.mallocInt(1);
+      GLFW.glfwGetWindowSize(windowService.getHandle(), pWidth, pHeight);
+      camera.resize(pWidth.get(0), pHeight.get(0));
+    }
+
+    // Connect the camera to the window resize events
+    windowService.setResizeListener(camera::resize);
+
+
+    // --- Register all game systems ---
+    worldService.addSystem(new PlayerInputSystem(inputMappingService));
+    worldService.addSystem(new MovementSystem());
+    worldService.addSystem(new EnemyAISystem(systemTimeService));
+    worldService.addSystem(new CollisionSystem());
+    worldService.addSystem(new RenderSystem(renderingService, assetCacheService, camera));
 
     worldService.addSystem(new RenderSystem(renderingService, assetCacheService, camera));
-    //systemManager.register(systemFactory.createRenderSystem(services.world()));
-    //systemManager.register(uiSystemFactory.createUISystem(services.world()));
-    //systemManager.register(systemFactory.createUIRenderSystem(services.world()));
   }
 
   @Override

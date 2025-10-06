@@ -2,7 +2,9 @@ package engine.services.rendering;
 
 import engine.IService;
 import engine.services.rendering.gl.Shader;
+import engine.services.resources.AssetCacheService;
 import jakarta.inject.Singleton;
+import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -15,38 +17,20 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 @Singleton
+@RequiredArgsConstructor
 public class RenderingService implements IService, Renderer {
 
-  private static final String DEFAULT_VERTEX_SHADER_SOURCE =
-    "#version 460 core\n" +
-      "layout (location = 0) in vec3 aPos;\n" +
-      "layout (location = 1) in vec2 aTexCoord;\n" +
-      "out vec2 vTexCoord;\n" +
-      "uniform mat4 uProjection;\n" +
-      "uniform mat4 uView;\n" +
-      "uniform mat4 uModel;\n" +
-      "void main()\n" +
-      "{\n" +
-      "    gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);\n" +
-      "    vTexCoord = aTexCoord;\n" +
-      "}";
-
-  private static final String DEFAULT_FRAGMENT_SHADER_SOURCE =
-    "#version 460 core\n" +
-      "out vec4 FragColor;\n" +
-      "in vec2 vTexCoord;\n" +
-      "uniform sampler2D uTextureSampler;\n" +
-      "void main()\n" +
-      "{\n" +
-      "    FragColor = texture(uTextureSampler, vTexCoord);\n" +
-      "}";
+  private final AssetCacheService assetCacheService;
 
   private Shader defaultShader;
 
   public void start() {
-    // Create the default shader program for sprite rendering.
-    // In a more advanced engine, this would be loaded from files by the ResourceManager.
-    this.defaultShader = new Shader(DEFAULT_VERTEX_SHADER_SOURCE, DEFAULT_FRAGMENT_SHADER_SOURCE);
+    // Load the default shader program from files.
+    this.defaultShader = assetCacheService.loadShader(
+      "default",
+      "/shaders/default.vert",
+      "/shaders/default.frag"
+    );
   }
 
   @Override

@@ -31,7 +31,8 @@ public class InputService implements IService {
    * Installs the necessary GLFW callbacks on the given window service to capture input events.
    *
    */
-  public void installCallbacks() {
+  @Override
+  public void start() {
     GLFW.glfwSetKeyCallback(windowService.getHandle(), new GLFWKeyCallback() {
       @Override
       public void invoke(long window, int key, int scancode, int action, int mods) {

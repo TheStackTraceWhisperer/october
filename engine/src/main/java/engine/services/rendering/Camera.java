@@ -1,5 +1,6 @@
 package engine.services.rendering;
 
+import jakarta.inject.Singleton;
 import lombok.Getter;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -8,6 +9,7 @@ import org.joml.Vector3f;
  * Represents a camera in the game world, responsible for the view and projection matrices.
  * This camera can operate in either a 2D (Orthographic) or 3D (Perspective) mode.
  */
+@Singleton
 public class Camera {
 
   private enum ProjectionType {
