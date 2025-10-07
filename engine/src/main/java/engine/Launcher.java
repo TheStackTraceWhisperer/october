@@ -9,7 +9,7 @@ public class Launcher {
       ApplicationContext context = Micronaut
         .build(args)
         .mainClass(primarySource)
-        .packages("engine", "plugin")
+        .packages("engine")
         .banner(false)
         .start()
     ) {

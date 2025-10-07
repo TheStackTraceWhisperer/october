@@ -5,15 +5,15 @@ import api.ecs.ISystem;
 import api.ecs.IWorld;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @RequiredArgsConstructor
 class SystemManager {
   private final IWorld world;
 
-  private final List<ISystem> systems = new ArrayList<>();
+  private final List<ISystem> systems = new CopyOnWriteArrayList<>();
   private boolean sorted = true;
 
   public void addSystem(ISystem system) {

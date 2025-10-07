@@ -1,28 +1,30 @@
 package engine;
 
-import engine.services.plugin.PluginService;
+import engine.services.window.WindowService;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration test to verify that the EngineTestHarness can successfully
+ * bootstrap the engine and its core services.
+ */
 class EngineIT extends EngineTestHarness {
 
   @Inject
-  private PluginService pluginService;
+  private WindowService windowService;
 
   @Test
-  void engineBeanIsCreatedSuccessfully() {
-    // Verifies that the Engine bean and its dependencies can be created.
-    // This test now implicitly uses the setup from EngineTestHarness.
+  void engineAndWindowServiceShouldBeInitialized() {
+    // The 'engine' field is inherited from the harness and should be injected.
     assertThat(engine).isNotNull();
-  }
 
-  @Test
-  void pluginServiceIsCreatedWithNoPlugins() {
-    // In this test, the 'plugin' module is not on the classpath, so we expect
-    // the PluginService to be injected with an empty list of plugins.
-    assertThat(pluginService).isNotNull();
-    assertThat(pluginService.pluginCount()).isZero();
+    // The WindowService should be injected and have created a valid window handle.
+    assertThat(windowService).isNotNull();
+    assertThat(windowService.getHandle())
+      .withFailMessage("Window handle should have been created by the EngineTestHarness")
+      .isNotZero();
   }
 }
+

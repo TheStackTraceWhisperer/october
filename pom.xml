@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.example</groupId>
-  <artifactId>micronaut-application</artifactId>
+  <artifactId>october</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -37,6 +38,7 @@
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
     <joml.version>1.10.5</joml.version>
+    <byte-buddy.version>1.14.17</byte-buddy.version>
   </properties>
 
   <dependencyManagement>
@@ -96,6 +98,12 @@
         <version>${jakarta.inject-api.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>${byte-buddy.version}</version>
+      </dependency>
+
       <!-- Lombok -->
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -143,9 +151,10 @@
 
       <dependency>
         <groupId>org.assertj</groupId>
-        <artifactId>assertj-core</artifactId>
+        <artifactId>assertj-bom</artifactId>
         <version>${assertj.version}</version>
-        <scope>test</scope>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <dependency>

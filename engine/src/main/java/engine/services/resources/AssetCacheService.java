@@ -20,6 +20,28 @@ public class AssetCacheService implements IService {
   private final Map<String, Shader> shaderCache = new HashMap<>();
   private final Map<String, AudioBuffer> audioBufferCache = new HashMap<>();
 
+
+  @Override
+  public void start() {
+    // Define the vertices for a standard quad mesh
+    float[] vertices = {
+      // Position           // UV Coords
+      0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
+      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
+      -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
+      -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top Left
+    };
+
+    // Define the indices for the quad
+    int[] indices = {
+      0, 1, 3, // First Triangle
+      1, 2, 3  // Second Triangle
+    };
+
+    // Programmatically create and load the quad mesh
+    loadProceduralMesh("quad", vertices, indices);
+  }
+
   /**
    * Loads a texture from a file, stores it in the cache, and returns it.
    * If the texture is already cached, returns the existing instance.

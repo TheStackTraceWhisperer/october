@@ -8,8 +8,11 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.IntBuffer;
 
 /**
  * GLFW window wrapper that creates an OpenGL 4.6 core profile context.
@@ -89,27 +92,23 @@ public final class WindowService implements IService {
     log.info("Created GLFW window: handle={}", window);
   }
 
-//  public long handle() {
-//    return handle;
-//  }
-//
-//  public int getWidth() {
-//    try (MemoryStack stack = MemoryStack.stackPush()) {
-//      IntBuffer pWidth = stack.mallocInt(1);
-//      IntBuffer pHeight = stack.mallocInt(1);
-//      GLFW.glfwGetWindowSize(handle, pWidth, pHeight);
-//      return pWidth.get(0);
-//    }
-//  }
-//
-//  public int getHeight() {
-//    try (MemoryStack stack = MemoryStack.stackPush()) {
-//      IntBuffer pWidth = stack.mallocInt(1);
-//      IntBuffer pHeight = stack.mallocInt(1);
-//      GLFW.glfwGetWindowSize(handle, pWidth, pHeight);
-//      return pHeight.get(0);
-//    }
-//  }
+  public int getWidth() {
+    try (MemoryStack stack = MemoryStack.stackPush()) {
+      IntBuffer pWidth = stack.mallocInt(1);
+      IntBuffer pHeight = stack.mallocInt(1);
+      GLFW.glfwGetWindowSize(handle, pWidth, pHeight);
+      return pWidth.get(0);
+    }
+  }
+
+  public int getHeight() {
+    try (MemoryStack stack = MemoryStack.stackPush()) {
+      IntBuffer pWidth = stack.mallocInt(1);
+      IntBuffer pHeight = stack.mallocInt(1);
+      GLFW.glfwGetWindowSize(handle, pWidth, pHeight);
+      return pHeight.get(0);
+    }
+  }
 
   public void swapBuffers() {
     GLFW.glfwSwapBuffers(handle);
