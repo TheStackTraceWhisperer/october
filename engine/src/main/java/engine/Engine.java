@@ -3,7 +3,6 @@ package engine;
 import api.events.EngineStarted;
 import api.events.EngineStopped;
 import engine.services.event.EventPublisherService;
-import engine.services.glfw.GlfwContextService;
 import engine.services.state.ApplicationStateService;
 import engine.services.time.SystemTimeService;
 import engine.services.window.WindowService;
@@ -23,7 +22,6 @@ public final class Engine implements Runnable {
   private final EventPublisherService eventPublisherService;
   private final ApplicationLoopPolicy loopPolicy;
   private final ApplicationStateService applicationStateService;
-  private final GlfwContextService glfwContextService;
   private final List<IService> services;
 
   @Getter

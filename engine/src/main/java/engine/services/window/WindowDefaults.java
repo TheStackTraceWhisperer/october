@@ -18,7 +18,4 @@ public class WindowDefaults {
     return "Micronaut September Engine";
   }
 
-  public ApplicationLoopPolicy loopPolicy() {
-    return ApplicationLoopPolicy.standard();
-  }
 }
