@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+      checks: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2-
+
+    - name: Build and Test with Docker
+      run: |
+        docker build -t october-ci .
+        docker run --name october-test october-ci
+        mkdir -p ./target
+        docker cp october-test:/workspace/application/target/. ./application/target/
+        docker cp october-test:/workspace/engine/target/. ./engine/target/
+        docker cp october-test:/workspace/engine-api/target/. ./engine-api/target/
+        docker cp october-test:/workspace/engine-bundle/target/. ./engine-bundle/target/
+        docker cp october-test:/workspace/plugin/target/. ./plugin/target/
+        docker rm october-test
+        sudo chown -R runner:runner ./application ./engine ./engine-api ./engine-bundle ./plugin
+
+    - name: Add coverage to PR
+      id: jacoco
+      uses: madrapps/jacoco-report@v1.6.1
+      if: github.event_name == 'pull_request' && always()
+      with:
+        paths: |
+          ${{ github.workspace }}/application/target/site/jacoco/jacoco.xml
+          ${{ github.workspace }}/engine/target/site/jacoco/jacoco.xml
+          ${{ github.workspace }}/engine-api/target/site/jacoco/jacoco.xml
+          ${{ github.workspace }}/plugin/target/site/jacoco/jacoco.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 40
+        min-coverage-changed-files: 60
+        title: 'JaCoCo Coverage Report'
+        update-comment: true
+
+    - name: Publish Test Reports
+      uses: mikepenz/action-junit-report@v4
+      if: always()
+      with:
+        report_paths: '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/TEST-*.xml'
+        check_name: 'Test Report'
+        job_summary: true
+        include_passed: true
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Build Artifacts
+        path: |
+          application/target/application-*.jar
+          engine/target/engine-*.jar
+          engine-bundle/target/engine-bundle-*.jar
+          plugin/target/plugin-*.jar
+        retention-days: 30
+
+    - name: Upload Coverage Reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Coverage Reports
+        path: '**/target/site/jacoco/**'
+        retention-days: 30
+
+  # ... (The publish and release jobs can remain largely the same, but may need path adjustments)
+
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        server-id: github
+    - name: Publish to GitHub Packages
+      run: mvn -B deploy -DskipTests
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: 'artifacts/Build Artifacts/*.jar'
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
