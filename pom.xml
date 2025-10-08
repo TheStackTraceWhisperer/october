@@ -243,4 +243,18 @@
     </pluginManagement>
   </build>
 
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/TheStackTraceWhisperer/october</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/TheStackTraceWhisperer/october</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>
