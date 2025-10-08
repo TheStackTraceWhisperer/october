@@ -1,6 +1,7 @@
 package engine.services.window;
 
 import engine.IService;
+import engine.services.rendering.gl.OpenGLDebugger;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,7 @@ public final class WindowService implements IService {
 
     try {
       GL.createCapabilities();
+      OpenGLDebugger.init();
       // Set initial state
       GLFW.glfwSwapInterval(1); // Enable v-sync
       GL30.glViewport(0, 0, width, height); // Set initial viewport
@@ -151,8 +153,8 @@ public final class WindowService implements IService {
       GLFW.glfwDestroyWindow(handle);
       handle = 0L;
     }
+    OpenGLDebugger.cleanup();
     //created = false;
   }
 
 }
-

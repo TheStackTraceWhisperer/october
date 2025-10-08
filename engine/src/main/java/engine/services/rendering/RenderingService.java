@@ -1,72 +1,87 @@
 package engine.services.rendering;
 
 import engine.IService;
+import engine.services.rendering.gl.InstancedShaderSources;
 import engine.services.rendering.gl.Shader;
-import engine.services.resources.AssetCacheService;
 import jakarta.inject.Singleton;
-import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 @Singleton
-@RequiredArgsConstructor
 public class RenderingService implements IService, Renderer {
 
-  private final AssetCacheService assetCacheService;
+  private Shader instancedShader;
+  private SpriteBatch spriteBatch;
+  private InstancedMesh quadMesh;
 
-  private Shader defaultShader;
-
+  @Override
   public void start() {
-    // Load the default shader program from files.
-    this.defaultShader = assetCacheService.loadShader(
-      "default",
-      "/shaders/default.vert",
-      "/shaders/default.frag"
+    // Create the instanced shader program
+    this.instancedShader = new Shader(
+      InstancedShaderSources.INSTANCED_VERTEX_SHADER,
+      InstancedShaderSources.INSTANCED_FRAGMENT_SHADER
     );
+    this.spriteBatch = new SpriteBatch();
+
+    // Define vertices for a quad that covers the entire screen in Normalized Device Coordinates
+    float[] vertices = {
+      // Positions        // Texture Coords
+      -0.5f, 0.5f, 0.0f,   0.0f, 1.0f, // Top-left
+      0.5f, 0.5f, 0.0f,    1.0f, 1.0f, // Top-right
+      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom-right
+      -0.5f, -0.5f, 0.0f,  0.0f, 0.0f  // Bottom-left
+    };
+
+    int[] indices = {
+      0, 3, 2, // First triangle
+      2, 1, 0  // Second triangle
+    };
+
+    this.quadMesh = new InstancedMesh(vertices, indices);
   }
 
   @Override
   public void beginScene(Camera camera) {
-    // Clear the screen to a dark grey color
+    // Clear the screen
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Prepare the shader for the scene by binding it and setting the camera matrices
-    defaultShader.bind();
-    defaultShader.setUniform("uProjection", camera.getProjectionMatrix());
-    defaultShader.setUniform("uView", camera.getViewMatrix());
+    // Clear the sprite batch for this frame
+    spriteBatch.clear();
+
+    // Prepare the shader for the scene
+    instancedShader.bind();
+    instancedShader.setUniform("uProjection", camera.getProjectionMatrix());
+    instancedShader.setUniform("uView", camera.getViewMatrix());
   }
 
   @Override
   public void submit(Mesh mesh, Texture texture, Matrix4f transform) {
-    // Bind the specific texture for this sprite to texture unit 0
-    texture.bind(0);
-    defaultShader.setUniform("uTextureSampler", 0); // Tell the shader to use texture unit 0
-
-    // Set the model matrix for this specific object
-    defaultShader.setUniform("uModel", transform);
-
-    // Bind the mesh's VAO
-    glBindVertexArray(mesh.getVaoId());
-
-    // Draw the object using its index buffer
-    glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
-
-    // Unbind the VAO for good practice
-    glBindVertexArray(0);
+    // Add sprite to batch instead of rendering immediately
+    spriteBatch.addSprite(texture, new Matrix4f(transform));
   }
 
   @Override
   public void endScene() {
-    // Unbind the shader program
-    defaultShader.unbind();
+    // Render all batches
+    for (Texture texture : spriteBatch.getTextures()) {
+      var transforms = spriteBatch.getSpritesForTexture(texture);
+
+      if (!transforms.isEmpty()) {
+        // Bind texture
+        texture.bind(0);
+        instancedShader.setUniform("uTextureSampler", 0);
+
+        // Render all instances for this texture
+        quadMesh.renderInstanced(transforms);
+      }
+    }
+
+    // Unbind shader
+    instancedShader.unbind();
   }
 }
