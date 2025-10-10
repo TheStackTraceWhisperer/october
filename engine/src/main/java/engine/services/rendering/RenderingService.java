@@ -1,9 +1,10 @@
 package engine.services.rendering;
 
 import engine.IService;
-import engine.services.rendering.gl.InstancedShaderSources;
 import engine.services.rendering.gl.Shader;
+import engine.services.resources.AssetCacheService;
 import jakarta.inject.Singleton;
+import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -12,7 +13,10 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
 @Singleton
+@RequiredArgsConstructor
 public class RenderingService implements IService, Renderer {
+
+  private final AssetCacheService assetCacheService;
 
   private Shader instancedShader;
   private SpriteBatch spriteBatch;
@@ -20,10 +24,11 @@ public class RenderingService implements IService, Renderer {
 
   @Override
   public void start() {
-    // Create the instanced shader program
-    this.instancedShader = new Shader(
-      InstancedShaderSources.INSTANCED_VERTEX_SHADER,
-      InstancedShaderSources.INSTANCED_FRAGMENT_SHADER
+    // Load the instanced shader program from files.
+    this.instancedShader = assetCacheService.loadShader(
+      "default",
+      "/shaders/default.vert",
+      "/shaders/default.frag"
     );
     this.spriteBatch = new SpriteBatch();
 

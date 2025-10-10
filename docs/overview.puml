@@ -1,0 +1,12 @@
+@startuml
+allowmixing
+
+card engine
+card services
+card managers
+card application
+
+engine -down-> services
+services -down-> managers
+application -> engine
+@enduml
