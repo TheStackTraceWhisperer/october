@@ -1,0 +1,19 @@
+{
+  "name": "simple",
+  "manifest": {
+    "textures": [
+      { "handle": "player", "path": "/textures/valid_texture.png" }
+    ],
+    "meshes": []
+  },
+  "entities": [
+    {
+      "name": "player-1",
+      "components": {
+        "TransformComponent": { },
+        "SpriteComponent": { "textureHandle": "player" }
+      }
+    }
+  ]
+}
+
