@@ -3,7 +3,6 @@ package engine;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
-import org.lwjgl.glfw.GLFW;
 
 import java.time.Duration;
 
@@ -66,13 +65,10 @@ class ApplicationLoopPolicyIT extends EngineTestHarness {
     long handle = engine.getWindowService().getHandle();
 
     // Act
-    GLFW.glfwSetWindowShouldClose(handle, true);
+    requestWindowClose();
 
     // Assert
     assertThat(ApplicationLoopPolicy.standard().continueRunning(0, handle)).isFalse();
-
-    // Cleanup: restore for other tests
-    GLFW.glfwSetWindowShouldClose(handle, false);
   }
 
   @Test
@@ -89,4 +85,3 @@ class ApplicationLoopPolicyIT extends EngineTestHarness {
     assertThat(ApplicationLoopPolicy.all(always, never).continueRunning(0, engine.getWindowService().getHandle())).isFalse();
   }
 }
-

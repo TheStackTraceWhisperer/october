@@ -3,7 +3,6 @@ package engine.services.window;
 import engine.EngineTestHarness;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,10 +27,10 @@ class WindowServiceIT extends EngineTestHarness {
       seenH.set(h);
     });
 
-    // Act: trigger a resize via GLFW and poll events to deliver the callback
+    // Act: trigger a resize and poll events to deliver the callback
     int newW = Math.max(64, originalW - 10);
     int newH = Math.max(64, originalH - 10);
-    GLFW.glfwSetWindowSize(windowService.getHandle(), newW, newH);
+    setWindowSize(newW, newH);
     windowService.pollEvents();
 
     // Assert (robust across WMs): dimensions are valid and callback observed positive framebuffer size

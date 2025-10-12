@@ -9,8 +9,10 @@ import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * An abstract base class that bootstraps a live, fully-functional game engine
@@ -39,6 +41,28 @@ public abstract class EngineTestHarness {
   @AfterAll
   void stopEngine() {
     engine.shutdown();
+  }
+
+  /**
+   * Resets window state after each test.
+   */
+  @AfterEach
+  void cleanup() {
+    GLFW.glfwSetWindowShouldClose(engine.getWindowService().getHandle(), false);
+  }
+
+  /**
+   * Signals the engine's window to close.
+   */
+  protected void requestWindowClose() {
+    GLFW.glfwSetWindowShouldClose(engine.getWindowService().getHandle(), true);
+  }
+
+  /**
+   * Sets the size of the main window.
+   */
+  protected void setWindowSize(int width, int height) {
+    GLFW.glfwSetWindowSize(engine.getWindowService().getHandle(), width, height);
   }
 
   /**

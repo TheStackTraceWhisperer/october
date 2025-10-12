@@ -1,15 +1,14 @@
 package engine.services.rendering;
 
 import engine.EngineTestHarness;
-import engine.services.resources.AssetCacheService;
-import jakarta.inject.Inject;
+import engine.services.rendering.gl.Shader;
+import engine.services.resources.AssetLoaderUtility;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 class MeshAndShaderIT extends EngineTestHarness {
-
-  @Inject AssetCacheService cache;
 
   @Test
   void creatingAndClosingMeshDoesNotThrow() {
@@ -19,7 +18,7 @@ class MeshAndShaderIT extends EngineTestHarness {
 
     // Act & Assert
     try (Mesh mesh = new Mesh(vertices, indices)) {
-      // no-op
+      assertThat(mesh.getVaoId()).isNotZero();
     }
   }
 
@@ -29,8 +28,14 @@ class MeshAndShaderIT extends EngineTestHarness {
     String vertex = "/shaders/valid_vertex.vert";
     String badFragment = "/shaders/syntax_error.frag";
 
-    // Act & Assert
-    assertThatThrownBy(() -> cache.loadShader("bad", vertex, badFragment))
-      .isInstanceOf(RuntimeException.class);
+    // Act
+    Throwable thrown = catchThrowable(() -> {
+      try (Shader shader = AssetLoaderUtility.loadShader(vertex, badFragment)) {
+        // Should not be reached
+      }
+    });
+
+    // Assert
+    assertThat(thrown).isInstanceOf(RuntimeException.class);
   }
 }
