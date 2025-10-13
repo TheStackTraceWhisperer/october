@@ -1,7 +1,6 @@
 package engine.services.rendering;
 
 import engine.IService;
-import engine.services.rendering.gl.Shader;
 import engine.services.resources.AssetCacheService;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
@@ -17,36 +16,14 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 public class RenderingService implements IService, Renderer {
 
   private final AssetCacheService assetCacheService;
-
-  private Shader instancedShader;
-  private SpriteBatch spriteBatch;
-  private InstancedMesh quadMesh;
+  private final UIRendererService uiRendererService;
+  private SpriteRenderer spriteRenderer;
 
   @Override
   public void start() {
-    // Load the instanced shader program from files.
-    this.instancedShader = assetCacheService.loadShader(
-      "default",
-      "/shaders/default.vert",
-      "/shaders/default.frag"
-    );
-    this.spriteBatch = new SpriteBatch();
-
-    // Define vertices for a quad that covers the entire screen in Normalized Device Coordinates
-    float[] vertices = {
-      // Positions        // Texture Coords
-      -0.5f, 0.5f, 0.0f,   0.0f, 1.0f, // Top-left
-      0.5f, 0.5f, 0.0f,    1.0f, 1.0f, // Top-right
-      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom-right
-      -0.5f, -0.5f, 0.0f,  0.0f, 0.0f  // Bottom-left
-    };
-
-    int[] indices = {
-      0, 3, 2, // First triangle
-      2, 1, 0  // Second triangle
-    };
-
-    this.quadMesh = new InstancedMesh(vertices, indices);
+    spriteRenderer = new SpriteRenderer(assetCacheService);
+    spriteRenderer.start();
+    uiRendererService.start();
   }
 
   @Override
@@ -55,38 +32,35 @@ public class RenderingService implements IService, Renderer {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Clear the sprite batch for this frame
-    spriteBatch.clear();
-
-    // Prepare the shader for the scene
-    instancedShader.bind();
-    instancedShader.setUniform("uProjection", camera.getProjectionMatrix());
-    instancedShader.setUniform("uView", camera.getViewMatrix());
+    // Begin 3D/sprite scene
+    spriteRenderer.beginScene(camera);
   }
 
   @Override
   public void submit(Mesh mesh, Texture texture, Matrix4f transform) {
-    // Add sprite to batch instead of rendering immediately
-    spriteBatch.addSprite(texture, new Matrix4f(transform));
+    // The mesh is ignored for now, as we are only rendering sprites.
+    // This will be addressed in a future refactoring.
+    spriteRenderer.submit(texture, transform);
   }
 
   @Override
   public void endScene() {
-    // Render all batches
-    for (Texture texture : spriteBatch.getTextures()) {
-      var transforms = spriteBatch.getSpritesForTexture(texture);
+    // End and render 3D/sprite scene
+    spriteRenderer.endScene();
 
-      if (!transforms.isEmpty()) {
-        // Bind texture
-        texture.bind(0);
-        instancedShader.setUniform("uTextureSampler", 0);
+    // Begin and render UI scene
+    uiRendererService.begin();
+    // Note: UI submission logic is handled by the UISystem, so we just end the frame here.
+    uiRendererService.end();
+  }
 
-        // Render all instances for this texture
-        quadMesh.renderInstanced(transforms);
-      }
+  @Override
+  public void stop() {
+    if (spriteRenderer != null) {
+      spriteRenderer.close();
     }
-
-    // Unbind shader
-    instancedShader.unbind();
+    if (uiRendererService != null) {
+      uiRendererService.close();
+    }
   }
 }

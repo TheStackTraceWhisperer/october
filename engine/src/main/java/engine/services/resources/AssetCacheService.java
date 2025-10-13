@@ -44,27 +44,37 @@ public class AssetCacheService implements IService {
 
   /**
    * Loads a texture from a file, stores it in the cache, and returns it.
-   * If the texture is already cached, returns the existing instance.
+   * If a texture with the same handle already exists, it will be closed and replaced.
    *
    * @param handle   The unique handle for this texture.
    * @param filePath The classpath path to the image file.
-   * @return The cached or newly loaded Texture.
+   * @return The newly loaded Texture.
    */
   public Texture loadTexture(String handle, String filePath) {
-    return textureCache.computeIfAbsent(handle, h -> AssetLoaderUtility.loadTexture(filePath));
+    Texture newTexture = AssetLoaderUtility.loadTexture(filePath);
+    Texture oldTexture = textureCache.put(handle, newTexture);
+    if (oldTexture != null) {
+      oldTexture.close();
+    }
+    return newTexture;
   }
 
   /**
    * Loads a shader program from two files, stores it, and returns it.
-   * If the shader is already cached, returns the existing instance.
+   * If a shader with the same handle already exists, it will be closed and replaced.
    *
    * @param handle       The unique handle for this shader.
    * @param vertexPath   The classpath path to the vertex shader file.
    * @param fragmentPath The classpath path to the fragment shader file.
-   * @return The cached or newly loaded Shader.
+   * @return The newly loaded Shader.
    */
   public Shader loadShader(String handle, String vertexPath, String fragmentPath) {
-    return shaderCache.computeIfAbsent(handle, h -> AssetLoaderUtility.loadShader(vertexPath, fragmentPath));
+    Shader newShader = AssetLoaderUtility.loadShader(vertexPath, fragmentPath);
+    Shader oldShader = shaderCache.put(handle, newShader);
+    if (oldShader != null) {
+      oldShader.close();
+    }
+    return newShader;
   }
 
   /**
@@ -76,10 +86,11 @@ public class AssetCacheService implements IService {
    * @param indices  The index data defining the triangles.
    */
   public void loadProceduralMesh(String handle, float[] vertices, int[] indices) {
-    if (meshCache.containsKey(handle)) {
-      meshCache.get(handle).close(); // Clean up the old mesh if it exists
+    Mesh newMesh = new Mesh(vertices, indices);
+    Mesh oldMesh = meshCache.put(handle, newMesh);
+    if (oldMesh != null) {
+      oldMesh.close();
     }
-    meshCache.put(handle, new Mesh(vertices, indices));
   }
 
   public Mesh resolveMeshHandle(String handle) {
@@ -96,14 +107,19 @@ public class AssetCacheService implements IService {
 
   /**
    * Loads an audio buffer from an OGG Vorbis file, stores it in the cache, and returns it.
-   * If the audio buffer is already cached, returns the existing instance.
+   * If an audio buffer with the same handle already exists, it will be closed and replaced.
    *
    * @param handle   The unique handle for this audio buffer.
    * @param filePath The classpath path to the OGG file.
-   * @return The cached or newly loaded AudioBuffer.
+   * @return The newly loaded AudioBuffer.
    */
   public AudioBuffer loadAudioBuffer(String handle, String filePath) {
-    return audioBufferCache.computeIfAbsent(handle, h -> AudioBuffer.loadFromOggFile(filePath));
+    AudioBuffer newAudioBuffer = AudioBuffer.loadFromOggFile(filePath);
+    AudioBuffer oldAudioBuffer = audioBufferCache.put(handle, newAudioBuffer);
+    if (oldAudioBuffer != null) {
+      oldAudioBuffer.close();
+    }
+    return newAudioBuffer;
   }
 
   public Shader resolveShaderHandle(String handle) {

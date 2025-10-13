@@ -4,13 +4,15 @@ import api.ecs.ISystem;
 import api.ecs.IWorld;
 import engine.services.event.EventPublisherService;
 import engine.services.input.InputService;
-
+import engine.services.rendering.Texture;
 import engine.services.rendering.UIRendererService;
+import engine.services.resources.AssetCacheService;
 import engine.services.window.WindowService;
 import engine.services.world.components.UIButtonComponent;
 import engine.services.world.components.UIImageComponent;
 import engine.services.world.components.UITransformComponent;
 import lombok.RequiredArgsConstructor;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
@@ -21,6 +23,7 @@ public class UISystem implements ISystem {
   private final InputService inputService;
   private final EventPublisherService eventPublisher;
   private final UIRendererService uiRenderer;
+  private final AssetCacheService assetCacheService;
 
   @Override
   public int priority() {
@@ -107,19 +110,37 @@ public class UISystem implements ISystem {
     uiRenderer.begin();
     for (int entityId : entities) {
       var transform = world.getComponent(entityId, UITransformComponent.class);
-      if (world.hasComponent(entityId, UIButtonComponent.class)) {
-        var button = world.getComponent(entityId, UIButtonComponent.class);
-        String textureHandle = switch (button.currentState) {
-          case HOVERED -> button.hoveredTexture;
-          case PRESSED -> button.pressedTexture;
-          default -> button.normalTexture;
-        };
-        uiRenderer.submit(transform, textureHandle);
-      } else if (world.hasComponent(entityId, UIImageComponent.class)) {
-        var image = world.getComponent(entityId, UIImageComponent.class);
-        uiRenderer.submit(transform, image.textureHandle);
+      String textureHandle = getTextureHandle(world, entityId);
+
+      if (textureHandle != null) {
+        Texture texture = assetCacheService.resolveTextureHandle(textureHandle);
+        Matrix4f modelMatrix = calculateModelMatrix(transform);
+        uiRenderer.submit(texture, modelMatrix);
       }
     }
     uiRenderer.end();
+  }
+
+  private String getTextureHandle(IWorld world, int entityId) {
+    if (world.hasComponent(entityId, UIButtonComponent.class)) {
+      var button = world.getComponent(entityId, UIButtonComponent.class);
+      return switch (button.currentState) {
+        case HOVERED -> button.hoveredTexture;
+        case PRESSED -> button.pressedTexture;
+        default -> button.normalTexture;
+      };
+    } else if (world.hasComponent(entityId, UIImageComponent.class)) {
+      return world.getComponent(entityId, UIImageComponent.class).textureHandle;
+    }
+    return null;
+  }
+
+  private Matrix4f calculateModelMatrix(UITransformComponent transform) {
+    float[] bounds = transform.screenBounds;
+    float width = bounds[2] - bounds[0];
+    float height = bounds[3] - bounds[1];
+    float posX = bounds[0] + width / 2.0f;
+    float posY = bounds[1] + height / 2.0f;
+    return new Matrix4f().translate(posX, posY, transform.offset.z).scale(width, height, 1.0f);
   }
 }

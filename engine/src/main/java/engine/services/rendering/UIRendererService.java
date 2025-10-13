@@ -4,62 +4,63 @@ import engine.IService;
 import engine.services.rendering.gl.Shader;
 import engine.services.resources.AssetCacheService;
 import engine.services.window.WindowService;
-import engine.services.world.components.UITransformComponent;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 @Singleton
 @RequiredArgsConstructor
-public class UIRendererService implements IService {
+public class UIRendererService implements IService, AutoCloseable {
 
   private final AssetCacheService assetCacheService;
   private final WindowService windowService;
-  private Camera uiCamera; // Does not inject, will be created locally
+  private final SpriteBatch spriteBatch = new SpriteBatch();
+  private Camera uiCamera;
   private Shader uiShader;
+  private InstancedMesh quadMesh;
 
   @Override
   public void start() {
-    this.uiCamera = new Camera(); // Create a dedicated camera for the UI
+    this.uiCamera = new Camera();
     this.uiShader = assetCacheService.loadShader("ui", "/shaders/default.vert", "/shaders/default.frag");
+    this.quadMesh = new InstancedMesh(
+      new float[]{
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // Top-left
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f, // Top-right
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Bottom-right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f  // Bottom-left
+      },
+      new int[]{0, 3, 2, 2, 1, 0}
+    );
     windowService.setResizeListener(this::resize);
-    // Set initial projection
     resize(windowService.getWidth(), windowService.getHeight());
   }
 
   public void begin() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    spriteBatch.clear();
     uiShader.bind();
     uiShader.setUniform("uProjection", uiCamera.getProjectionMatrix());
     uiShader.setUniform("uView", new Matrix4f().identity());
   }
 
-  public void submit(UITransformComponent transform, String textureHandle) {
-    if (textureHandle == null) {
-      return;
-    }
-    Texture texture = assetCacheService.resolveTextureHandle(textureHandle);
-    Matrix4f modelMatrix = calculateModelMatrix(transform);
-
-    texture.bind(0);
-    uiShader.setUniform("uTextureSampler", 0);
-    uiShader.setUniform("uModel", modelMatrix);
-
-    Mesh quadMesh = assetCacheService.resolveMeshHandle("quad");
-    glBindVertexArray(quadMesh.getVaoId());
-    glDrawElements(GL_TRIANGLES, quadMesh.getVertexCount(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+  public void submit(Texture texture, Matrix4f transform) {
+    spriteBatch.addSprite(texture, transform);
   }
 
   public void end() {
+    for (Texture texture : spriteBatch.getTextures()) {
+      var transforms = spriteBatch.getSpritesForTexture(texture);
+      if (!transforms.isEmpty()) {
+        texture.bind(0);
+        uiShader.setUniform("uTextureSampler", 0);
+        quadMesh.renderInstanced(transforms);
+      }
+    }
     uiShader.unbind();
     glDisable(GL_BLEND);
   }
@@ -70,12 +71,10 @@ public class UIRendererService implements IService {
     }
   }
 
-  private Matrix4f calculateModelMatrix(UITransformComponent transform) {
-    float[] bounds = transform.screenBounds;
-    float width = bounds[2] - bounds[0];
-    float height = bounds[3] - bounds[1];
-    float posX = bounds[0] + width / 2.0f;
-    float posY = bounds[1] + height / 2.0f;
-    return new Matrix4f().translate(posX, posY, transform.offset.z).scale(width, height, 1.0f);
+  @Override
+  public void close() {
+    if (quadMesh != null) {
+      quadMesh.close();
+    }
   }
 }

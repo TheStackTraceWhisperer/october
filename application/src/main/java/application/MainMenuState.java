@@ -4,6 +4,7 @@ import api.ecs.IComponent;
 import engine.services.event.EventPublisherService;
 import engine.services.input.InputService;
 import engine.services.rendering.UIRendererService;
+import engine.services.resources.AssetCacheService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.state.ApplicationStateService;
@@ -34,6 +35,7 @@ public class MainMenuState implements ApplicationState {
   private final EventPublisherService eventPublisher;
   private final UIRendererService uiRenderer;
   private final WindowService windowService;
+  private final AssetCacheService assetCacheService;
 
   @Override
   public void onEnter() {
@@ -45,7 +47,7 @@ public class MainMenuState implements ApplicationState {
     sceneService.initialize(registry);
     sceneService.load("/scenes/main_menu.json");
 
-    worldService.addSystem(new UISystem(windowService, inputService, eventPublisher, uiRenderer));
+    worldService.addSystem(new UISystem(windowService, inputService, eventPublisher, uiRenderer, assetCacheService));
   }
 
   @EventListener

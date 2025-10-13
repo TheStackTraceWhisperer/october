@@ -2,6 +2,7 @@ package engine.services.resources;
 
 import engine.EngineTestHarness;
 import engine.services.rendering.Mesh;
+import engine.services.rendering.Texture;
 import engine.services.rendering.gl.Shader;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,18 @@ class AssetCacheAndLoaderIT extends EngineTestHarness {
 
     var tex = cache.loadTexture("t-valid", "/textures/valid_texture.png");
     assertThat(cache.resolveTextureHandle("t-valid")).isSameAs(tex);
+  }
+
+  @Test
+  void reloadingAssetWithSameHandle_returnsNewInstance() {
+    // Arrange
+    Texture originalTexture = cache.loadTexture("reload-test", "/textures/valid_texture.png");
+
+    // Act: Load a different texture with the same handle
+    Texture reloadedTexture = cache.loadTexture("reload-test", "/textures/test.png");
+
+    // Assert: The cache returns the new instance, and the original is a different object
+    assertThat(reloadedTexture).isNotSameAs(originalTexture);
   }
 
   @Test
