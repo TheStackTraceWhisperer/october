@@ -16,15 +16,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class Engine implements Runnable {
 
+  private enum State {
+    NEW,
+    INITIALIZED,
+    SHUTDOWN
+  }
+
   private final ApplicationLoopPolicy loopPolicy;
   private final ApplicationStateService applicationStateService;
   private final List<IService> services;
-
   @Getter
-  final private WindowService windowService;
+  private final WindowService windowService;
   private final SystemTimeService systemTimeService;
 
+  private State state = State.NEW;
+  private int frames = 0;
+
   public void init() {
+    if (state != State.NEW) {
+      log.warn("Engine has already been initialized.");
+      return;
+    }
     try {
       log.info("Initializing September Engine with DI container");
 
@@ -36,6 +48,7 @@ public final class Engine implements Runnable {
       });
 
       log.info("September Engine initialized successfully");
+      state = State.INITIALIZED;
 
     } catch (Exception e) {
       shutdown();
@@ -44,19 +57,28 @@ public final class Engine implements Runnable {
   }
 
   private void mainLoop() {
-    int frames = 0;
-
     while (loopPolicy.continueRunning(frames, windowService.getHandle()) && !applicationStateService.isEmpty()) {
-      windowService.pollEvents();
-      services.forEach(IService::update);
-      float dt = systemTimeService.getDeltaTimeSeconds();
-      services.forEach(service -> service.update(dt));
-      windowService.swapBuffers();
-      frames++;
+      tick();
     }
   }
 
+  public void tick() {
+    if (state != State.INITIALIZED) {
+      throw new IllegalStateException("Cannot tick engine that is not initialized.");
+    }
+    windowService.pollEvents();
+    services.forEach(IService::update);
+    float dt = systemTimeService.getDeltaTimeSeconds();
+    services.forEach(service -> service.update(dt));
+    windowService.swapBuffers();
+    frames++;
+  }
+
   public void shutdown() {
+    if (state == State.SHUTDOWN) {
+      log.warn("Engine has already been shut down.");
+      return;
+    }
     log.info("Shutting down September Engine");
 
     services.sort(Comparator.comparingInt(IService::priority).reversed());
@@ -66,6 +88,7 @@ public final class Engine implements Runnable {
       iService.stop();
     });
 
+    state = State.SHUTDOWN;
   }
 
   @Override

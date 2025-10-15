@@ -42,6 +42,14 @@ public abstract class EngineTestHarness {
   }
 
   /**
+   * Executes a single frame of the main game loop.
+   * This is the primary way tests should interact with and update the engine state.
+   */
+  protected void tick() {
+    engine.tick();
+  }
+
+  /**
    * A Micronaut Factory to provide test-specific beans that override
    * the production configuration.
    */
