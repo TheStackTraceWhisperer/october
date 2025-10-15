@@ -1,16 +1,19 @@
 package engine.services.world;
 
-import engine.ecs.ISystem;
 import engine.IService;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.Set;
 
 @Singleton
 public class WorldService implements IService {
   private final World world = new World();
   private final SystemManager systemManager = new SystemManager(world);
+
+  @Override
+  public int priority() {
+    return 50;
+  }
 
   @Override
   public void update() {
@@ -62,4 +65,3 @@ public class WorldService implements IService {
     systemManager.clear();
   }
 }
-

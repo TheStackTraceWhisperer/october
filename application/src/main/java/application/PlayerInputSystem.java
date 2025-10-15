@@ -1,21 +1,24 @@
 package application;
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.ControllableComponent;
+import io.micronaut.context.annotation.Prototype;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 
 /**
  * This system reads from the InputMappingService and updates the state of all
  * ControllableComponent instances based on the player's 2D input.
  */
-@RequiredArgsConstructor
+@Prototype
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerInputSystem implements ISystem {
 
   private final InputMappingService mappingService;
 
   @Override
-  public void update(IWorld world, float deltaTime) {
+  public void update(World world, float deltaTime) {
     for (int entityId : world.getEntitiesWith(ControllableComponent.class)) {
       ControllableComponent control = world.getComponent(entityId, ControllableComponent.class);
       int playerId = control.playerId;

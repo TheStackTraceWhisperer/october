@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import engine.ecs.IComponent;
+import engine.services.world.IComponent;
 
 public class SoundEffectComponent implements IComponent {
 

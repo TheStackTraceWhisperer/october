@@ -1,9 +1,9 @@
 package engine.services.world.components;
 
-import engine.ecs.IComponent;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import engine.services.world.IComponent;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

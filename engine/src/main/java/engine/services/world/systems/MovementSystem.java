@@ -1,16 +1,18 @@
 package engine.services.world.systems;
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.ControllableComponent;
 import engine.services.world.components.MovementStatsComponent;
 import engine.services.world.components.TransformComponent;
+import io.micronaut.context.annotation.Prototype;
 import org.joml.Vector3f;
 
 /**
  * This system is responsible for moving entities based on their ControllableComponent state.
  * It reads the player's intent and applies it to the entity's TransformComponent.
  */
+@Prototype
 public class MovementSystem implements ISystem {
 
   // Re-use a single vector object per frame to avoid creating garbage
@@ -18,7 +20,7 @@ public class MovementSystem implements ISystem {
 
 
   @Override
-  public void update(IWorld world, float deltaTime) {
+  public void update(World world, float deltaTime) {
     // Get all entities that can be moved by the player
     var entities = world.getEntitiesWith(
       ControllableComponent.class,

@@ -1,23 +1,15 @@
 package engine.services.scene;
 
-import engine.ecs.IComponent;
-import engine.ecs.IWorld;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import engine.IService;
 import engine.services.resources.AssetCacheService;
 import engine.services.world.WorldService;
-import engine.services.world.components.ColliderComponent;
-import engine.services.world.components.ControllableComponent;
-import engine.services.world.components.MovementStatsComponent;
-import engine.services.world.components.SpriteComponent;
-import engine.services.world.components.TransformComponent;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -29,14 +21,14 @@ public class SceneService implements IService {
   private final WorldService worldService;
   private final AssetCacheService resourceManager;
 
-  // only used for mapping scene file components to entity components
-  private Map<String, Class<? extends IComponent>> componentRegistry;
+  private Map<String, Class<?>> componentRegistry;
 
-  /**
-   * Initializes the scene manager with the component registry.
-   * This must be called before loading any scenes.
-   */
-  public void initialize(Map<String, Class<? extends IComponent>> componentRegistry) {
+  @Override
+  public int priority() {
+    return 60;
+  }
+
+  public void initialize(Map<String, Class<?>> componentRegistry) {
     this.componentRegistry = componentRegistry;
   }
 
@@ -55,23 +47,21 @@ public class SceneService implements IService {
       Scene scene = MAPPER.readValue(sceneStream, Scene.class);
       log.info("Successfully parsed scene: {}", scene.name());
 
-      // Step 1: Load all assets from the manifest
       loadAssets(scene.manifest());
 
-      // Step 2: Create all entities from the templates
       for (EntityTemplate template : scene.entities()) {
         int entity = worldService.createEntity();
         log.info("creating entity {} with id {}", template.name(), entity);
 
         for (Map.Entry<String, Object> componentEntity : template.components().entrySet()) {
           String componentName = componentEntity.getKey();
-          Class<? extends IComponent> componentClass = componentRegistry.get(componentName);
+          Class<?> componentClass = componentRegistry.get(componentName);
 
           if (componentClass != null) {
-            IComponent component = MAPPER.convertValue(componentEntity.getValue(), componentClass);
+            Object component = MAPPER.convertValue(componentEntity.getValue(), componentClass);
             worldService.addComponent(entity, component);
           } else {
-            log.warn("Unknown component type '{}' for entity '{}'", componentName, template.name());
+            log.warn("Unknown component type \'{}\' for entity \'{}\'", componentName, template.name());
           }
         }
       }

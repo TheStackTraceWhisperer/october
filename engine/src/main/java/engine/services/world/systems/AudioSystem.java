@@ -1,11 +1,11 @@
 package engine.services.world.systems;
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
 import engine.services.audio.AudioBuffer;
 import engine.services.audio.AudioService;
 import engine.services.audio.AudioSource;
 import engine.services.resources.AssetCacheService;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.AudioSourceComponent;
 import engine.services.world.components.MusicComponent;
 import engine.services.world.components.SoundEffectComponent;
@@ -29,13 +29,13 @@ public class AudioSystem implements ISystem {
   private final Map<Integer, AudioSource> soundEffectSourceMap = new HashMap<>();
 
   @Override
-  public void update(IWorld world, float deltaTime) {
+  public void update(World world, float deltaTime) {
     updateAudioSources(world, deltaTime);
     updateMusic(world, deltaTime);
     updateSoundEffects(world, deltaTime);
   }
 
-  private void updateAudioSources(IWorld world, float deltaTime) {
+  private void updateAudioSources(World world, float deltaTime) {
     var entities = world.getEntitiesWith(AudioSourceComponent.class);
 
     for (int entityId : entities) {
@@ -76,7 +76,7 @@ public class AudioSystem implements ISystem {
     cleanupAudioSources(entities, audioSourceMap);
   }
 
-  private void updateMusic(IWorld world, float deltaTime) {
+  private void updateMusic(World world, float deltaTime) {
     var entities = world.getEntitiesWith(MusicComponent.class);
 
     for (int entityId : entities) {
@@ -143,7 +143,7 @@ public class AudioSystem implements ISystem {
     }
   }
 
-  private void updateSoundEffects(IWorld world, float deltaTime) {
+  private void updateSoundEffects(World world, float deltaTime) {
     List<Integer> entitiesToCleanup = new ArrayList<>();
     var entities = world.getEntitiesWith(SoundEffectComponent.class);
 
@@ -195,13 +195,13 @@ public class AudioSystem implements ISystem {
     });
   }
 
-  public void playSoundEffect(IWorld world, int entityId, String bufferHandle,
+  public void playSoundEffect(World world, int entityId, String bufferHandle,
                               SoundEffectComponent.SoundEffectType soundType, float volume) {
     SoundEffectComponent soundComp = new SoundEffectComponent(bufferHandle, soundType, volume);
     world.addComponent(entityId, soundComp);
   }
 
-  public void fadeOutAllMusic(IWorld world) {
+  public void fadeOutAllMusic(World world) {
     var entities = world.getEntitiesWith(MusicComponent.class);
     for (int entityId : entities) {
       MusicComponent musicComp = world.getComponent(entityId, MusicComponent.class);

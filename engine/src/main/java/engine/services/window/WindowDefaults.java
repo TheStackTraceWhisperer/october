@@ -1,6 +1,5 @@
 package engine.services.window;
 
-import engine.ApplicationLoopPolicy;
 import jakarta.inject.Singleton;
 
 @Singleton
@@ -15,7 +14,7 @@ public class WindowDefaults {
   }
 
   public String title() {
-    return "Micronaut September Engine";
+    return "October";
   }
 
 }

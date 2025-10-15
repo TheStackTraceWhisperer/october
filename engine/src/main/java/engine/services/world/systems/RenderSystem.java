@@ -1,14 +1,17 @@
 package engine.services.world.systems;
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
 import engine.services.rendering.Camera;
 import engine.services.rendering.Mesh;
+import engine.services.rendering.Renderer;
 import engine.services.rendering.RenderingService;
 import engine.services.rendering.Texture;
 import engine.services.resources.AssetCacheService;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.SpriteComponent;
 import engine.services.world.components.TransformComponent;
+import io.micronaut.context.annotation.Prototype;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -18,15 +21,17 @@ import lombok.RequiredArgsConstructor;
  * It queries the world for entities with a Transform and a Sprite, resolves their
  * texture and mesh resources, and submits them to the Renderer to be drawn.
  */
-@RequiredArgsConstructor
+@Prototype
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class RenderSystem implements ISystem {
 
-  private final RenderingService renderer;
+  private final RenderingService renderingService;
   private final AssetCacheService resourceManager;
   private final Camera camera;
 
   @Override
-  public void update(IWorld world, float deltaTime) {
+  public void update(World world, float deltaTime) {
+    Renderer renderer = renderingService.getRenderer();
     renderer.beginScene(camera);
 
     // Get all entities that have the components required for sprite rendering

@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import engine.ecs.IComponent;
+import engine.services.world.IComponent;
 import org.joml.Vector4f;
 
 import java.util.Objects;

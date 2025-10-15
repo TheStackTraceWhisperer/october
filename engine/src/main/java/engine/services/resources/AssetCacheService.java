@@ -22,6 +22,11 @@ public class AssetCacheService implements IService {
 
 
   @Override
+  public int priority() {
+    return 20;
+  }
+
+  @Override
   public void start() {
     // Define the vertices for a standard quad mesh
     float[] vertices = {

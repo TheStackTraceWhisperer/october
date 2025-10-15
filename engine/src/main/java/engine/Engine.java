@@ -1,8 +1,5 @@
 package engine;
 
-import engine.events.EngineStarted;
-import engine.events.EngineStopped;
-import engine.services.event.EventPublisherService;
 import engine.services.state.ApplicationStateService;
 import engine.services.time.SystemTimeService;
 import engine.services.window.WindowService;
@@ -19,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class Engine implements Runnable {
 
-  private final EventPublisherService eventPublisherService;
   private final ApplicationLoopPolicy loopPolicy;
   private final ApplicationStateService applicationStateService;
   private final List<IService> services;
@@ -40,7 +36,6 @@ public final class Engine implements Runnable {
       });
 
       log.info("September Engine initialized successfully");
-      eventPublisherService.publish(new EngineStarted());
 
     } catch (Exception e) {
       shutdown();
@@ -64,8 +59,6 @@ public final class Engine implements Runnable {
   public void shutdown() {
     log.info("Shutting down September Engine");
 
-    eventPublisherService.publish(new EngineStopped());
-
     services.sort(Comparator.comparingInt(IService::priority).reversed());
 
     services.forEach(iService -> {
@@ -85,4 +78,3 @@ public final class Engine implements Runnable {
     }
   }
 }
-

@@ -1,17 +1,14 @@
 package application;
 
-import engine.ecs.IComponent;
 import engine.services.rendering.Camera;
-import engine.services.rendering.RenderingService;
-import engine.services.resources.AssetCacheService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
-import engine.services.time.SystemTimeService;
 import engine.services.window.WindowService;
 import engine.services.world.WorldService;
 import engine.services.world.components.*;
 import engine.services.world.systems.MovementSystem;
 import engine.services.world.systems.RenderSystem;
+import engine.services.world.systems.UISystem;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +23,16 @@ public class PlayingState implements ApplicationState {
 
   private final SceneService sceneService;
   private final WorldService worldService;
-  private final AssetCacheService assetCacheService;
-  private final RenderingService renderingService;
   private final Camera camera;
   private final WindowService windowService;
-  private final InputMappingService inputMappingService;
-  private final SystemTimeService timeService;
+
+  // Systems
+  private final PlayerInputSystem playerInputSystem;
+  private final MovementSystem movementSystem;
+  private final EnemyAISystem enemyAISystem;
+  private final CollisionSystem collisionSystem;
+  private final RenderSystem renderSystem;
+  private final UISystem uiSystem;
 
   @Override
   public void onEnter() {
@@ -48,7 +49,7 @@ public class PlayingState implements ApplicationState {
 
   private void initializeSceneAndSystems() {
     // Define all components the scene loader might encounter
-    Map<String, Class<? extends IComponent>> registry = new HashMap<>();
+    Map<String, Class<?>> registry = new HashMap<>();
     registry.put("TransformComponent", TransformComponent.class);
     registry.put("SpriteComponent", SpriteComponent.class);
     registry.put("ControllableComponent", ControllableComponent.class);
@@ -57,17 +58,21 @@ public class PlayingState implements ApplicationState {
     registry.put("PlayerComponent", PlayerComponent.class);
     registry.put("EnemyComponent", EnemyComponent.class);
     registry.put("HealthComponent", HealthComponent.class);
+    registry.put("UITransformComponent", UITransformComponent.class);
+    registry.put("UIImageComponent", UIImageComponent.class);
+    registry.put("UIButtonComponent", UIButtonComponent.class);
 
     // Load the scene file
     sceneService.initialize(registry);
     sceneService.load("/scenes/playing-scene.json");
 
     // Register all game-related systems
-    worldService.addSystem(new PlayerInputSystem(inputMappingService));
-    worldService.addSystem(new MovementSystem());
-    worldService.addSystem(new EnemyAISystem(timeService));
-    worldService.addSystem(new CollisionSystem());
-    worldService.addSystem(new RenderSystem(renderingService, assetCacheService, camera));
+    worldService.addSystem(playerInputSystem);
+    worldService.addSystem(movementSystem);
+    worldService.addSystem(enemyAISystem);
+    worldService.addSystem(collisionSystem);
+    worldService.addSystem(renderSystem);
+    worldService.addSystem(uiSystem);
   }
 
   @Override
@@ -77,7 +82,6 @@ public class PlayingState implements ApplicationState {
 
   @Override
   public void onExit() {
-    // Clear out all the game systems to prepare for the next state
     worldService.clearSystems();
   }
 }

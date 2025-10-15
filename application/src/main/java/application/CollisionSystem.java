@@ -1,19 +1,20 @@
 package application;
 
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.ColliderComponent;
 import engine.services.world.components.TransformComponent;
+import io.micronaut.context.annotation.Prototype;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
+@Prototype
 public class CollisionSystem implements ISystem {
 
   @Override
-  public void update(IWorld world, float delta) {
+  public void update(World world, float delta) {
     List<Integer> entities = new ArrayList<>(world.getEntitiesWith(TransformComponent.class, ColliderComponent.class));
 
     for (int i = 0; i < entities.size(); i++) {

@@ -20,6 +20,11 @@ public class SystemTimeService implements IService {
   private double totalTimeSeconds;
 
   @Override
+  public int priority() {
+    return 10;
+  }
+
+  @Override
   public void update() {
     long currentFrameNanos = System.nanoTime();
 

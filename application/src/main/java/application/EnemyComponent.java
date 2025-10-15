@@ -1,7 +1,7 @@
 package application;
 
 
-import engine.ecs.IComponent;
+import engine.services.world.IComponent;
 
 public class EnemyComponent implements IComponent {
 }

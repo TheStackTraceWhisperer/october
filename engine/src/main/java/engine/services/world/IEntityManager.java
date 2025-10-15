@@ -1,4 +1,4 @@
-package engine.ecs;
+package engine.services.world;
 
 import java.util.Set;
 

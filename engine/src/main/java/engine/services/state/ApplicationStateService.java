@@ -24,6 +24,11 @@ public class ApplicationStateService implements IService {
 
   private final Stack<ApplicationState> stateStack = new Stack<>();
 
+  @Override
+  public int priority() {
+    return 100; // Must be last
+  }
+
   public void start() {
     pushState(initialStateProvider.get());
   }

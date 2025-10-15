@@ -1,13 +1,8 @@
 package application;
 
-import engine.ecs.IComponent;
-import engine.services.event.EventPublisherService;
-import engine.services.input.InputService;
-import engine.services.rendering.UIRendererService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.state.ApplicationStateService;
-import engine.services.window.WindowService;
 import engine.services.world.WorldService;
 import engine.services.world.components.UIButtonComponent;
 import engine.services.world.components.UIImageComponent;
@@ -30,14 +25,11 @@ public class MainMenuState implements ApplicationState {
   private final SceneService sceneService;
   private final WorldService worldService;
   private final ApplicationStateService applicationStateService;
-  private final InputService inputService;
-  private final EventPublisherService eventPublisher;
-  private final UIRendererService uiRenderer;
-  private final WindowService windowService;
+  private final UISystem uiSystem;
 
   @Override
   public void onEnter() {
-    Map<String, Class<? extends IComponent>> registry = new HashMap<>();
+    Map<String, Class<?>> registry = new HashMap<>();
     registry.put("UITransformComponent", UITransformComponent.class);
     registry.put("UIImageComponent", UIImageComponent.class);
     registry.put("UIButtonComponent", UIButtonComponent.class);
@@ -45,7 +37,7 @@ public class MainMenuState implements ApplicationState {
     sceneService.initialize(registry);
     sceneService.load("/scenes/main_menu.json");
 
-    worldService.addSystem(new UISystem(windowService, inputService, eventPublisher, uiRenderer));
+    worldService.addSystem(uiSystem);
   }
 
   @EventListener

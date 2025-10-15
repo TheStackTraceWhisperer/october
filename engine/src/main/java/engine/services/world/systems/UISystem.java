@@ -1,26 +1,29 @@
 package engine.services.world.systems;
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
 import engine.services.event.EventPublisherService;
 import engine.services.input.InputService;
-
+import engine.services.rendering.UIRenderer;
 import engine.services.rendering.UIRendererService;
 import engine.services.window.WindowService;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.UIButtonComponent;
 import engine.services.world.components.UIImageComponent;
 import engine.services.world.components.UITransformComponent;
+import io.micronaut.context.annotation.Prototype;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
-@RequiredArgsConstructor
+@Prototype
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UISystem implements ISystem {
 
   private final WindowService window;
   private final InputService inputService;
   private final EventPublisherService eventPublisher;
-  private final UIRendererService uiRenderer;
+  private final UIRendererService uiRendererService;
 
   @Override
   public int priority() {
@@ -28,7 +31,7 @@ public class UISystem implements ISystem {
   }
 
   @Override
-  public void update(IWorld world, float deltaTime) {
+  public void update(World world, float deltaTime) {
     var uiEntities = world.getEntitiesWith(UITransformComponent.class);
 
     int width = window.getWidth();
@@ -39,7 +42,7 @@ public class UISystem implements ISystem {
     renderUI(world, uiEntities);
   }
 
-  private void calculateLayout(IWorld world, Iterable<Integer> entities, int windowWidth, int windowHeight) {
+  private void calculateLayout(World world, Iterable<Integer> entities, int windowWidth, int windowHeight) {
     Vector2f parentSize = new Vector2f(windowWidth, windowHeight);
 
     for (int entityId : entities) {
@@ -71,7 +74,7 @@ public class UISystem implements ISystem {
     }
   }
 
-  private void handleButtonInteractions(IWorld world, Iterable<Integer> entities, int windowHeight) {
+  private void handleButtonInteractions(World world, Iterable<Integer> entities, int windowHeight) {
     double mouseX = inputService.getMouseX();
     double mouseY = windowHeight - inputService.getMouseY(); // Flip Y for OpenGL coords
     boolean isMouseDown = inputService.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT);
@@ -103,7 +106,8 @@ public class UISystem implements ISystem {
     }
   }
 
-  private void renderUI(IWorld world, Iterable<Integer> entities) {
+  private void renderUI(World world, Iterable<Integer> entities) {
+    UIRenderer uiRenderer = uiRendererService.getRenderer();
     uiRenderer.begin();
     for (int entityId : entities) {
       var transform = world.getComponent(entityId, UITransformComponent.class);

@@ -1,23 +1,26 @@
 package application;
 
 
-import engine.ecs.ISystem;
-import engine.ecs.IWorld;
 import engine.services.time.SystemTimeService;
+import engine.services.world.ISystem;
+import engine.services.world.World;
 import engine.services.world.components.TransformComponent;
+import io.micronaut.context.annotation.Prototype;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 
 /**
  * A simple AI system that makes enemies move back and forth horizontally.
  */
-@RequiredArgsConstructor
+@Prototype
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EnemyAISystem implements ISystem {
 
   private final SystemTimeService timeService;
   private final float travelDistance = 3.0f; // How far from the center they patrol
 
   @Override
-  public void update(IWorld world, float deltaTime) {
+  public void update(World world, float deltaTime) {
     var entities = world.getEntitiesWith(EnemyComponent.class, TransformComponent.class);
 
     for (int entityId : entities) {

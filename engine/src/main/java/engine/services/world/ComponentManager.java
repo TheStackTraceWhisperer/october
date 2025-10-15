@@ -1,7 +1,5 @@
 package engine.services.world;
 
-import engine.ecs.IComponentManager;
-
 import java.util.HashMap;
 import java.util.Map;
 

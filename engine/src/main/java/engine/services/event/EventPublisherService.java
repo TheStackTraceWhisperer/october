@@ -11,6 +11,11 @@ import lombok.RequiredArgsConstructor;
 public class EventPublisherService implements IService {
   private final ApplicationEventPublisher applicationEventPublisher;
 
+  @Override
+  public int priority() {
+    return 10;
+  }
+
   public <T> void publish(T event) {
     applicationEventPublisher.publishEvent(event);
   }

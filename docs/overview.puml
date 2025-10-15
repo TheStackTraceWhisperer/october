@@ -1,12 +1,20 @@
 @startuml
 allowmixing
+title Service Dependency Graph
 
-card engine
-card services
-card managers
-card application
+object "GlfwContextService" as glfw <<service>>
+object "WindowService" as window <<service>>
+object "AudioService" as audio <<service>>
+object "InputService" as input <<service>>
+object "RenderingService" as render <<service>>
+object "UIRendererService" as ui <<service>>
+object "SceneService" as scene <<service>>
+object "ApplicationStateService" as appstate <<service>>
+object "AssetCacheService" as assetcache <<service>>
+object "SystemTimeService" as systime <<service>>
+object "WorldService" as world <<service>>
+object "EventPublisherService" as eventpub <<service>>
 
-engine -down-> services
-services -down-> managers
-application -> engine
+glfw --> window
+
 @enduml

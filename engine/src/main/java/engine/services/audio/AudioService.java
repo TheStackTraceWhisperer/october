@@ -1,7 +1,6 @@
 package engine.services.audio;
 
 import engine.IService;
-import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import org.lwjgl.openal.AL;
@@ -43,6 +42,11 @@ public final class AudioService implements IService {
    */
   @Getter
   private boolean initialized = false;
+
+  @Override
+  public int priority() {
+    return 10;
+  }
 
   /**
    * Initializes the OpenAL audio system.

@@ -30,6 +30,11 @@ public class MultiDeviceMappingService implements IService, InputMappingService 
   private final Map<Integer, Map<GameAction, Integer>> playerKeyMappings = new HashMap<>();
 
   @Override
+  public int priority() {
+    return 16;
+  }
+
+  @Override
   public void start() {
     loadDefaultMappings();
     refreshAssignments();

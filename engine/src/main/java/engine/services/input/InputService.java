@@ -27,6 +27,11 @@ public class InputService implements IService {
   @Getter
   private double mouseY;
 
+  @Override
+  public int priority() {
+    return 15;
+  }
+
   /**
    * Installs the necessary GLFW callbacks on the given window service to capture input events.
    *
