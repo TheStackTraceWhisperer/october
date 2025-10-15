@@ -1,0 +1,56 @@
+# Project Testing Strategy
+
+This document outlines the official testing strategy for the October engine and application. Adhering to this strategy is crucial for maintaining code quality, reliability, and maintainability.
+
+## Guiding Principle: The Testing Pyramid
+
+Our methodology is based on the classic Testing Pyramid model. The goal is to have many fast, isolated unit tests at the base, a smaller number of integration tests to verify component collaboration, and very few (if any) full end-to-end tests.
+
+```
+      / \
+     /   \   <-- (Few) End-to-End Tests
+    /-----\
+   /       \  <-- (More) Integration Tests
+  /---------\
+ /           \ <-- (Lots) Unit Tests
+/-------------\
+```
+
+This structure provides the best balance of feedback speed, test reliability, and confidence in the codebase.
+
+---
+
+## 1. Unit Tests (The Foundation)
+
+Unit tests form the base of our pyramid. They are the first line of defense against bugs.
+
+*   **Scope:** A single class or a single method (`unit`). All external dependencies (other services, file system, network, OpenGL context, etc.) **must** be mocked or stubbed.
+*   **Goal:** To verify the correctness of a specific piece of logic in complete isolation.
+*   **What to Test:**
+    *   **Execution Branches:** Every `if`, `else`, `for`, `while`, and `switch` path.
+    *   **Negative Cases:** How the unit behaves with invalid input (e.g., `null` arguments, empty lists, negative numbers).
+    *   **Edge Cases:** Boundary conditions (e.g., zero, `Integer.MAX_VALUE`, empty strings).
+    *   **Error Handling:** Correct exception throwing and `try-catch` logic.
+*   **Speed:** Must be very fast. The entire unit test suite should run in seconds.
+*   **Location:** `src/test/java`
+*   **Execution:** Run via `mvn test` (using the Maven Surefire plugin).
+
+---
+
+## 2. Integration Tests (The Middle Layer)
+
+Integration tests verify that different parts of the system work together as intended.
+
+*   **Scope:** A feature slice or a complete use case involving multiple, real components working together. This can include a running Micronaut context, interaction between services, or systems running in a live engine context.
+*   **Goal:** To verify that independently developed components collaborate correctly to produce the desired outcome.
+*   **What to Test:**
+    *   **Happy Paths:** The expected, successful flow of a feature from start to finish (e.g., player presses a button -> a state transition occurs -> a new scene is loaded).
+    *   **Failure Paths:** How the integrated system behaves when one component fails or returns an error (e.g., a texture file is missing, a service returns an unexpected value).
+    *   **Data Flow:** Correctness of data passing between services, systems, and components.
+*   **Speed:** Slower than unit tests. It's acceptable for these to take longer as they may involve starting an application context or a live engine via the `EngineTestHarness`.
+*   **Location:** `src/test/java`, typically using a `*IT.java` naming convention (e.g., `SceneLoadingIT.java`).
+*   **Execution:** Run via `mvn verify` (using the Maven Failsafe plugin).
+
+---
+
+This strategy ensures we have a robust, maintainable, and well-tested application.
