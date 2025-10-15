@@ -14,12 +14,6 @@
   <artifactId>engine</artifactId>
 
   <dependencies>
-    <!-- Project -->
-    <dependency>
-      <groupId>com.example</groupId>
-      <artifactId>engine-api</artifactId>
-    </dependency>
-
     <!-- Micronaut -->
     <dependency>
       <groupId>io.micronaut</groupId>

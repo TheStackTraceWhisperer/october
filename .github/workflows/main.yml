@@ -33,11 +33,8 @@ jobs:
         mkdir -p ./target
         docker cp october-test:/workspace/application/target/. ./application/target/
         docker cp october-test:/workspace/engine/target/. ./engine/target/
-        docker cp october-test:/workspace/engine-api/target/. ./engine-api/target/
-        docker cp october-test:/workspace/engine-bundle/target/. ./engine-bundle/target/
-        docker cp october-test:/workspace/plugin/target/. ./plugin/target/
         docker rm october-test
-        sudo chown -R runner:runner ./application ./engine ./engine-api ./engine-bundle ./plugin
+        sudo chown -R runner:runner ./application ./engine
 
     - name: Add coverage to PR
       id: jacoco
@@ -47,8 +44,6 @@ jobs:
         paths: |
           ${{ github.workspace }}/application/target/site/jacoco/jacoco.xml
           ${{ github.workspace }}/engine/target/site/jacoco/jacoco.xml
-          ${{ github.workspace }}/engine-api/target/site/jacoco/jacoco.xml
-          ${{ github.workspace }}/plugin/target/site/jacoco/jacoco.xml
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 40
         min-coverage-changed-files: 60
@@ -72,8 +67,6 @@ jobs:
         path: |
           application/target/application-*.jar
           engine/target/engine-*.jar
-          engine-bundle/target/engine-bundle-*.jar
-          plugin/target/plugin-*.jar
         retention-days: 30
 
     - name: Upload Coverage Reports

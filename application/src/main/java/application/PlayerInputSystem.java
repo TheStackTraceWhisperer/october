@@ -1,7 +1,7 @@
 package application;
 
-import api.ecs.ISystem;
-import api.ecs.IWorld;
+import engine.ecs.ISystem;
+import engine.ecs.IWorld;
 import engine.services.world.components.ControllableComponent;
 import lombok.RequiredArgsConstructor;
 

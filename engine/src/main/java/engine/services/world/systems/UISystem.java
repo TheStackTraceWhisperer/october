@@ -1,7 +1,7 @@
 package engine.services.world.systems;
 
-import api.ecs.ISystem;
-import api.ecs.IWorld;
+import engine.ecs.ISystem;
+import engine.ecs.IWorld;
 import engine.services.event.EventPublisherService;
 import engine.services.input.InputService;
 

@@ -1,7 +1,7 @@
 package engine.services.world.systems;
 
-import api.ecs.ISystem;
-import api.ecs.IWorld;
+import engine.ecs.ISystem;
+import engine.ecs.IWorld;
 import engine.services.rendering.Camera;
 import engine.services.rendering.Mesh;
 import engine.services.rendering.RenderingService;
@@ -24,13 +24,6 @@ public class RenderSystem implements ISystem {
   private final RenderingService renderer;
   private final AssetCacheService resourceManager;
   private final Camera camera;
-
-//  public RenderSystem(IWorld world, Renderer renderer, ResourceManager resourceManager, Camera camera) {
-//    this.world = world;
-//    this.renderer = renderer;
-//    this.resourceManager = resourceManager;
-//    this.camera = camera;
-//  }
 
   @Override
   public void update(IWorld world, float deltaTime) {

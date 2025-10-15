@@ -1,8 +1,8 @@
 package application;
 
 
-import api.ecs.ISystem;
-import api.ecs.IWorld;
+import engine.ecs.ISystem;
+import engine.ecs.IWorld;
 import engine.services.time.SystemTimeService;
 import engine.services.world.components.TransformComponent;
 import lombok.RequiredArgsConstructor;

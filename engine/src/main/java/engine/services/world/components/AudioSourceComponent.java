@@ -1,7 +1,7 @@
 package engine.services.world.components;
 
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 
 /**
  * A component that allows an entity to play audio through a positioned 3D audio source.

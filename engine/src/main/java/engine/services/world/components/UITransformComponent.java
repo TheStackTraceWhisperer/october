@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

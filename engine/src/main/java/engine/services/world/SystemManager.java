@@ -1,8 +1,7 @@
 package engine.services.world;
 
-import api.ecs.ISystem;
-
-import api.ecs.IWorld;
+import engine.ecs.ISystem;
+import engine.ecs.IWorld;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Comparator;

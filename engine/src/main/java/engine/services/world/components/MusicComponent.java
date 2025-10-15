@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 
 /**
  * A component for background music with advanced playback control.

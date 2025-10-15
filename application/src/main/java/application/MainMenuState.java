@@ -1,6 +1,6 @@
 package application;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 import engine.services.event.EventPublisherService;
 import engine.services.input.InputService;
 import engine.services.rendering.UIRendererService;

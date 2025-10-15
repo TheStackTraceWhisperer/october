@@ -50,15 +50,6 @@ This document outlines a comprehensive set of test specifications for the game e
   -   Call `publish` with a sample event object.
   -   Verify that the mock publisher's `publishEvent` method was called with the correct event object.
 
-### Plugin System (`PluginService`)
-- [ ] **Unit**: Should call the `start` method on all registered plugins.
-  -   Create a list of mock `IPlugin` objects.
-  -   Instantiate `PluginService` with the mock plugins.
-  -   Call the service's `start` method.
-  -   Verify that the `start` method was called on each mock plugin.
-- [ ] **Unit**: Should call the `stop` method on all registered plugins.
-  -   (Similar setup to the start test) Call the service's `stop` method and verify `stop` was called on each mock plugin.
-
 ### Time Service (`SystemTimeService`)
 - [ ] **Unit**: Should correctly calculate delta time between updates.
   -   Call `start`.

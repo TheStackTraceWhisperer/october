@@ -1,7 +1,7 @@
 package engine.services.world.components;
 
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 
 /**
  * An ECS component that associates an entity with a renderable mesh.

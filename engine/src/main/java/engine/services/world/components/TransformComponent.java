@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;

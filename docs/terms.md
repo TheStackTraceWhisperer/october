@@ -12,7 +12,6 @@
 |-------------|-----------------|-----------|----------------------------|
 | `Bean`      | :beans:         | Mixed     |                            |
 | `Service`   | :brain:         | Stateful  | @Singletons Classes        |
-| `Plugin`    | :electric_plug: | Stateful  | Plugins Classes            |
 | `State`     | :world_map:     | Stateful  | Application State Classes  |
 | `Event`     | :envelope:      | Immutable | @EventListener DTO Classes |
 
@@ -22,7 +21,6 @@
 |-------------|-----------------|-----------------------|----------------------------|
 | `Bean`      | :beans:         | Framework             |                            |
 | `Service`   | :brain:         | Framework             | @Singletons Classes        |
-| `Plugin`    | :electric_plug: | Framework             | Plugins Classes            |
 | `State`     | :world_map:     | Framework             | Application State Classes  |
 | `Utility`   | :toolbox:       | Static                | Stateless Utility Classes  |
 | `Event`     | :envelope:      | Application/Framework | @EventListener DTO Classes |
@@ -86,7 +84,6 @@
 |-------------|-----------------------|-----------|----------------------------|
 | `Bean`      | :beans:               | DI        |                            |
 | `Service`   | :brain:               | DI        | @Singletons Classes        |
-| `Plugin`    | :electric_plug:       | DI        | Plugins Classes            |
 | `Utility`   | :toolbox:             | Static    | Stateless Utility Classes  |
 | `Event`     | :envelope:            | Adhoc     | @EventListener DTO Classes |
 | `State`     | :world_map:           | DI        | Application State Classes  |

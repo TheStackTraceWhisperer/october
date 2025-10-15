@@ -1,8 +1,9 @@
 package engine.services.world;
 
-import api.ecs.IWorld;
+import engine.ecs.IWorld;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class World implements IWorld {
@@ -41,9 +42,9 @@ public class World implements IWorld {
   }
 
   @Override
-  public List<Integer> getEntitiesWith(Class<?>... componentClasses) {
+  public Set<Integer> getEntitiesWith(Class<?>... componentClasses) {
     // Start with a list of all active entities.
-    List<Integer> activeEntities = entityManager.getActiveEntities();
+    Set<Integer> activeEntities = entityManager.getActiveEntities();
 
     if (componentClasses == null || componentClasses.length == 0) {
       return activeEntities;
@@ -59,6 +60,6 @@ public class World implements IWorld {
         }
         return true; // This entity has all required components.
       })
-      .collect(Collectors.toList());
+      .collect(Collectors.toSet());
   }
 }

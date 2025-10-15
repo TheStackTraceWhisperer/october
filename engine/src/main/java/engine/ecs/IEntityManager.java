@@ -1,9 +1,9 @@
-package api.ecs;
+package engine.ecs;
 
-import java.util.List;
+import java.util.Set;
 
 public interface IEntityManager {
   int createEntity();
   void destroyEntity(int entityId);
-  List<Integer> getActiveEntities();
+  Set<Integer> getEntities();
 }

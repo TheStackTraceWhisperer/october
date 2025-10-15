@@ -1,10 +1,11 @@
 package engine.services.world;
 
-import api.ecs.ISystem;
+import engine.ecs.ISystem;
 import engine.IService;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 public class WorldService implements IService {
@@ -53,7 +54,7 @@ public class WorldService implements IService {
     systemManager.removeSystem(system);
   }
 
-  public List<Integer> getEntitiesWith(Class<?>... componentClasses) {
+  public Set<Integer> getEntitiesWith(Class<?>... componentClasses) {
     return world.getEntitiesWith(componentClasses);
   }
 

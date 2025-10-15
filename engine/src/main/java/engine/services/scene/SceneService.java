@@ -1,7 +1,7 @@
 package engine.services.scene;
 
-import api.ecs.IComponent;
-import api.ecs.IWorld;
+import engine.ecs.IComponent;
+import engine.ecs.IWorld;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import engine.IService;
 import engine.services.resources.AssetCacheService;

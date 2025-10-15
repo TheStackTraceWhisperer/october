@@ -18,7 +18,7 @@
     <!-- Project -->
     <dependency>
       <groupId>com.example</groupId>
-      <artifactId>engine-bundle</artifactId>
+      <artifactId>engine</artifactId>
       <version>${project.version}</version>
     </dependency>
 

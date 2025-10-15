@@ -1,6 +1,6 @@
 package application;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 import engine.services.rendering.Camera;
 import engine.services.rendering.RenderingService;
 import engine.services.resources.AssetCacheService;

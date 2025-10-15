@@ -1,5 +1,4 @@
-package api.ecs;
+package engine.ecs;
 
 public interface IComponent {
-
 }

@@ -1,6 +1,6 @@
 package application;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 
 public class PlayerComponent implements IComponent {
 }

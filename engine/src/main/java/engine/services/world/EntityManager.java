@@ -1,6 +1,6 @@
 package engine.services.world;
 
-import api.ecs.IEntityManager;
+import engine.ecs.IEntityManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +21,12 @@ class EntityManager implements IEntityManager {
     activeEntities.remove(entityId);
   }
 
-  public List<Integer> getActiveEntities() {
-    return new ArrayList<>(activeEntities);
+  @Override
+  public Set<Integer> getEntities() {
+    return new HashSet<>(activeEntities);
+  }
+
+  public Set<Integer> getActiveEntities() {
+    return getEntities();
   }
 }

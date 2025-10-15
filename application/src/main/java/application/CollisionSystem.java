@@ -1,18 +1,20 @@
 package application;
 
 
-import api.ecs.ISystem;
-import api.ecs.IWorld;
+import engine.ecs.ISystem;
+import engine.ecs.IWorld;
 import engine.services.world.components.ColliderComponent;
 import engine.services.world.components.TransformComponent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CollisionSystem implements ISystem {
 
   @Override
   public void update(IWorld world, float delta) {
-    List<Integer> entities = world.getEntitiesWith(TransformComponent.class, ColliderComponent.class);
+    List<Integer> entities = new ArrayList<>(world.getEntitiesWith(TransformComponent.class, ColliderComponent.class));
 
     for (int i = 0; i < entities.size(); i++) {
       for (int j = i + 1; j < entities.size(); j++) {

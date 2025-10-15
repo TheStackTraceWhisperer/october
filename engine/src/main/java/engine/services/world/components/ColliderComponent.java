@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

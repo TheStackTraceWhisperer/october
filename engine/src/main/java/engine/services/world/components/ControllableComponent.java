@@ -1,6 +1,6 @@
 package engine.services.world.components;
 
-import api.ecs.IComponent;
+import engine.ecs.IComponent;
 
 /**
  * A component that marks an entity as being controllable by a player.

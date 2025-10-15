@@ -14,9 +14,6 @@
   <modules>
     <module>application</module>
     <module>engine</module>
-    <module>engine-bundle</module>
-    <module>engine-api</module>
-    <module>plugin</module>
   </modules>
 
   <properties>
@@ -47,16 +44,6 @@
       <dependency>
         <groupId>com.example</groupId>
         <artifactId>engine</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.example</groupId>
-        <artifactId>engine-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.example</groupId>
-        <artifactId>plugin</artifactId>
         <version>${project.version}</version>
       </dependency>
 
