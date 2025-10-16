@@ -57,9 +57,15 @@ public final class Engine implements Runnable {
   }
 
   private void mainLoop() {
-    while (loopPolicy.continueRunning(frames, windowService.getHandle()) && !applicationStateService.isEmpty()) {
+    while (shouldContinueLoop()) {
       tick();
     }
+  }
+
+  private boolean shouldContinueLoop() {
+    boolean policyAllowsRunning = loopPolicy.continueRunning(frames, windowService.getHandle());
+    boolean applicationStateIsNotEmpty = !applicationStateService.isEmpty();
+    return policyAllowsRunning && applicationStateIsNotEmpty;
   }
 
   public void tick() {

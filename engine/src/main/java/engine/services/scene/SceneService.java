@@ -37,7 +37,7 @@ public class SceneService implements IService {
       throw new IllegalStateException("SceneManager not initialized. Call initialize() with component registry first.");
     }
 
-    log.info("Loading scene: {}", path);
+    log.debug("Loading scene: {}", path);
     worldService.getEntitiesWith().forEach(worldService::destroyEntity);
 
     try (InputStream sceneStream = SceneService.class.getResourceAsStream(path)) {
@@ -45,13 +45,13 @@ public class SceneService implements IService {
         throw new IOException("Scene file not found: " + path);
       }
       Scene scene = MAPPER.readValue(sceneStream, Scene.class);
-      log.info("Successfully parsed scene: {}", scene.name());
+      log.debug("Successfully parsed scene: {}", scene.name());
 
       loadAssets(scene.manifest());
 
       for (EntityTemplate template : scene.entities()) {
         int entity = worldService.createEntity();
-        log.info("creating entity {} with id {}", template.name(), entity);
+        log.debug("creating entity {} with id {}", template.name(), entity);
 
         for (Map.Entry<String, Object> componentEntity : template.components().entrySet()) {
           String componentName = componentEntity.getKey();
@@ -75,7 +75,7 @@ public class SceneService implements IService {
       return;
     }
 
-    log.info("Loading assets from scene manifest...");
+    log.debug("Loading assets from scene manifest...");
     if (manifest.textures() != null) {
       for (TextureDefinition textureDef : manifest.textures()) {
         resourceManager.loadTexture(textureDef.handle(), textureDef.path());

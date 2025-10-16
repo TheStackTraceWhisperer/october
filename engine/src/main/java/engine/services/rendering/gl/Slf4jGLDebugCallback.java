@@ -51,7 +51,7 @@ public class Slf4jGLDebugCallback extends GLDebugMessageCallback {
         log.warn("[GL] Medium - Source: 0x{}, Type: 0x{}, ID: {}: {}", source, type, id, msg);
         break;
       case GL_DEBUG_SEVERITY_LOW:
-        log.info("[GL] Low - Source: 0x{}, Type: 0x{}, ID: {}: {}", source, type, id, msg);
+        log.debug("[GL] Low - Source: 0x{}, Type: 0x{}, ID: {}: {}", source, type, id, msg);
         break;
       case GL_DEBUG_SEVERITY_NOTIFICATION:
         log.debug("[GL] Notification: {}", msg);
