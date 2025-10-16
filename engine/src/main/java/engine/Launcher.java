@@ -9,7 +9,7 @@ public class Launcher {
       ApplicationContext context = Micronaut
         .build(args)
         .mainClass(primarySource)
-        .packages("engine")
+        .packages("engine", "application") // Scan both engine and application packages
         .banner(false)
         .start()
     ) {

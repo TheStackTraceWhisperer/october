@@ -1,6 +1,5 @@
-package application;
+package engine;
 
-import engine.IService;
 import engine.services.input.InputService;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;

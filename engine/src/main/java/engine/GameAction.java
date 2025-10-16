@@ -1,4 +1,4 @@
-package application;
+package engine;
 
 public enum GameAction {
   // Movement

@@ -6,13 +6,12 @@
         </encoder>
     </appender>
 
-    <!-- Suppress Micronaut startup messages -->
-    <logger name="io.micronaut.runtime.Micronaut" level="WARN"/>
-
-    <root level="info">
+    <!-- Set the baseline logging level for the application to WARN -->
+    <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
 
-  <logger name="engine" level="DEBUG" />
+    <!-- Example: If you need to see INFO level for a specific package -->
+    <!-- <logger name="com.example.mypackage" level="INFO" /> -->
 
 </configuration>
