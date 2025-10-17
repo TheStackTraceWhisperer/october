@@ -12,7 +12,7 @@ public class EventPublisherService implements IService {
   private final ApplicationEventPublisher applicationEventPublisher;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 10;
   }
 

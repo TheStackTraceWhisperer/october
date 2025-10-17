@@ -22,7 +22,7 @@ public class AssetCacheService implements IService {
 
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 20;
   }
 

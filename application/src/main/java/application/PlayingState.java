@@ -5,15 +5,11 @@ import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.window.WindowService;
 import engine.services.world.WorldService;
-import engine.services.world.components.*;
 import engine.services.world.systems.*;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector3f;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -46,22 +42,7 @@ public class PlayingState implements ApplicationState {
   }
 
   private void initializeSceneAndSystems() {
-    // Define all components the scene loader might encounter
-    Map<String, Class<?>> registry = new HashMap<>();
-    registry.put("TransformComponent", TransformComponent.class);
-    registry.put("SpriteComponent", SpriteComponent.class);
-    registry.put("ControllableComponent", ControllableComponent.class);
-    registry.put("MovementStatsComponent", MovementStatsComponent.class);
-    registry.put("ColliderComponent", ColliderComponent.class);
-    registry.put("PlayerComponent", PlayerComponent.class);
-    registry.put("EnemyComponent", EnemyComponent.class);
-    registry.put("HealthComponent", HealthComponent.class);
-    registry.put("UITransformComponent", UITransformComponent.class);
-    registry.put("UIImageComponent", UIImageComponent.class);
-    registry.put("UIButtonComponent", UIButtonComponent.class);
-
     // Load the scene file
-    sceneService.initialize(registry);
     sceneService.load("/scenes/playing-scene.json");
 
     // Register all game-related systems

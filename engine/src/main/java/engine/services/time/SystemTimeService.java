@@ -20,7 +20,7 @@ public class SystemTimeService implements IService {
   private double totalTimeSeconds;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 10;
   }
 

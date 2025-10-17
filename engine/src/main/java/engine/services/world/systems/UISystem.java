@@ -2,7 +2,6 @@ package engine.services.world.systems;
 
 import engine.services.event.EventPublisherService;
 import engine.services.input.InputService;
-import engine.services.rendering.UIRenderer;
 import engine.services.rendering.UIRendererService;
 import engine.services.window.WindowService;
 import engine.services.world.ISystem;
@@ -107,8 +106,7 @@ public class UISystem implements ISystem {
   }
 
   private void renderUI(World world, Iterable<Integer> entities) {
-    UIRenderer uiRenderer = uiRendererService.getRenderer();
-    uiRenderer.begin();
+    uiRendererService.begin();
     for (int entityId : entities) {
       var transform = world.getComponent(entityId, UITransformComponent.class);
       if (world.hasComponent(entityId, UIButtonComponent.class)) {
@@ -118,12 +116,12 @@ public class UISystem implements ISystem {
           case PRESSED -> button.pressedTexture;
           default -> button.normalTexture;
         };
-        uiRenderer.submit(transform, textureHandle);
+        uiRendererService.submit(transform, textureHandle);
       } else if (world.hasComponent(entityId, UIImageComponent.class)) {
         var image = world.getComponent(entityId, UIImageComponent.class);
-        uiRenderer.submit(transform, image.textureHandle);
+        uiRendererService.submit(transform, image.textureHandle);
       }
     }
-    uiRenderer.end();
+    uiRendererService.end();
   }
 }

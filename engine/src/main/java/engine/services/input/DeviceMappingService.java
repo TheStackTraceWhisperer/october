@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Singleton
 @RequiredArgsConstructor
-public class MultiDeviceMappingService implements IService, InputMappingService {
+public class DeviceMappingService implements IService {
 
   private static final int MAX_PLAYERS = 8;
   private static final float DEADZONE = 0.25f;
@@ -30,7 +30,7 @@ public class MultiDeviceMappingService implements IService, InputMappingService 
   private final Map<Integer, Map<GameAction, Integer>> playerKeyMappings = new HashMap<>();
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 16;
   }
 
@@ -51,7 +51,6 @@ public class MultiDeviceMappingService implements IService, InputMappingService 
     playerKeyMappings.put(0, player0KeyMap);
   }
 
-  @Override
   public boolean isActionActive(int playerId, GameAction action) {
     DeviceBinding binding = playerBindings.get(playerId);
     if (binding == null) {

@@ -40,7 +40,7 @@ public final class Engine implements Runnable {
     try {
       log.info("Initializing September Engine with DI container");
 
-      services.sort(Comparator.comparingInt(IService::priority));
+      services.sort(Comparator.comparingInt(IService::executionOrder));
 
       services.forEach(iService -> {
         log.debug("Starting service {}", iService.getClass().getSimpleName());
@@ -87,7 +87,7 @@ public final class Engine implements Runnable {
     }
     log.info("Shutting down September Engine");
 
-    services.sort(Comparator.comparingInt(IService::priority).reversed());
+    services.sort(Comparator.comparingInt(IService::executionOrder).reversed());
 
     services.forEach(iService -> {
       log.debug("Stopping service {}", iService.getClass().getSimpleName());

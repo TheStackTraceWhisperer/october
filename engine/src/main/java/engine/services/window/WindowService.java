@@ -29,7 +29,7 @@ public final class WindowService implements IService {
   private long handle = 0L;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return Integer.MIN_VALUE + 1;
   }
 

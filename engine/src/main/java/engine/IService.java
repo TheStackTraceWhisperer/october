@@ -14,7 +14,10 @@ public interface IService {
   // Called for all services AFTER update();
   default void update(float dt) { };
 
-  // Determines the priority (order) of invocation (priority = weight = heavier = later)
-  default int priority() { return 0; };
+  /**
+   * Determines the order of service execution. Lower numbers execute earlier.
+   * @return The execution order value.
+   */
+  default int executionOrder() { return 0; };
 
 }

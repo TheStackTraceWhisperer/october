@@ -2,7 +2,6 @@ package engine.services.world.systems;
 
 import engine.services.rendering.Camera;
 import engine.services.rendering.Mesh;
-import engine.services.rendering.Renderer;
 import engine.services.rendering.RenderingService;
 import engine.services.rendering.Texture;
 import engine.services.resources.AssetCacheService;
@@ -31,8 +30,7 @@ public class RenderSystem implements ISystem {
 
   @Override
   public void update(World world, float deltaTime) {
-    Renderer renderer = renderingService.getRenderer();
-    renderer.beginScene(camera);
+    renderingService.beginScene(camera);
 
     // Get all entities that have the components required for sprite rendering
     var renderableEntities = world.getEntitiesWith(TransformComponent.class, SpriteComponent.class);
@@ -49,9 +47,9 @@ public class RenderSystem implements ISystem {
       Texture texture = resourceManager.resolveTextureHandle(sprite.textureHandle());
 
       // Submit the quad mesh, the specific texture, and the transform to the renderer.
-      renderer.submit(quadMesh, texture, transform.getTransformMatrix());
+      renderingService.submit(quadMesh, texture, transform.getTransformMatrix());
     }
 
-    renderer.endScene();
+    renderingService.endScene();
   }
 }

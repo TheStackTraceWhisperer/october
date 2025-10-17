@@ -25,7 +25,7 @@ public class ApplicationStateService implements IService {
   private final Stack<ApplicationState> stateStack = new Stack<>();
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 100; // Must be last
   }
 

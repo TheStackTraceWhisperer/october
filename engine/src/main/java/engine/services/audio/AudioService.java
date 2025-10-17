@@ -44,7 +44,7 @@ public final class AudioService implements IService {
   private boolean initialized = false;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 10;
   }
 

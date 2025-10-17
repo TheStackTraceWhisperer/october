@@ -24,4 +24,8 @@ public record SpriteComponent(String textureHandle, Vector4f color) implements I
       color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
     }
   }
+
+  public SpriteComponent(String textureHandle) {
+    this(textureHandle, null);
+  }
 }

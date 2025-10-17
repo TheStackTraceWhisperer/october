@@ -16,4 +16,8 @@ public class UIImageComponent implements IComponent {
     this.textureHandle = textureHandle;
     this.color = color != null ? color : new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
   }
+
+  public UIImageComponent(String textureHandle) {
+    this(textureHandle, null);
+  }
 }

@@ -11,7 +11,7 @@ public class WorldService implements IService {
   private final SystemManager systemManager = new SystemManager(world);
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 50;
   }
 

@@ -41,25 +41,25 @@ class EngineTest {
   @Mock
   private SystemTimeService systemTimeService;
   @Mock
-  private IService serviceHighPriority; // e.g., priority 1
+  private IService serviceEarly; // e.g., executionOrder 1
   @Mock
-  private IService serviceLowPriority;  // e.g., priority 10
+  private IService serviceLate;  // e.g., executionOrder 10
   @Mock
-  private IService serviceMediumPriority; // e.g., priority 5
+  private IService serviceMiddle; // e.g., executionOrder 5
 
   private Engine engine;
   private List<IService> mutableServices;
 
   @BeforeEach
   void setUp() {
-    // Configure service priorities (leniently, as not all tests directly use these stubs)
-    lenient().when(serviceHighPriority.priority()).thenReturn(1);
-    lenient().when(serviceMediumPriority.priority()).thenReturn(5);
-    lenient().when(serviceLowPriority.priority()).thenReturn(10);
+    // Configure service execution orders (leniently, as not all tests directly use these stubs)
+    lenient().when(serviceEarly.executionOrder()).thenReturn(1);
+    lenient().when(serviceMiddle.executionOrder()).thenReturn(5);
+    lenient().when(serviceLate.executionOrder()).thenReturn(10);
 
     // The Engine requires a mutable list to sort, so we must provide an ArrayList.
     // Add them in a non-sorted order to ensure the engine's sorting logic is tested.
-    mutableServices = new ArrayList<>(List.of(serviceLowPriority, serviceHighPriority, serviceMediumPriority));
+    mutableServices = new ArrayList<>(List.of(serviceLate, serviceEarly, serviceMiddle));
     engine = new Engine(loopPolicy, applicationStateService, mutableServices, windowService, systemTimeService);
 
     // Default mock behavior for loop policy and application state for most tests.
@@ -76,21 +76,21 @@ class EngineTest {
 
     // Assert
     // Verify that the start method on each service was called exactly once.
-    verify(serviceHighPriority, times(1)).start();
-    verify(serviceMediumPriority, times(1)).start();
-    verify(serviceLowPriority, times(1)).start();
+    verify(serviceEarly, times(1)).start();
+    verify(serviceMiddle, times(1)).start();
+    verify(serviceLate, times(1)).start();
   }
 
   @Test
-  void init_startsServicesInPriorityOrder() {
+  void init_startsServicesInExecutionOrder() {
     // Act
     engine.init();
 
     // Assert
-    InOrder inOrder = inOrder(serviceHighPriority, serviceMediumPriority, serviceLowPriority);
-    inOrder.verify(serviceHighPriority).start();
-    inOrder.verify(serviceMediumPriority).start();
-    inOrder.verify(serviceLowPriority).start();
+    InOrder inOrder = inOrder(serviceEarly, serviceMiddle, serviceLate);
+    inOrder.verify(serviceEarly).start();
+    inOrder.verify(serviceMiddle).start();
+    inOrder.verify(serviceLate).start();
   }
 
   @Test
@@ -104,13 +104,13 @@ class EngineTest {
 
     // Assert
     // Verify that the stop method on each service was called exactly once.
-    verify(serviceHighPriority, times(1)).stop();
-    verify(serviceMediumPriority, times(1)).stop();
-    verify(serviceLowPriority, times(1)).stop();
+    verify(serviceEarly, times(1)).stop();
+    verify(serviceMiddle, times(1)).stop();
+    verify(serviceLate, times(1)).stop();
   }
 
   @Test
-  void shutdown_stopsServicesInReversePriorityOrder() {
+  void shutdown_stopsServicesInReverseExecutionOrder() {
     // Arrange
     engine.init(); // Initialize first to set up the state
 
@@ -118,10 +118,10 @@ class EngineTest {
     engine.shutdown();
 
     // Assert
-    InOrder inOrder = inOrder(serviceLowPriority, serviceMediumPriority, serviceHighPriority);
-    inOrder.verify(serviceLowPriority).stop();
-    inOrder.verify(serviceMediumPriority).stop();
-    inOrder.verify(serviceHighPriority).stop();
+    InOrder inOrder = inOrder(serviceLate, serviceMiddle, serviceEarly);
+    inOrder.verify(serviceLate).stop();
+    inOrder.verify(serviceMiddle).stop();
+    inOrder.verify(serviceEarly).stop();
   }
 
   @Test
@@ -143,12 +143,12 @@ class EngineTest {
 
     // Assert
     verify(windowService).pollEvents();
-    verify(serviceHighPriority).update();
-    verify(serviceMediumPriority).update();
-    verify(serviceLowPriority).update();
-    verify(serviceHighPriority).update(expectedDeltaTime);
-    verify(serviceMediumPriority).update(expectedDeltaTime);
-    verify(serviceLowPriority).update(expectedDeltaTime);
+    verify(serviceEarly).update();
+    verify(serviceMiddle).update();
+    verify(serviceLate).update();
+    verify(serviceEarly).update(expectedDeltaTime);
+    verify(serviceMiddle).update(expectedDeltaTime);
+    verify(serviceLate).update(expectedDeltaTime);
     verify(windowService).swapBuffers();
     // We can't easily verify the 'frames' counter directly without a getter,
     // but its effect on loopPolicy.continueRunning is tested in run_executesMainLoop.
@@ -165,12 +165,12 @@ class EngineTest {
 
     // Assert
     // Verify that init() and shutdown() were both called once as part of the run() lifecycle.
-    verify(serviceHighPriority, times(1)).start();
-    verify(serviceHighPriority, times(1)).stop();
-    verify(serviceMediumPriority, times(1)).start();
-    verify(serviceMediumPriority, times(1)).stop();
-    verify(serviceLowPriority, times(1)).start();
-    verify(serviceLowPriority, times(1)).stop();
+    verify(serviceEarly, times(1)).start();
+    verify(serviceEarly, times(1)).stop();
+    verify(serviceMiddle, times(1)).start();
+    verify(serviceMiddle, times(1)).stop();
+    verify(serviceLate, times(1)).start();
+    verify(serviceLate, times(1)).stop();
   }
 
   @Test
@@ -187,21 +187,21 @@ class EngineTest {
 
     // Assert
     // Verify init and shutdown are called once
-    verify(serviceHighPriority, times(1)).start();
-    verify(serviceHighPriority, times(1)).stop();
+    verify(serviceEarly, times(1)).start();
+    verify(serviceEarly, times(1)).stop();
 
     // Verify tick() was called 3 times (for frames 0, 1, 2)
     verify(windowService, times(3)).pollEvents();
     verify(windowService, times(3)).swapBuffers();
-    verify(serviceHighPriority, times(3)).update();
-    verify(serviceMediumPriority, times(3)).update();
-    verify(serviceLowPriority, times(3)).update();
+    verify(serviceEarly, times(3)).update();
+    verify(serviceMiddle, times(3)).update();
+    verify(serviceLate, times(3)).update();
   }
 
   @Test
   void run_shutsDownIfInitFails() {
     // Arrange
-    doThrow(new RuntimeException("Service failed to start")).when(serviceHighPriority).start();
+    doThrow(new RuntimeException("Service failed to start")).when(serviceEarly).start();
 
     // Act & Assert
     RuntimeException thrown = assertThrows(RuntimeException.class, () -> engine.run());
@@ -209,13 +209,13 @@ class EngineTest {
     assert(thrown.getMessage().contains("Engine initialization failed"));
 
     // Verify that shutdown was called on services that might have started.
-    // In this case, serviceHighPriority failed to start, but shutdown() is still called in finally.
-    verify(serviceHighPriority, times(1)).start(); // Attempted to start
-    verify(serviceHighPriority, times(1)).stop(); // stop() is called in finally block
-    verify(serviceMediumPriority, never()).start(); // Never started
-    verify(serviceLowPriority, never()).start(); // Never started
+    // In this case, serviceEarly failed to start, but shutdown() is still called in finally.
+    verify(serviceEarly, times(1)).start(); // Attempted to start
+    verify(serviceEarly, times(1)).stop(); // stop() is called in finally block
+    verify(serviceMiddle, never()).start(); // Never started
+    verify(serviceLate, never()).start(); // Never started
 
-    // If serviceMediumPriority had started before serviceHighPriority failed, it would also be stopped.
-    // For this specific test, we only expect serviceHighPriority to be affected.
+    // If serviceMiddle had started before serviceEarly failed, it would also be stopped.
+    // For this specific test, we only expect serviceEarly to be affected.
   }
 }

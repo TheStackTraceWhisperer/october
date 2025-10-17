@@ -28,7 +28,7 @@ public class InputService implements IService {
   private double mouseY;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 15;
   }
 

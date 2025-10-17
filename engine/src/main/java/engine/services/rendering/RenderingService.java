@@ -3,8 +3,8 @@ package engine.services.rendering;
 import engine.IService;
 import engine.services.resources.AssetCacheService;
 import jakarta.inject.Singleton;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.joml.Matrix4f;
 
 @Singleton
 @RequiredArgsConstructor
@@ -12,11 +12,10 @@ public class RenderingService implements IService {
 
   private final AssetCacheService assetCacheService;
 
-  @Getter
   private Renderer renderer;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return 30;
   }
 
@@ -24,5 +23,17 @@ public class RenderingService implements IService {
   public void start() {
     this.renderer = new Renderer(assetCacheService);
     this.renderer.start();
+  }
+
+  public void beginScene(Camera camera) {
+    renderer.beginScene(camera);
+  }
+
+  public void submit(Mesh mesh, Texture texture, Matrix4f transform) {
+    renderer.submit(mesh, texture, transform);
+  }
+
+  public void endScene() {
+    renderer.endScene();
   }
 }

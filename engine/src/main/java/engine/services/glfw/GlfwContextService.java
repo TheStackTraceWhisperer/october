@@ -15,7 +15,7 @@ public class GlfwContextService implements IService {
   private GLFWErrorCallback errorCallback;
 
   @Override
-  public int priority() {
+  public int executionOrder() {
     return Integer.MIN_VALUE;
   }
 

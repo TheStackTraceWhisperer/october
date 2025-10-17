@@ -3,9 +3,11 @@ package engine.services.scene;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import engine.IService;
 import engine.services.resources.AssetCacheService;
+import engine.services.world.IComponent;
 import engine.services.world.WorldService;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -14,29 +16,30 @@ import java.util.Map;
 
 @Slf4j
 @Singleton
-@RequiredArgsConstructor
 public class SceneService implements IService {
   private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new CustomJomlModule());
 
   private final WorldService worldService;
   private final AssetCacheService resourceManager;
+  private final Map<String, Class<? extends IComponent>> componentRegistry;
 
-  private Map<String, Class<?>> componentRegistry;
-
-  @Override
-  public int priority() {
-    return 60;
-  }
-
-  public void initialize(Map<String, Class<?>> componentRegistry) {
+  @Inject
+  public SceneService(
+    WorldService worldService,
+    AssetCacheService resourceManager,
+    @Named("componentRegistry") Map<String, Class<? extends IComponent>> componentRegistry
+  ) {
+    this.worldService = worldService;
+    this.resourceManager = resourceManager;
     this.componentRegistry = componentRegistry;
   }
 
-  public void load(String path) {
-    if (componentRegistry == null) {
-      throw new IllegalStateException("SceneManager not initialized. Call initialize() with component registry first.");
-    }
+  @Override
+  public int executionOrder() {
+    return 60;
+  }
 
+  public void load(String path) {
     log.debug("Loading scene: {}", path);
     worldService.getEntitiesWith().forEach(worldService::destroyEntity);
 
