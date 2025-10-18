@@ -40,6 +40,30 @@ public class Texture implements AutoCloseable {
   private final int height;
 
   /**
+   * Creates a texture from raw pixel data.
+   *
+   * @param width The width of the texture.
+   * @param height The height of the texture.
+   * @param data A ByteBuffer containing the raw RGBA pixel data.
+   */
+  public Texture(int width, int height, ByteBuffer data) {
+    this.width = width;
+    this.height = height;
+    this.textureId = glGenTextures();
+
+    glBindTexture(GL_TEXTURE_2D, this.textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
+
+  /**
    * Loads a texture from an in-memory image buffer.
    *
    * @param imageBuffer A ByteBuffer containing the raw image file data (e.g., a PNG or JPG).

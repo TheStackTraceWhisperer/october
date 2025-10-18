@@ -48,6 +48,21 @@ public class AssetCacheService implements IService {
   }
 
   /**
+   * Adds a pre-existing Texture object to the cache.
+   * If a texture with the same handle already exists, it will be closed and replaced.
+   * This is useful for procedurally generated textures in tests.
+   *
+   * @param handle  The unique handle for this texture.
+   * @param texture The Texture object to cache.
+   */
+  public void addTexture(String handle, Texture texture) {
+    if (textureCache.containsKey(handle)) {
+      textureCache.get(handle).close();
+    }
+    textureCache.put(handle, texture);
+  }
+
+  /**
    * Loads a texture from a file, stores it in the cache, and returns it.
    * If the texture is already cached, returns the existing instance.
    *
