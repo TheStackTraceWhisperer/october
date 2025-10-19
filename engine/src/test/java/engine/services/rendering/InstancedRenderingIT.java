@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.lwjgl.opengl.GL11.*;
 
-public class RenderingServiceIT extends EngineTestHarness {
+public class InstancedRenderingIT extends EngineTestHarness {
 
     @Inject
     private RenderingService renderingService;
@@ -33,12 +33,12 @@ public class RenderingServiceIT extends EngineTestHarness {
 
         // And: A standard quad mesh and a transform to place it at the center of the screen
         Mesh quadMesh = assetCacheService.resolveMeshHandle("quad");
-        Matrix4f transform = new Matrix4f().identity().scale(5.0f); // A large quad
+        Matrix4f transform = new Matrix4f().identity().scale(5.0f);
 
         // When: We directly call the rendering service to submit and render the sprite
         renderingService.beginScene(camera);
         renderingService.submit(quadMesh, redTexture, transform);
-        renderingService.endScene(); // This is where the instanced drawing happens
+        renderingService.endScene();
 
         // Then: The center pixel of the back buffer should be red
         PixelColor centerColor = readPixelColorFromBackBuffer(windowService.getWidth() / 2, windowService.getHeight() / 2);
