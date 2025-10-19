@@ -1,10 +1,12 @@
 package engine.services.input;
 
 import engine.IService;
+import engine.game.GameAction;
 import engine.services.window.WindowService;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWGamepadState;
@@ -21,7 +23,9 @@ public class InputService implements IService {
   private static final int MAX_GAMEPADS = 8;
 
   private final boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST + 1];
+  private final boolean[] keysLastFrame = new boolean[GLFW.GLFW_KEY_LAST + 1];
   private final boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
+  private final boolean[] mouseButtonsLastFrame = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
   @Getter
   private double mouseX;
   @Getter
@@ -131,5 +135,83 @@ public class InputService implements IService {
     } finally {
       state.free();
     }
+  }
+
+  /**
+   * Returns the current cursor position as a Vector2d.
+   * 
+   * @return A new Vector2d containing the current cursor position.
+   */
+  public Vector2d getCursorPos() {
+    return new Vector2d(mouseX, mouseY);
+  }
+
+  /**
+   * Checks if a GameAction was just pressed this frame (pressed now, but not last frame).
+   * This checks keyboard input for the default player 0 key mappings.
+   * 
+   * @param action The GameAction to check.
+   * @return true if the action was just pressed this frame.
+   */
+  public boolean isActionJustPressed(GameAction action) {
+    // Map GameAction to key codes for player 0 (default WASD + Space)
+    int keyCode = getKeyCodeForAction(action);
+    if (keyCode < 0) {
+      return false;
+    }
+    return isKeyJustPressed(keyCode);
+  }
+
+  /**
+   * Checks if a key was just pressed this frame (pressed now, but not last frame).
+   * 
+   * @param keyCode The GLFW key code to check.
+   * @return true if the key was just pressed this frame.
+   */
+  public boolean isKeyJustPressed(int keyCode) {
+    if (keyCode < 0 || keyCode > GLFW.GLFW_KEY_LAST) {
+      return false;
+    }
+    return keys[keyCode] && !keysLastFrame[keyCode];
+  }
+
+  /**
+   * Checks if a mouse button was just pressed this frame.
+   * 
+   * @param button The GLFW mouse button code.
+   * @return true if the button was just pressed this frame.
+   */
+  public boolean isMouseButtonJustPressed(int button) {
+    if (button < 0 || button > GLFW.GLFW_MOUSE_BUTTON_LAST) {
+      return false;
+    }
+    return mouseButtons[button] && !mouseButtonsLastFrame[button];
+  }
+
+  /**
+   * Maps a GameAction to its corresponding key code for player 0.
+   * Returns -1 if the action has no keyboard mapping.
+   */
+  private int getKeyCodeForAction(GameAction action) {
+    return switch (action) {
+      case MOVE_UP -> GLFW.GLFW_KEY_W;
+      case MOVE_DOWN -> GLFW.GLFW_KEY_S;
+      case MOVE_LEFT -> GLFW.GLFW_KEY_A;
+      case MOVE_RIGHT -> GLFW.GLFW_KEY_D;
+      case ATTACK -> GLFW.GLFW_KEY_SPACE;
+      case INTERACT -> GLFW.GLFW_KEY_E;
+      case OPEN_MENU -> GLFW.GLFW_KEY_ESCAPE;
+    };
+  }
+
+  /**
+   * Updates the input state tracking for "just pressed" detection.
+   * This is called automatically once per frame by the Engine.
+   */
+  @Override
+  public void update() {
+    // Copy current states to last frame states
+    System.arraycopy(keys, 0, keysLastFrame, 0, keys.length);
+    System.arraycopy(mouseButtons, 0, mouseButtonsLastFrame, 0, mouseButtons.length);
   }
 }
