@@ -2,6 +2,7 @@ package engine.services.glfw;
 
 import engine.IService;
 import jakarta.inject.Singleton;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.glfw.GLFW;
@@ -11,6 +12,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 @Singleton
 @RequiredArgsConstructor
 public class GlfwContextService implements IService {
+  @Getter
   private boolean initialized = false;
   private GLFWErrorCallback errorCallback;
 

@@ -10,6 +10,8 @@ import engine.services.world.components.AudioSourceComponent;
 import engine.services.world.components.MusicComponent;
 import engine.services.world.components.SoundEffectComponent;
 import engine.services.world.components.TransformComponent;
+import io.micronaut.context.annotation.Prototype;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -18,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@RequiredArgsConstructor
+@Prototype
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class AudioSystem implements ISystem {
 
   private final AudioService audioManager;
