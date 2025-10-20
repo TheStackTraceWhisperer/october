@@ -41,7 +41,10 @@ public class AudioSystemIT extends EngineTestHarness {
     void testMusicComponent_autoPlayAndLooping() {
         // Given
         int entity = worldService.createEntity();
-        MusicComponent music = new MusicComponent("test-music", 1.0f, true);
+        // Correctly use the Lombok-generated constructor
+        MusicComponent music = new MusicComponent("test-music");
+        // Set other properties on the instance
+        music.looping = true;
         music.autoPlay = true;
         worldService.addComponent(entity, music);
 
@@ -60,7 +63,7 @@ public class AudioSystemIT extends EngineTestHarness {
     void testSystem_cleansUpSourceWhenComponentIsRemoved() throws Exception {
         // Given: An entity with music that is playing
         int entity = worldService.createEntity();
-        worldService.addComponent(entity, new MusicComponent("test-music", 1.0f, true));
+        worldService.addComponent(entity, new MusicComponent("test-music"));
         tick(); // Tick once to create and play the internal AudioSource
 
         // And: We can see the internal source was created
@@ -83,7 +86,7 @@ public class AudioSystemIT extends EngineTestHarness {
     void testPauseAndResumeAllMusic() throws Exception {
         // Given: An entity with music that is playing
         int entity = worldService.createEntity();
-        worldService.addComponent(entity, new MusicComponent("test-music", 1.0f, true));
+        worldService.addComponent(entity, new MusicComponent("test-music"));
         tick(); // Start playback
 
         Map<Integer, AudioSource> musicSourceMap = getInternalMusicSourceMap();

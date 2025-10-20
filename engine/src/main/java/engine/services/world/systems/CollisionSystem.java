@@ -62,18 +62,18 @@ public class CollisionSystem implements ISystem {
       ColliderComponent colliderA,
       TransformComponent transformB,
       ColliderComponent colliderB) {
-    // Get integer-based positions for the collision check
-    int x1 = (int) (transformA.position.x + colliderA.getOffsetX());
-    int y1 = (int) (transformA.position.y + colliderA.getOffsetY());
-    int w1 = colliderA.getWidth();
-    int h1 = colliderA.getHeight();
+    // Use floating-point math to avoid truncation errors at fractional positions
+    float x1 = transformA.position.x + colliderA.getOffsetX();
+    float y1 = transformA.position.y + colliderA.getOffsetY();
+    float w1 = colliderA.getWidth();
+    float h1 = colliderA.getHeight();
 
-    int x2 = (int) (transformB.position.x + colliderB.getOffsetX());
-    int y2 = (int) (transformB.position.y + colliderB.getOffsetY());
-    int w2 = colliderB.getWidth();
-    int h2 = colliderB.getHeight();
+    float x2 = transformB.position.x + colliderB.getOffsetX();
+    float y2 = transformB.position.y + colliderB.getOffsetY();
+    float w2 = colliderB.getWidth();
+    float h2 = colliderB.getHeight();
 
-    // AABB collision check
+    // AABB collision check (treats touching edges as non-colliding)
     return (x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2);
   }
 }

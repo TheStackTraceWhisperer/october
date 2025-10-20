@@ -4,7 +4,7 @@ package engine.services.world.systems;
 import engine.services.time.SystemTimeService;
 import engine.services.world.ISystem;
 import engine.services.world.World;
-import engine.services.world.components.EnemyComponent;
+import engine.game.EnemyComponent;
 import engine.services.world.components.TransformComponent;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
@@ -22,9 +22,13 @@ public class EnemyAISystem implements ISystem {
 
   @Override
   public void update(World world, float deltaTime) {
-    var entities = world.getEntitiesWith(EnemyComponent.class, TransformComponent.class);
+    // Query broadly by TransformComponent, then filter for actual enemies.
+    var entities = world.getEntitiesWith(TransformComponent.class);
 
     for (int entityId : entities) {
+      if (!world.hasComponent(entityId, EnemyComponent.class)) {
+        continue;
+      }
       TransformComponent transform = world.getComponent(entityId, TransformComponent.class);
 
       // This is a simple sine wave patrol. The enemy's X position will oscillate

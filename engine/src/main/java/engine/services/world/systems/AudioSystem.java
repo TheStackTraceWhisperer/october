@@ -200,7 +200,7 @@ public class AudioSystem implements ISystem {
 
   public void playSoundEffect(World world, int entityId, String bufferHandle,
                               SoundEffectComponent.SoundEffectType soundType, float volume) {
-    SoundEffectComponent soundComp = new SoundEffectComponent(bufferHandle, soundType, volume);
+    SoundEffectComponent soundComp = new SoundEffectComponent(bufferHandle, soundType);
     world.addComponent(entityId, soundComp);
   }
 
