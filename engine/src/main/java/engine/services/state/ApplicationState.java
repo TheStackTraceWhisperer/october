@@ -25,7 +25,14 @@ public interface ApplicationState {
    */
   void onExit();
 
-  // Future methods to be added for a stack-based FSM:
-  // void onSuspend();
-  // void onResume();
+  /**
+   * Called when the state is uncovered and becomes active again after another
+   * state above it has been popped. Default no-op.
+   */
+  default void onResume() { }
+
+  /**
+   * Called when the state is being covered by another pushed state. Default no-op.
+   */
+  default void onSuspend() { }
 }

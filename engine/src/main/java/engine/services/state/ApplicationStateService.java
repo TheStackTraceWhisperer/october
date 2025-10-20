@@ -66,6 +66,10 @@ public class ApplicationStateService implements IService {
    */
   public void pushState(ApplicationState state) {
     log.debug("Pushing state: {}", state.getClass().getSimpleName());
+    if (!stateStack.isEmpty()) {
+      // Suspend the current state before covering it
+      stateStack.peek().onSuspend();
+    }
     stateStack.push(state);
     state.onEnter();
   }
@@ -90,6 +94,10 @@ public class ApplicationStateService implements IService {
       ApplicationState poppedState = stateStack.pop();
       log.debug("Popping state: {}", poppedState.getClass().getSimpleName());
       poppedState.onExit();
+      if (!stateStack.isEmpty()) {
+        // Resume the now-exposed state
+        stateStack.peek().onResume();
+      }
     } else {
       log.warn("Attempted to pop state from an empty stack.");
     }

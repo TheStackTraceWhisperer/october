@@ -21,7 +21,16 @@ public class EnemyAISystem implements ISystem {
   private final float travelDistance = 3.0f; // How far from the center they patrol
 
   @Override
+  public void update(World world) {
+    applyPatrol(world);
+  }
+
+  @Override
   public void update(World world, float deltaTime) {
+    applyPatrol(world);
+  }
+
+  private void applyPatrol(World world) {
     // Query broadly by TransformComponent, then filter for actual enemies.
     var entities = world.getEntitiesWith(TransformComponent.class);
 

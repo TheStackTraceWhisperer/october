@@ -39,6 +39,15 @@ public class MainMenuState implements ApplicationState {
     worldService.addSystem(uiSystem);
   }
 
+  @Override
+  public void onResume() {
+    // When returning from a cutscene or another overlay state, reset idle tracking
+    resetIdleTimer();
+    // Sync the cursor reference to avoid spurious movement detection
+    Vector2d current = inputService.getCursorPos();
+    this.lastCursorPos.set(current);
+  }
+
   @EventListener
   public void onStartGame(String event) {
     if ("START_NEW_GAME".equals(event)) {
@@ -56,7 +65,7 @@ public class MainMenuState implements ApplicationState {
     if (this.idleTimer >= IDLE_TIMEOUT) {
       // Idle timeout reached, push the cutscene state onto the stack.
       applicationStateService.pushState(introCutsceneStateProvider.get());
-      // The timer will be reset in onEnter() when this state becomes active again.
+      // The timer will be reset in onEnter()/onResume when this state becomes active again.
     }
   }
 
