@@ -15,6 +15,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,11 +40,11 @@ class PlayerInputSystemTest {
         control.playerId = playerId;
 
         // Configure the mock world to return our test entity
-        when(world.getEntitiesWith(ControllableComponent.class)).thenReturn(Set.of(entityId));
-        when(world.getComponent(entityId, ControllableComponent.class)).thenReturn(control);
+        lenient().when(world.getEntitiesWith(ControllableComponent.class)).thenReturn(Set.of(entityId));
+        lenient().when(world.getComponent(entityId, ControllableComponent.class)).thenReturn(control);
 
         // Default: no actions active for any player/action
-        when(mappingService.isActionActive(anyInt(), any(GameAction.class))).thenReturn(false);
+        lenient().when(mappingService.isActionActive(anyInt(), any(GameAction.class))).thenReturn(false);
     }
 
     @Test
@@ -78,5 +79,58 @@ class PlayerInputSystemTest {
         assertFalse(control.wantsToMoveLeft);
         assertFalse(control.wantsToMoveRight);
         assertFalse(control.wantsToAttack);
+    }
+
+    @Test
+    void testSystem_handlesAllDirectionalInputsSimultaneously() {
+        // Given: All directional inputs are active
+        when(mappingService.isActionActive(playerId, GameAction.MOVE_UP)).thenReturn(true);
+        when(mappingService.isActionActive(playerId, GameAction.MOVE_DOWN)).thenReturn(true);
+        when(mappingService.isActionActive(playerId, GameAction.MOVE_LEFT)).thenReturn(true);
+        when(mappingService.isActionActive(playerId, GameAction.MOVE_RIGHT)).thenReturn(true);
+
+        // When: The system updates
+        playerInputSystem.update(world, 0.1f);
+
+        // Then: All directional flags should be set
+        assertTrue(control.wantsToMoveUp);
+        assertTrue(control.wantsToMoveDown);
+        assertTrue(control.wantsToMoveLeft);
+        assertTrue(control.wantsToMoveRight);
+    }
+
+    @Test
+    void testSystem_handlesNoEntities() {
+        // Given: No entities have ControllableComponent
+        when(world.getEntitiesWith(ControllableComponent.class)).thenReturn(Set.of());
+
+        // When: The system updates
+        // Then: No exception should be thrown
+        assertDoesNotThrow(() -> playerInputSystem.update(world, 0.1f));
+    }
+
+    @Test
+    void testSystem_handlesMultipleEntities() {
+        // Given: Multiple entities with different player IDs
+        int entityId2 = 2;
+        int playerId2 = 1;
+        ControllableComponent control2 = new ControllableComponent();
+        control2.playerId = playerId2;
+
+        when(world.getEntitiesWith(ControllableComponent.class)).thenReturn(Set.of(entityId, entityId2));
+        when(world.getComponent(entityId2, ControllableComponent.class)).thenReturn(control2);
+
+        // Set different actions for different players
+        when(mappingService.isActionActive(playerId, GameAction.MOVE_UP)).thenReturn(true);
+        when(mappingService.isActionActive(playerId2, GameAction.MOVE_DOWN)).thenReturn(true);
+
+        // When: The system updates
+        playerInputSystem.update(world, 0.1f);
+
+        // Then: Each entity should reflect its player's input
+        assertTrue(control.wantsToMoveUp);
+        assertFalse(control.wantsToMoveDown);
+        assertFalse(control2.wantsToMoveUp);
+        assertTrue(control2.wantsToMoveDown);
     }
 }
