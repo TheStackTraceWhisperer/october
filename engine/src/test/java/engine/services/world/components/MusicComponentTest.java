@@ -34,6 +34,45 @@ class MusicComponentTest {
     }
 
     @Test
+    void constructor_shouldAcceptNullHandle() {
+        MusicComponent nullMusic = new MusicComponent(null);
+        assertNull(nullMusic.musicBufferHandle);
+    }
+
+    @Test
+    void baseVolume_canBeModified() {
+        music.baseVolume = 0.5f;
+        assertEquals(0.5f, music.baseVolume);
+        
+        music.baseVolume = 0.0f;
+        assertEquals(0.0f, music.baseVolume);
+    }
+
+    @Test
+    void fadeDuration_canBeModified() {
+        music.fadeDuration = 5.0f;
+        assertEquals(5.0f, music.fadeDuration);
+        
+        music.fadeDuration = 0.1f;
+        assertEquals(0.1f, music.fadeDuration);
+    }
+
+    @Test
+    void playbackFlags_canBeToggled() {
+        music.looping = false;
+        assertFalse(music.looping);
+        
+        music.autoPlay = false;
+        assertFalse(music.autoPlay);
+        
+        music.isPlaying = true;
+        assertTrue(music.isPlaying);
+        
+        music.isPaused = true;
+        assertTrue(music.isPaused);
+    }
+
+    @Test
     void startFadeIn_shouldSetFadingFlagsAndResetVolume() {
         music.currentVolume = 0.5f; // Simulate a different state
         music.startFadeIn();
@@ -45,10 +84,34 @@ class MusicComponentTest {
     }
 
     @Test
+    void startFadeIn_shouldOverrideFadeOut() {
+        music.fadingOut = true;
+        music.fadeTimer = 1.5f;
+        
+        music.startFadeIn();
+        
+        assertTrue(music.fadingIn);
+        assertFalse(music.fadingOut);
+        assertEquals(0.0f, music.fadeTimer);
+    }
+
+    @Test
     void startFadeOut_shouldSetFadingFlags() {
         music.fadingIn = true; // Simulate a different state
         music.startFadeOut();
 
+        assertFalse(music.fadingIn);
+        assertTrue(music.fadingOut);
+        assertEquals(0.0f, music.fadeTimer);
+    }
+
+    @Test
+    void startFadeOut_shouldOverrideFadeIn() {
+        music.fadingIn = true;
+        music.fadeTimer = 1.0f;
+        
+        music.startFadeOut();
+        
         assertFalse(music.fadingIn);
         assertTrue(music.fadingOut);
         assertEquals(0.0f, music.fadeTimer);
@@ -67,5 +130,39 @@ class MusicComponentTest {
         assertFalse(music.fadingOut);
         assertEquals(0.0f, music.fadeTimer);
         assertEquals(0.8f, music.currentVolume);
+    }
+
+    @Test
+    void stopFade_shouldWorkWhenFadingOut() {
+        music.baseVolume = 0.7f;
+        music.currentVolume = 0.3f;
+        music.fadingOut = true;
+        music.fadeTimer = 0.5f;
+
+        music.stopFade();
+
+        assertFalse(music.fadingIn);
+        assertFalse(music.fadingOut);
+        assertEquals(0.0f, music.fadeTimer);
+        assertEquals(0.7f, music.currentVolume);
+    }
+
+    @Test
+    void stopFade_shouldWorkWhenNotFading() {
+        music.baseVolume = 0.9f;
+        music.currentVolume = 0.5f;
+
+        music.stopFade();
+
+        assertFalse(music.fadingIn);
+        assertFalse(music.fadingOut);
+        assertEquals(0.0f, music.fadeTimer);
+        assertEquals(0.9f, music.currentVolume);
+    }
+
+    @Test
+    void fadeTimer_canBeManuallyModified() {
+        music.fadeTimer = 1.5f;
+        assertEquals(1.5f, music.fadeTimer);
     }
 }
