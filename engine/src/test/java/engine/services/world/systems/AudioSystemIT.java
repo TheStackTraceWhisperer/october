@@ -3,8 +3,10 @@ package engine.services.world.systems;
 import engine.EngineTestHarness;
 import engine.services.audio.AudioSource;
 import engine.services.resources.AssetCacheService;
+import engine.services.world.World;
 import engine.services.world.WorldService;
 import engine.services.world.components.MusicComponent;
+import engine.services.world.components.SoundEffectComponent;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +30,7 @@ public class AudioSystemIT extends EngineTestHarness {
     void setUp() {
         worldService.addSystem(audioSystem);
         assetCacheService.loadAudioBuffer("test-music", "audio/test-music.ogg");
+        assetCacheService.loadAudioBuffer("test-click", "audio/test-click.ogg");
     }
 
     @AfterEach
@@ -41,9 +44,7 @@ public class AudioSystemIT extends EngineTestHarness {
     void testMusicComponent_autoPlayAndLooping() {
         // Given
         int entity = worldService.createEntity();
-        // Correctly use the Lombok-generated constructor
         MusicComponent music = new MusicComponent("test-music");
-        // Set other properties on the instance
         music.looping = true;
         music.autoPlay = true;
         worldService.addComponent(entity, music);
@@ -106,6 +107,80 @@ public class AudioSystemIT extends EngineTestHarness {
         assertTrue(source.isPlaying(), "Source should be playing again after resume.");
     }
 
+    @Test
+    void testMusicFadeInThenFadeOutStopsPlayback() throws Exception {
+        int entity = worldService.createEntity();
+        MusicComponent music = new MusicComponent("test-music");
+        music.baseVolume = 0.8f;
+        music.fadeDuration = 0.25f; // short fade for tests
+        music.autoPlay = true;
+        music.looping = true;
+        worldService.addComponent(entity, music);
+
+        // Trigger creation and fade-in
+        tick();
+        assertTrue(music.fadingIn, "Music should be fading in after autoPlay.");
+
+        float lastVolume = music.currentVolume;
+        // Progress frames until fade-in completes
+        int safety = 200;
+        while (music.fadingIn && safety-- > 0) {
+            tick();
+            assertTrue(music.currentVolume >= lastVolume - 0.001f, "Volume should not decrease during fade-in.");
+            lastVolume = music.currentVolume;
+        }
+        assertFalse(music.fadingIn, "Fade-in should complete.");
+        assertEquals(music.baseVolume, music.currentVolume, 0.05f, "Volume should be at base after fade-in.");
+
+        // Now start fade-out and ensure it reaches zero and stops
+        music.startFadeOut();
+        safety = 200;
+        lastVolume = music.currentVolume;
+        while (music.fadingOut && safety-- > 0) {
+            tick();
+            assertTrue(music.currentVolume <= lastVolume + 0.001f, "Volume should not increase during fade-out.");
+            lastVolume = music.currentVolume;
+        }
+        assertFalse(music.fadingOut, "Fade-out should complete.");
+        assertEquals(0.0f, music.currentVolume, 0.05f, "Volume should be ~0 after fade-out.");
+        // The system should stop playback after fade-out completes
+        Map<Integer, AudioSource> musicSourceMap = getInternalMusicSourceMap();
+        AudioSource source = musicSourceMap.get(entity);
+        assertTrue(source.isStopped() || !music.isPlaying, "Source should be stopped or flag cleared after fade-out.");
+    }
+
+    @Test
+    void testPlaySoundEffectHelper_setsVolumeAndCleansUpAfterStop() throws Exception {
+        int entity = worldService.createEntity();
+        World internalWorld = getInternalWorld();
+
+        // When: use helper to add a one-shot sound effect with custom volume
+        audioSystem.playSoundEffect(internalWorld, entity, "test-click", new TestSoundEffect(), 0.42f);
+
+        // Then: the component should exist with that volume
+        SoundEffectComponent comp = worldService.getComponent(entity, SoundEffectComponent.class);
+        assertNotNull(comp, "SoundEffectComponent should be added by helper");
+        assertEquals(0.42f, comp.volume, 0.001f);
+
+        // Tick to create the source and trigger playback
+        tick();
+
+        // Access internal map, stop the source manually to simulate playback end
+        Map<Integer, AudioSource> effectMap = getInternalEffectSourceMap();
+        AudioSource s = effectMap.get(entity);
+        assertNotNull(s, "Effect AudioSource should be created");
+
+        s.stop();
+        // Mark as triggered and ensure removeAfterPlay is true by default; next tick should clean up
+        comp.hasBeenTriggered = true;
+        comp.removeAfterPlay = true;
+        tick();
+
+        // Component should be removed and source entry cleared from the map
+        assertNull(worldService.getComponent(entity, SoundEffectComponent.class), "SoundEffectComponent should be removed after stop");
+        assertFalse(getInternalEffectSourceMap().containsKey(entity), "Effect source should be removed from internal map after cleanup");
+    }
+
     /**
      * Uses reflection to access the private source map for verification.
      * This is an acceptable testing practice for verifying internal state management.
@@ -116,4 +191,19 @@ public class AudioSystemIT extends EngineTestHarness {
         field.setAccessible(true);
         return (Map<Integer, AudioSource>) field.get(audioSystem);
     }
+
+    @SuppressWarnings("unchecked")
+    private Map<Integer, AudioSource> getInternalEffectSourceMap() throws NoSuchFieldException, IllegalAccessException {
+        Field field = AudioSystem.class.getDeclaredField("soundEffectSourceMap");
+        field.setAccessible(true);
+        return (Map<Integer, AudioSource>) field.get(audioSystem);
+    }
+
+    private World getInternalWorld() throws NoSuchFieldException, IllegalAccessException {
+        Field f = WorldService.class.getDeclaredField("world");
+        f.setAccessible(true);
+        return (World) f.get(worldService);
+    }
+
+    private static class TestSoundEffect implements SoundEffectComponent.SoundEffectType { }
 }

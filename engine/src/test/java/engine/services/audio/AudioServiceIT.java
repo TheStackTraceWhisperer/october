@@ -57,4 +57,45 @@ public class AudioServiceIT extends EngineTestHarness {
         // Reset volume for other tests
         audioService.setMasterVolume(initialVolume);
     }
+
+    @Test
+    void testMasterVolumeClampedAtZeroWhenNegative() {
+        assertTrue(audioService.isInitialized());
+        audioService.setMasterVolume(-1.0f);
+        assertEquals(0.0f, audioService.getMasterVolume(), 0.001f, "Negative master volume should clamp to 0.0");
+    }
+
+    @Test
+    void testSourceVolumeClampAndStates() {
+        assertTrue(audioService.isInitialized());
+        // Load a small buffer and exercise volume clamp
+        AudioBuffer soundBuffer = assetCacheService.loadAudioBuffer("test-sound-2", "audio/test-sound.ogg");
+        assertNotNull(soundBuffer);
+
+        try (AudioSource source = audioService.createSource()) {
+            source.setVolume(-0.5f);
+            assertEquals(0.0f, source.getVolume(), 0.001f, "Negative source volume should clamp to 0.0");
+
+            source.setLooping(false);
+            source.play(soundBuffer);
+            assertTrue(source.isPlaying());
+            source.pause();
+            assertTrue(source.isPaused());
+            source.resume();
+            assertTrue(source.isPlaying());
+            source.stop();
+            assertTrue(source.isStopped());
+        }
+    }
+
+    @Test
+    void testAudioBufferCloseThenGetIdThrows() {
+        assertTrue(audioService.isInitialized());
+        // Use a dedicated handle to avoid polluting cache used by other tests
+        AudioBuffer soundBuffer = assetCacheService.loadAudioBuffer("close-me", "audio/test-sound.ogg");
+        assertNotNull(soundBuffer);
+        soundBuffer.close();
+        assertTrue(soundBuffer.isClosed(), "Buffer should report closed after close()");
+        assertThrows(IllegalStateException.class, soundBuffer::getBufferId, "getBufferId after close should throw");
+    }
 }

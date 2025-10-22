@@ -3,6 +3,7 @@ package engine.services.audio;
 import engine.IService;
 import jakarta.inject.Singleton;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -25,21 +26,17 @@ import static org.lwjgl.openal.ALC10.alcOpenDevice;
  * Manages the OpenAL audio context and provides high-level audio services.
  * This is analogous to how the Engine class manages the OpenGL context.
  * <p>
- * The AudioManager is responsible for:
+ * The AudioService is responsible for:
  * - Initializing and cleaning up the OpenAL context
  * - Managing global audio settings (master volume, listener properties)
  * - Providing factory methods for creating audio resources
  */
 @Singleton
+@Slf4j
 public final class AudioService implements IService {
   private long device;
   private long context;
-  /**
-   * -- GETTER --
-   *  Checks if the AudioManager has been initialized.
-   *
-   * @return true if initialized, false otherwise
-   */
+
   @Getter
   private boolean initialized = false;
 
@@ -56,14 +53,14 @@ public final class AudioService implements IService {
   @Override
   public void start() {
     if (initialized) {
-      throw new IllegalStateException("AudioManager is already initialized");
+      throw new IllegalStateException("AudioService is already initialized");
     }
 
     try {
       // Open the default audio device
       device = alcOpenDevice((CharSequence) null);
       if (device == 0) {
-        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("No OpenAL device available - audio will be disabled");
+        log.warn("No OpenAL device available - audio will be disabled");
         return;
       }
 
@@ -71,7 +68,7 @@ public final class AudioService implements IService {
       context = alcCreateContext(device, (int[]) null);
       if (context == 0) {
         alcCloseDevice(device);
-        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("Failed to create OpenAL context - audio will be disabled");
+        log.warn("Failed to create OpenAL context - audio will be disabled");
         return;
       }
 
@@ -79,7 +76,7 @@ public final class AudioService implements IService {
       if (!alcMakeContextCurrent(context)) {
         alcDestroyContext(context);
         alcCloseDevice(device);
-        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("Failed to make OpenAL context current - audio will be disabled");
+        log.warn("Failed to make OpenAL context current - audio will be disabled");
         return;
       }
 
@@ -88,7 +85,7 @@ public final class AudioService implements IService {
       ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
       if (!alCapabilities.OpenAL10) {
-        org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("OpenAL 1.0 is not supported - audio will be disabled");
+        log.warn("OpenAL 1.0 is not supported - audio will be disabled");
         return;
       }
 
@@ -99,7 +96,7 @@ public final class AudioService implements IService {
       setListenerOrientation(0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
       setMasterVolume(1.0f);
     } catch (Exception e) {
-      org.slf4j.LoggerFactory.getLogger(AudioService.class).warn("Audio initialization failed - audio will be disabled", e);
+      log.warn("Audio initialization failed - audio will be disabled", e);
       initialized = false;
     }
   }
@@ -111,7 +108,7 @@ public final class AudioService implements IService {
    */
   public void setMasterVolume(float volume) {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     alListenerf(AL_GAIN, Math.max(0.0f, volume));
@@ -124,7 +121,7 @@ public final class AudioService implements IService {
    */
   public float getMasterVolume() {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     return alGetListenerf(AL_GAIN);
@@ -139,7 +136,7 @@ public final class AudioService implements IService {
    */
   public void setListenerPosition(float x, float y, float z) {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     alListener3f(AL_POSITION, x, y, z);
@@ -158,7 +155,7 @@ public final class AudioService implements IService {
   public void setListenerOrientation(float forwardX, float forwardY, float forwardZ,
                                      float upX, float upY, float upZ) {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     float[] orientation = {forwardX, forwardY, forwardZ, upX, upY, upZ};
@@ -173,7 +170,7 @@ public final class AudioService implements IService {
    */
   public AudioSource createSource() {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     return new AudioSource();
@@ -190,7 +187,7 @@ public final class AudioService implements IService {
    */
   public AudioBuffer createBuffer(java.nio.ShortBuffer data, int channels, int sampleRate) {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     return new AudioBuffer(data, channels, sampleRate);
@@ -205,7 +202,7 @@ public final class AudioService implements IService {
    */
   public AudioBuffer loadAudioBuffer(String resourcePath) {
     if (!initialized) {
-      throw new IllegalStateException("AudioManager is not initialized");
+      throw new IllegalStateException("AudioService is not initialized");
     }
 
     return AudioBuffer.loadFromOggFile(resourcePath);

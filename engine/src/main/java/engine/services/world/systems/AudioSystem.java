@@ -24,7 +24,7 @@ import java.util.Set;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class AudioSystem implements ISystem {
 
-  private final AudioService audioManager;
+  private final AudioService audioService;
   private final AssetCacheService resourceManager;
 
   private final Map<Integer, AudioSource> audioSourceMap = new HashMap<>();
@@ -38,6 +38,12 @@ public class AudioSystem implements ISystem {
     updateSoundEffects(world, deltaTime);
   }
 
+  private static void applySourceProperties(AudioSource source, float volume, float pitch, boolean looping) {
+    source.setVolume(volume);
+    source.setPitch(pitch);
+    source.setLooping(looping);
+  }
+
   private void updateAudioSources(World world, float deltaTime) {
     var entities = world.getEntitiesWith(AudioSourceComponent.class);
 
@@ -46,12 +52,10 @@ public class AudioSystem implements ISystem {
       AudioSource audioSource = audioSourceMap.get(entityId);
 
       if (audioSource == null) {
-        audioSource = audioManager.createSource();
+        audioSource = audioService.createSource();
         audioSourceMap.put(entityId, audioSource);
 
-        audioSource.setVolume(audioComp.volume);
-        audioSource.setPitch(audioComp.pitch);
-        audioSource.setLooping(audioComp.looping);
+        applySourceProperties(audioSource, audioComp.volume, audioComp.pitch, audioComp.looping);
 
         if (audioComp.autoPlay && !audioComp.isPlaying) {
           AudioBuffer buffer = resourceManager.resolveAudioBufferHandle(audioComp.audioBufferHandle);
@@ -65,9 +69,7 @@ public class AudioSystem implements ISystem {
         audioSource.setPosition(transform.position);
       }
 
-      audioSource.setVolume(audioComp.volume);
-      audioSource.setPitch(audioComp.pitch);
-      audioSource.setLooping(audioComp.looping);
+      applySourceProperties(audioSource, audioComp.volume, audioComp.pitch, audioComp.looping);
 
       audioComp.isPlaying = audioSource.isPlaying();
 
@@ -87,7 +89,7 @@ public class AudioSystem implements ISystem {
       AudioSource musicSource = musicSourceMap.get(entityId);
 
       if (musicSource == null) {
-        musicSource = audioManager.createSource();
+        musicSource = audioService.createSource();
         musicSourceMap.put(entityId, musicSource);
 
         musicSource.setPosition(0.0f, 0.0f, 0.0f);
@@ -155,7 +157,7 @@ public class AudioSystem implements ISystem {
       AudioSource soundSource = soundEffectSourceMap.get(entityId);
 
       if (soundSource == null && !soundComp.hasBeenTriggered) {
-        soundSource = audioManager.createSource();
+        soundSource = audioService.createSource();
         soundEffectSourceMap.put(entityId, soundSource);
 
         soundSource.setVolume(soundComp.volume);
@@ -201,6 +203,7 @@ public class AudioSystem implements ISystem {
   public void playSoundEffect(World world, int entityId, String bufferHandle,
                               SoundEffectComponent.SoundEffectType soundType, float volume) {
     SoundEffectComponent soundComp = new SoundEffectComponent(bufferHandle, soundType);
+    soundComp.volume = volume;
     world.addComponent(entityId, soundComp);
   }
 
