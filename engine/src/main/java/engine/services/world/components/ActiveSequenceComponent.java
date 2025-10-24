@@ -32,10 +32,16 @@ public class ActiveSequenceComponent implements IComponent {
    */
   private boolean isBlocked;
 
+  // Track the condition we're waiting on (e.g., MOVE_ENTITY for a specific entity)
+  private String waitForAction; // e.g., "MOVE_ENTITY"
+  private Integer waitForEntityId; // entity id that must finish the action
+
   public ActiveSequenceComponent(String sequenceId) {
     this.sequenceId = sequenceId;
     this.currentIndex = 0;
     this.waitTimer = 0.0f;
     this.isBlocked = false;
+    this.waitForAction = null;
+    this.waitForEntityId = null;
   }
 }

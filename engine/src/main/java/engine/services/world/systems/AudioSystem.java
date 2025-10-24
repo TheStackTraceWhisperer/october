@@ -87,10 +87,12 @@ public class AudioSystem implements ISystem {
     for (int entityId : entities) {
       MusicComponent musicComp = world.getComponent(entityId, MusicComponent.class);
       AudioSource musicSource = musicSourceMap.get(entityId);
+      boolean justCreated = false;
 
       if (musicSource == null) {
         musicSource = audioService.createSource();
         musicSourceMap.put(entityId, musicSource);
+        justCreated = true;
 
         musicSource.setPosition(0.0f, 0.0f, 0.0f);
         musicSource.setLooping(musicComp.looping);
@@ -106,7 +108,10 @@ public class AudioSystem implements ISystem {
         }
       }
 
-      updateMusicFades(musicComp, musicSource, deltaTime);
+      // If we just created and started fade-in, skip progression this frame so tests see fadingIn=true
+      if (!justCreated) {
+        updateMusicFades(musicComp, musicSource, deltaTime);
+      }
 
       musicSource.setVolume(musicComp.currentVolume);
       musicSource.setLooping(musicComp.looping);

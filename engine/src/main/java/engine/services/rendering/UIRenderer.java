@@ -42,6 +42,10 @@ public class UIRenderer {
   }
 
   public void submit(UITransformComponent transform, String textureHandle) {
+    submitColored(transform, textureHandle, 1.0f, 1.0f, 1.0f, 1.0f);
+  }
+
+  public void submitColored(UITransformComponent transform, String textureHandle, float r, float g, float b, float a) {
     if (textureHandle == null) return;
     Texture texture = assetCacheService.resolveTextureHandle(textureHandle);
     Matrix4f modelMatrix = calculateModelMatrix(transform);
@@ -49,6 +53,7 @@ public class UIRenderer {
     texture.bind(0);
     uiShader.setUniform("uTextureSampler", 0);
     uiShader.setUniform("uModel", modelMatrix);
+    uiShader.setUniform("uColor", r, g, b, a);
 
     Mesh quadMesh = assetCacheService.resolveMeshHandle("quad");
     glBindVertexArray(quadMesh.getVaoId());

@@ -90,5 +90,11 @@ public class SceneService implements IService {
         resourceManager.loadProceduralMesh(meshDef.handle(), meshDef.vertices(), meshDef.indices());
       }
     }
+
+    if (manifest.audioBuffers() != null) {
+      for (AudioBufferDefinition audioDef : manifest.audioBuffers()) {
+        resourceManager.loadAudioBuffer(audioDef.handle(), audioDef.path());
+      }
+    }
   }
 }

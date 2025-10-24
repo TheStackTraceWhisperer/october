@@ -8,9 +8,10 @@ out vec4 fColor;
 
 // Uniforms
 uniform sampler2D uTextureSampler;
+uniform vec4 uColor; // tint color (rgba)
 
 void main()
 {
-    // Sample the texture at the given texture coordinates
-    fColor = texture(uTextureSampler, vTexCoord);
+    // Sample the texture at the given texture coordinates and apply tint
+    fColor = texture(uTextureSampler, vTexCoord) * uColor;
 }

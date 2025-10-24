@@ -20,6 +20,7 @@ public class DeviceMappingService implements IService {
 
   private static final int MAX_PLAYERS = 8;
   private static final float DEADZONE = 0.25f;
+  private static final float HOTPLUG_REFRESH_INTERVAL = 1.0f; // seconds
 
   private final InputService inputService;
 
@@ -28,6 +29,8 @@ public class DeviceMappingService implements IService {
 
   // Keyboard mappings
   private final Map<Integer, Map<GameAction, Integer>> playerKeyMappings = new HashMap<>();
+
+  private float hotplugTimer = 0.0f;
 
   @Override
   public int executionOrder() {
@@ -38,6 +41,16 @@ public class DeviceMappingService implements IService {
   public void start() {
     loadDefaultMappings();
     refreshAssignments();
+  }
+
+  @Override
+  public void update(float dt) {
+    // Periodically refresh device assignments to handle hotplug events
+    hotplugTimer += dt;
+    if (hotplugTimer >= HOTPLUG_REFRESH_INTERVAL) {
+      hotplugTimer = 0.0f;
+      refreshAssignments();
+    }
   }
 
   private void loadDefaultMappings() {

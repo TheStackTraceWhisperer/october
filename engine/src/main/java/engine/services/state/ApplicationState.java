@@ -1,7 +1,7 @@
 package engine.services.state;
 
 /**
- * Represents a distinct state of the game, such as a main menu, playing, or paused.
+ * Represents a distinct state of the application, such as a main menu, playing, or paused.
  * Each state is responsible for its own logic and rendering.
  */
 public interface ApplicationState {

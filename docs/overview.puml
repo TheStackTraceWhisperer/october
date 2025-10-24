@@ -1,0 +1,91 @@
+@startuml
+
+skinparam card {
+  BackgroundColor<<system>> LightBlue
+  BackgroundColor<<service>> LightGreen
+  BackgroundColor<<resource>> LightYellow
+  BackgroundColor<<pure_system>> LightGray
+}
+
+!procedure resource($alias, $name)
+
+card $name as res_$alias <<resource>>
+
+!endprocedure
+
+!procedure system($alias, $name)
+
+card $name as sys_$alias <<system>>
+
+!endprocedure
+
+!procedure pure_system($alias, $name)
+
+card $name as sys_$alias <<pure_system>>
+
+!endprocedure
+
+!procedure service($alias, $name)
+
+card $name as svc_$alias <<service>>
+
+!endprocedure
+
+!procedure missing($source, $target)
+$source ..> $target : <<missing>>
+!endprocedure
+
+
+resource(publisher, ApplicationEventPublisher)
+
+service(audio, AudioService)
+service(publisher, PublisherService)
+service(glfw, GlfwContextService)
+service(input, InputService)
+service(device, DeviceMappingService)
+service(renderer, RendererService)
+service(ui, UIRendererService)
+service(cache, AssetCacheService)
+service(scene, SceneService)
+service(state, StateService)
+service(timer, SystemTimeService)
+service(window, WindowService)
+service(world, WorldService)
+service(zone, ZoneService)
+service(fade, FadeService)
+
+system(audio, AudioSystem)
+pure_system(collision, CollisionSystem)
+system(enemyAI, EnemyAISystem)
+system(fade, FadeOverlaySystem)
+pure_system(move, MovementSystem)
+pure_system(movetotarget, MoveToTargetSystem)
+system(playerInput, PlayerInputSystem)
+system(renderer, RendererSystem)
+system(sequence, SequenceSystem)
+system(trigger, TriggerSystem)
+system(ui, UISystem)
+
+
+  private final RenderingService renderingService;
+  private final AssetCacheService resourceManager;
+  private final Camera camera;
+
+sys_audio --> svc_audio
+sys_audio --> svc_cache
+
+svc_publisher --> res_publisher
+
+sys_enemyAI --> svc_timer
+
+sys_fade --> svc_fade
+sys_fade --> svc_ui
+sys_fade --> svc_window
+
+sys_playerInput --> svc_device
+
+svc_device --> svc_input
+
+missing(sys_collision, svc_world)
+
+@enduml

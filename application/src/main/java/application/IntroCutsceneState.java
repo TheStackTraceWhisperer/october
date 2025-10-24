@@ -8,6 +8,9 @@ import engine.services.world.WorldService;
 import engine.services.world.systems.TriggerSystem;
 import engine.services.world.systems.SequenceSystem;
 import engine.services.world.systems.MovementSystem;
+import engine.services.world.systems.AudioSystem;
+import engine.services.world.systems.MoveToTargetSystem;
+import engine.services.world.systems.FadeOverlaySystem;
 import engine.services.zone.ZoneService;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +39,10 @@ public class IntroCutsceneState implements ApplicationState {
   private final TriggerSystem triggerSystem;
   private final SequenceSystem sequenceSystem;
   private final MovementSystem movementSystem;
-  
+  private final AudioSystem audioSystem;
+  private final MoveToTargetSystem moveToTargetSystem;
+  private final FadeOverlaySystem fadeOverlaySystem;
+
   private float cutsceneTimer;
 
   public IntroCutsceneState(
@@ -46,7 +52,10 @@ public class IntroCutsceneState implements ApplicationState {
       ZoneService zoneService,
       TriggerSystem triggerSystem,
       SequenceSystem sequenceSystem,
-      MovementSystem movementSystem) {
+      MovementSystem movementSystem,
+      AudioSystem audioSystem,
+      MoveToTargetSystem moveToTargetSystem,
+      FadeOverlaySystem fadeOverlaySystem) {
     this.applicationStateService = applicationStateService;
     this.inputService = inputService;
     this.worldService = worldService;
@@ -54,6 +63,9 @@ public class IntroCutsceneState implements ApplicationState {
     this.triggerSystem = triggerSystem;
     this.sequenceSystem = sequenceSystem;
     this.movementSystem = movementSystem;
+    this.audioSystem = audioSystem;
+    this.moveToTargetSystem = moveToTargetSystem;
+    this.fadeOverlaySystem = fadeOverlaySystem;
   }
 
   @Override
@@ -62,17 +74,16 @@ public class IntroCutsceneState implements ApplicationState {
     this.cutsceneTimer = 0.0f;
     
     // Register the necessary systems for cutscene processing
-    // The TriggerSystem will listen for ZoneLoadedEvent and process triggers
-    // The SequenceSystem will interpret ActiveSequence components and execute GameEvents
     worldService.addSystem(triggerSystem);
     worldService.addSystem(sequenceSystem);
     worldService.addSystem(movementSystem);
-    
-    // Load the intro cutscene zone
-    // This will emit a ZoneLoadedEvent which the TriggerSystem will process
-    // Note: The actual zone loading functionality needs to be implemented in ZoneService
-    // zoneService.loadZone("intro_cutscene_zone");
-    
+    worldService.addSystem(moveToTargetSystem);
+    worldService.addSystem(audioSystem);
+    worldService.addSystem(fadeOverlaySystem);
+
+    // Load the intro cutscene zone (publishes ZoneLoadedEvent)
+    zoneService.loadZone("intro_cutscene_zone");
+
     log.debug("IntroCutsceneState systems registered and zone loading initiated");
   }
 

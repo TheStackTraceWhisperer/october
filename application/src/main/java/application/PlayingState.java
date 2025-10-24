@@ -25,8 +25,13 @@ public class PlayingState implements ApplicationState {
   private final MovementSystem movementSystem;
   private final EnemyAISystem enemyAISystem;
   private final CollisionSystem collisionSystem;
+  private final AudioSystem audioSystem; // Inject and register audio system
+  private final TriggerSystem triggerSystem;
+  private final SequenceSystem sequenceSystem;
+  private final MoveToTargetSystem moveToTargetSystem;
   private final RenderSystem renderSystem;
   private final UISystem uiSystem;
+  private final FadeOverlaySystem fadeOverlaySystem;
 
   @Override
   public void onEnter() {
@@ -35,9 +40,7 @@ public class PlayingState implements ApplicationState {
 
     // --- Configure the main game camera ---
     camera.setPosition(new Vector3f(0.0f, 0.0f, 5.0f));
-    // Set the projection based on the current window size
     camera.resize(windowService.getWidth(), windowService.getHeight());
-    // Ensure the camera updates if the window is resized
     windowService.setResizeListener(camera::resize);
   }
 
@@ -45,18 +48,23 @@ public class PlayingState implements ApplicationState {
     // Load the scene file
     sceneService.load("/scenes/playing-scene.json");
 
-    // Register all game-related systems
+    // Register all game-related systems (ordering managed by SystemManager priority)
     worldService.addSystem(playerInputSystem);
     worldService.addSystem(movementSystem);
     worldService.addSystem(enemyAISystem);
     worldService.addSystem(collisionSystem);
+    worldService.addSystem(triggerSystem);
+    worldService.addSystem(sequenceSystem);
+    worldService.addSystem(moveToTargetSystem);
+    worldService.addSystem(audioSystem);
     worldService.addSystem(renderSystem);
     worldService.addSystem(uiSystem);
+    worldService.addSystem(fadeOverlaySystem);
   }
 
   @Override
   public void onUpdate(float deltaTime) {
-    // All logic is handled by the systems, so this can be empty for now
+    // All logic is handled by the systems
   }
 
   @Override

@@ -2,22 +2,18 @@ package engine.services.world.systems;
 
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
-import engine.services.zone.SimpleZone;
 import engine.services.zone.Zone;
 import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Sequence;
-import engine.services.zone.sequence.SimpleGameEvent;
-import engine.services.zone.sequence.SimpleSequence;
+import engine.services.rendering.FadeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -28,35 +24,51 @@ class SequenceSystemTest {
   @Mock
   private ZoneService zoneService;
 
+  @Mock
+  private AudioSystem audioSystem;
+
+  @Mock
+  private FadeService fadeService;
+
   private World world;
   private SequenceSystem sequenceSystem;
+
+  // --- Test helpers ---
+  static class TestEvent implements GameEvent {
+    private final String type; private final Map<String, Object> props;
+    TestEvent(String type, Map<String, Object> props) { this.type = type; this.props = props; }
+    @Override public String getType() { return type; }
+    @Override public Map<String, Object> getProperties() { return props; }
+  }
+  static class TestSequence implements Sequence {
+    private final String id; private final List<GameEvent> events;
+    TestSequence(String id, List<GameEvent> events) { this.id = id; this.events = events; }
+    @Override public String getId() { return id; }
+    @Override public List<GameEvent> getEvents() { return events; }
+  }
+  static class TestZone implements Zone {
+    private final String id; private final List<Sequence> seqs;
+    TestZone(String id, List<Sequence> seqs) { this.id = id; this.seqs = seqs; }
+    @Override public String getId() { return id; }
+    @Override public String getName() { return id; }
+    @Override public engine.services.zone.tilemap.Tilemap getTilemap() { return null; }
+    @Override public List<Sequence> getSequences() { return seqs; }
+    @Override public List<engine.services.zone.sequence.Trigger> getTriggers() { return Collections.emptyList(); }
+    @Override public Map<String, Object> getProperties() { return Collections.emptyMap(); }
+  }
 
   @BeforeEach
   void setUp() {
     world = new World();
-    sequenceSystem = new SequenceSystem(zoneService);
+    sequenceSystem = new SequenceSystem(zoneService, audioSystem, fadeService);
   }
 
   @Test
   void testWaitEventDecreasesTimer() {
     // Given a sequence with a WAIT event
-    GameEvent waitEvent = SimpleGameEvent.builder()
-      .type("WAIT")
-      .properties(Map.of("duration", 2.0))
-      .build();
-
-    Sequence sequence = SimpleSequence.builder()
-      .id("wait_sequence")
-      .events(List.of(waitEvent))
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .sequences(List.of(sequence))
-      .triggers(List.of())
-      .properties(new HashMap<>())
-      .build();
+    GameEvent waitEvent = new TestEvent("WAIT", Map.of("duration", 2.0));
+    Sequence sequence = new TestSequence("wait_sequence", List.of(waitEvent));
+    Zone zone = new TestZone("test_zone", List.of(sequence));
 
     when(zoneService.getCurrentZone()).thenReturn(zone);
 
@@ -90,23 +102,9 @@ class SequenceSystemTest {
   @Test
   void testInstantActionAdvancesIndex() {
     // Given a sequence with a PLAY_SOUND event
-    GameEvent playSoundEvent = SimpleGameEvent.builder()
-      .type("PLAY_SOUND")
-      .properties(Map.of("soundId", "test_sound"))
-      .build();
-
-    Sequence sequence = SimpleSequence.builder()
-      .id("sound_sequence")
-      .events(List.of(playSoundEvent))
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .sequences(List.of(sequence))
-      .triggers(List.of())
-      .properties(new HashMap<>())
-      .build();
+    GameEvent playSoundEvent = new TestEvent("PLAY_SOUND", Map.of("soundId", "test_sound"));
+    Sequence sequence = new TestSequence("sound_sequence", List.of(playSoundEvent));
+    Zone zone = new TestZone("test_zone", List.of(sequence));
 
     when(zoneService.getCurrentZone()).thenReturn(zone);
 
@@ -125,23 +123,9 @@ class SequenceSystemTest {
   @Test
   void testSequenceCompletionRemovesComponent() {
     // Given a sequence with a single instant event
-    GameEvent playSoundEvent = SimpleGameEvent.builder()
-      .type("PLAY_SOUND")
-      .properties(Map.of("soundId", "test_sound"))
-      .build();
-
-    Sequence sequence = SimpleSequence.builder()
-      .id("complete_sequence")
-      .events(List.of(playSoundEvent))
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .sequences(List.of(sequence))
-      .triggers(List.of())
-      .properties(new HashMap<>())
-      .build();
+    GameEvent playSoundEvent = new TestEvent("PLAY_SOUND", Map.of("soundId", "test_sound"));
+    Sequence sequence = new TestSequence("complete_sequence", List.of(playSoundEvent));
+    Zone zone = new TestZone("test_zone", List.of(sequence));
 
     when(zoneService.getCurrentZone()).thenReturn(zone);
 
@@ -167,23 +151,9 @@ class SequenceSystemTest {
   @Test
   void testBlockedSequenceDoesNotAdvance() {
     // Given a sequence with a MOVE_ENTITY event
-    GameEvent moveEvent = SimpleGameEvent.builder()
-      .type("MOVE_ENTITY")
-      .properties(Map.of("entityId", "player"))
-      .build();
-
-    Sequence sequence = SimpleSequence.builder()
-      .id("move_sequence")
-      .events(List.of(moveEvent))
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .sequences(List.of(sequence))
-      .triggers(List.of())
-      .properties(new HashMap<>())
-      .build();
+    GameEvent moveEvent = new TestEvent("MOVE_ENTITY", Map.of("entityId", "player"));
+    Sequence sequence = new TestSequence("move_sequence", List.of(moveEvent));
+    Zone zone = new TestZone("test_zone", List.of(sequence));
 
     when(zoneService.getCurrentZone()).thenReturn(zone);
 
@@ -226,23 +196,9 @@ class SequenceSystemTest {
   @Test
   void testUnknownEventTypeAdvancesIndex() {
     // Given a sequence with an unknown event type
-    GameEvent unknownEvent = SimpleGameEvent.builder()
-      .type("UNKNOWN_TYPE")
-      .properties(new HashMap<>())
-      .build();
-
-    Sequence sequence = SimpleSequence.builder()
-      .id("unknown_sequence")
-      .events(List.of(unknownEvent))
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .sequences(List.of(sequence))
-      .triggers(List.of())
-      .properties(new HashMap<>())
-      .build();
+    GameEvent unknownEvent = new TestEvent("UNKNOWN_TYPE", new HashMap<>());
+    Sequence sequence = new TestSequence("unknown_sequence", List.of(unknownEvent));
+    Zone zone = new TestZone("test_zone", List.of(sequence));
 
     when(zoneService.getCurrentZone()).thenReturn(zone);
 

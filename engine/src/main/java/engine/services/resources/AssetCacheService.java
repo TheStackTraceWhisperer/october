@@ -8,6 +8,7 @@ import engine.services.rendering.gl.Shader;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +46,12 @@ public class AssetCacheService implements IService {
 
     // Programmatically create and load the quad mesh
     loadProceduralMesh("quad", vertices, indices);
+
+    // Create a 1x1 white texture for UI overlays and tints
+    ByteBuffer whitePixel = ByteBuffer.allocateDirect(4);
+    whitePixel.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF);
+    whitePixel.flip();
+    addTexture("white", new Texture(1, 1, whitePixel));
   }
 
   /**

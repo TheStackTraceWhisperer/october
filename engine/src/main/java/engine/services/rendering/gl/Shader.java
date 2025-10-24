@@ -81,6 +81,14 @@ public class Shader implements AutoCloseable {
     glUniform1i(location, value);
   }
 
+  /**
+   * Sets a vec4 uniform (e.g., color RGBA).
+   */
+  public void setUniform(String name, float x, float y, float z, float w) {
+    int location = getUniformLocation(name);
+    glUniform4f(location, x, y, z, w);
+  }
+
   private int getUniformLocation(String name) {
     // Memoization: Look up the location once and cache it for future frames.
     return uniforms.computeIfAbsent(name, n -> glGetUniformLocation(programId, n));

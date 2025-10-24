@@ -21,11 +21,6 @@ public class EnemyAISystem implements ISystem {
   private final float travelDistance = 3.0f; // How far from the center they patrol
 
   @Override
-  public void update(World world) {
-    applyPatrol(world);
-  }
-
-  @Override
   public void update(World world, float deltaTime) {
     applyPatrol(world);
   }
