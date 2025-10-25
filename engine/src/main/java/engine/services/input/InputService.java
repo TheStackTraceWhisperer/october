@@ -26,6 +26,11 @@ public class InputService implements IService {
   private final boolean[] keysLastFrame = new boolean[GLFW.GLFW_KEY_LAST + 1];
   private final boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
   private final boolean[] mouseButtonsLastFrame = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
+
+  // Track gamepad button states per port for "just pressed" detection
+  private final byte[][] gamepadButtons = new byte[MAX_GAMEPADS][GLFW.GLFW_GAMEPAD_BUTTON_LAST + 1];
+  private final byte[][] gamepadButtonsLastFrame = new byte[MAX_GAMEPADS][GLFW.GLFW_GAMEPAD_BUTTON_LAST + 1];
+
   @Getter
   private double mouseX;
   @Getter
@@ -92,6 +97,57 @@ public class InputService implements IService {
       return false;
     }
     return mouseButtons[button];
+  }
+
+  // Convenience helpers to avoid looping in callers
+  public boolean isAnyKeyPressed() {
+    for (int i = 0; i <= GLFW.GLFW_KEY_LAST; i++) {
+      if (keys[i]) return true;
+    }
+    return false;
+  }
+
+  public boolean isAnyMouseButtonPressed() {
+    for (int i = 0; i <= GLFW.GLFW_MOUSE_BUTTON_LAST; i++) {
+      if (mouseButtons[i]) return true;
+    }
+    return false;
+  }
+
+  public boolean isAnyGamepadButtonPressed() {
+    for (int port = 0; port < MAX_GAMEPADS; port++) {
+      if (!isGamepadConnected(port)) continue;
+      for (int b = 0; b <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; b++) {
+        if (gamepadButtons[port][b] == GLFW.GLFW_PRESS) { return true; }
+      }
+    }
+    return false;
+  }
+
+  public boolean isAnyKeyJustPressed() {
+    for (int i = 0; i <= GLFW.GLFW_KEY_LAST; i++) {
+      if (keys[i] && !keysLastFrame[i]) return true;
+    }
+    return false;
+  }
+
+  public boolean isAnyMouseButtonJustPressed() {
+    for (int i = 0; i <= GLFW.GLFW_MOUSE_BUTTON_LAST; i++) {
+      if (mouseButtons[i] && !mouseButtonsLastFrame[i]) return true;
+    }
+    return false;
+  }
+
+  public boolean isAnyGamepadButtonJustPressed() {
+    for (int port = 0; port < MAX_GAMEPADS; port++) {
+      if (!isGamepadConnected(port)) continue;
+      for (int b = 0; b <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; b++) {
+        if (gamepadButtons[port][b] == GLFW.GLFW_PRESS && gamepadButtonsLastFrame[port][b] == GLFW.GLFW_RELEASE) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public boolean isGamepadConnected(int port) {
@@ -213,5 +269,31 @@ public class InputService implements IService {
     // Copy current states to last frame states
     System.arraycopy(keys, 0, keysLastFrame, 0, keys.length);
     System.arraycopy(mouseButtons, 0, mouseButtonsLastFrame, 0, mouseButtons.length);
+    for (int port = 0; port < MAX_GAMEPADS; port++) {
+      System.arraycopy(gamepadButtons[port], 0, gamepadButtonsLastFrame[port], 0, gamepadButtons[port].length);
+    }
+
+    // Poll gamepad states into current arrays
+    for (int port = 0; port < MAX_GAMEPADS; port++) {
+      int joystickId = GLFW.GLFW_JOYSTICK_1 + port;
+      if (!GLFW.glfwJoystickPresent(joystickId) || !GLFW.glfwJoystickIsGamepad(joystickId)) {
+        // Mark all as released if not connected
+        Arrays.fill(gamepadButtons[port], (byte) GLFW.GLFW_RELEASE);
+        continue;
+
+      }
+      GLFWGamepadState state = GLFWGamepadState.malloc();
+      try {
+        if (GLFW.glfwGetGamepadState(joystickId, state)) {
+          for (int b = 0; b <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; b++) {
+            gamepadButtons[port][b] = state.buttons(b);
+          }
+        } else {
+          Arrays.fill(gamepadButtons[port], (byte) GLFW.GLFW_RELEASE);
+        }
+      } finally {
+        state.free();
+      }
+    }
   }
 }

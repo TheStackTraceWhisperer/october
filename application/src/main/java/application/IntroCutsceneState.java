@@ -4,30 +4,34 @@ import engine.game.GameAction;
 import engine.services.state.ApplicationState;
 import engine.services.state.ApplicationStateService;
 import engine.services.input.InputService;
+import engine.services.scene.SceneService;
 import engine.services.world.WorldService;
+import engine.services.world.ISystem;
 import engine.services.world.systems.TriggerSystem;
 import engine.services.world.systems.SequenceSystem;
 import engine.services.world.systems.MovementSystem;
 import engine.services.world.systems.AudioSystem;
 import engine.services.world.systems.MoveToTargetSystem;
 import engine.services.world.systems.FadeOverlaySystem;
+import engine.services.world.systems.RenderSystem;
+import engine.services.world.systems.UISystem;
 import engine.services.zone.ZoneService;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
+import application.ui.TimerOverlaySystem;
+import application.ui.TimerOverlayProvider;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The IntroCutsceneState demonstrates the integration of the Zone, Tilemap, and Sequence components.
- * 
- * According to the specification, the ApplicationState is responsible for:
- * - Enabling necessary services (ZoneService, RenderService, AudioService)
- * - Registering systems (TriggerSystem, SequenceSystem, MovementSystem)
- * - Loading the initial zone which kicks off the trigger and sequence processing
  */
 @Singleton
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class IntroCutsceneState implements ApplicationState {
 
   private static final float CUTSCENE_DURATION = 10.0f;
@@ -35,6 +39,7 @@ public class IntroCutsceneState implements ApplicationState {
   private final ApplicationStateService applicationStateService;
   private final InputService inputService;
   private final WorldService worldService;
+  private final SceneService sceneService;
   private final ZoneService zoneService;
   private final TriggerSystem triggerSystem;
   private final SequenceSystem sequenceSystem;
@@ -42,44 +47,35 @@ public class IntroCutsceneState implements ApplicationState {
   private final AudioSystem audioSystem;
   private final MoveToTargetSystem moveToTargetSystem;
   private final FadeOverlaySystem fadeOverlaySystem;
+  private final RenderSystem renderSystem;
+  private final UISystem uiSystem;
+  private final TimerOverlayProvider timerOverlayProvider;
 
+  private TimerOverlaySystem timerOverlaySystem;
+  private List<ISystem> systems;
   private float cutsceneTimer;
-
-  public IntroCutsceneState(
-      ApplicationStateService applicationStateService, 
-      InputService inputService,
-      WorldService worldService,
-      ZoneService zoneService,
-      TriggerSystem triggerSystem,
-      SequenceSystem sequenceSystem,
-      MovementSystem movementSystem,
-      AudioSystem audioSystem,
-      MoveToTargetSystem moveToTargetSystem,
-      FadeOverlaySystem fadeOverlaySystem) {
-    this.applicationStateService = applicationStateService;
-    this.inputService = inputService;
-    this.worldService = worldService;
-    this.zoneService = zoneService;
-    this.triggerSystem = triggerSystem;
-    this.sequenceSystem = sequenceSystem;
-    this.movementSystem = movementSystem;
-    this.audioSystem = audioSystem;
-    this.moveToTargetSystem = moveToTargetSystem;
-    this.fadeOverlaySystem = fadeOverlaySystem;
-  }
 
   @Override
   public void onEnter() {
     log.debug("Entering IntroCutsceneState");
     this.cutsceneTimer = 0.0f;
-    
-    // Register the necessary systems for cutscene processing
-    worldService.addSystem(triggerSystem);
-    worldService.addSystem(sequenceSystem);
-    worldService.addSystem(movementSystem);
-    worldService.addSystem(moveToTargetSystem);
-    worldService.addSystem(audioSystem);
-    worldService.addSystem(fadeOverlaySystem);
+
+    // Clear any existing entities (e.g., main menu UI) so the cutscene fully takes over
+    sceneService.load("/scenes/cutscene-blank.json");
+
+    // Prepare progress overlay and declare systems needed for this state
+    this.timerOverlaySystem = timerOverlayProvider.introCutscene(() -> cutsceneTimer / CUTSCENE_DURATION);
+    this.systems = List.of(
+      triggerSystem,
+      sequenceSystem,
+      movementSystem,
+      moveToTargetSystem,
+      audioSystem,
+      renderSystem,
+      uiSystem,
+      fadeOverlaySystem,
+      timerOverlaySystem
+    );
 
     // Load the intro cutscene zone (publishes ZoneLoadedEvent)
     zoneService.loadZone("intro_cutscene_zone");
@@ -90,16 +86,19 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
-    
-    // Clean up systems when exiting the state
-    worldService.clearSystems();
+    this.timerOverlaySystem = null;
+    this.systems = null;
+  }
+
+  @Override
+  public Collection<ISystem> systems() {
+    return systems != null ? systems : List.of();
   }
 
   @Override
   public void onUpdate(float deltaTime) {
     handleInput();
     update(deltaTime);
-    render();
   }
 
   public void update(float deltaTime) {
@@ -110,18 +109,9 @@ public class IntroCutsceneState implements ApplicationState {
   }
 
   public void handleInput() {
-    // Implement skip functionality - any input will skip the cutscene
-    for (GameAction action : GameAction.values()) {
-      if (inputService.isActionJustPressed(action)) {
-        applicationStateService.popState();
-        return;
-      }
+    // Skip on any keyboard key, mouse button, or gamepad button just-pressed; ignore cursor movement
+    if (inputService.isAnyKeyJustPressed() || inputService.isAnyMouseButtonJustPressed() || inputService.isAnyGamepadButtonJustPressed()) {
+      applicationStateService.popState();
     }
-  }
-
-  public void render() {
-    // Clear screen to black to indicate state change
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
   }
 }

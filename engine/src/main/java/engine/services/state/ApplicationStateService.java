@@ -1,6 +1,7 @@
 package engine.services.state;
 
 import engine.IService;
+import engine.services.world.WorldService;
 import io.micronaut.context.ApplicationContext;
 import jakarta.inject.Named;
 import jakarta.inject.Provider;
@@ -8,7 +9,9 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
 import java.util.Stack;
+import java.util.function.Supplier;
 
 /**
  * A stack-based Finite State Machine (FSM) for managing the game's high-level states.
@@ -18,6 +21,7 @@ import java.util.Stack;
 @RequiredArgsConstructor
 public class ApplicationStateService implements IService {
   private final ApplicationContext applicationContext;
+  private final WorldService worldService;
 
   @Named("initial")
   private final Provider<ApplicationState> initialStateProvider;
@@ -30,7 +34,7 @@ public class ApplicationStateService implements IService {
   }
 
   public void start() {
-    pushState(initialStateProvider.get());
+    pushState(initialStateProvider::get);
   }
 
   public void stop() {
@@ -68,22 +72,22 @@ public class ApplicationStateService implements IService {
     log.debug("Pushing state: {}", state.getClass().getSimpleName());
     if (!stateStack.isEmpty()) {
       // Suspend the current state before covering it
-      stateStack.peek().onSuspend();
+      ApplicationState current = stateStack.peek();
+      detachStateSystems(current);
+      current.onSuspend();
     }
     stateStack.push(state);
     state.onEnter();
+    attachStateSystems(state);
   }
 
-  /**
-   * Pushes a new state onto the stack, making it the active state.
-   * A new instance of the state class will be created by the application context.
-   *
-   * @param stateClass The class of the new state to activate.
-   */
-  public void pushState(Class<? extends ApplicationState> stateClass) {
-    log.debug("Creating and pushing state from class: {}", stateClass.getSimpleName());
-    ApplicationState newState = applicationContext.createBean(stateClass);
-    pushState(newState);
+  /** Push a state provided via Supplier; the service will call get(). */
+  public void pushState(Supplier<? extends ApplicationState> supplier) {
+    if (supplier == null) {
+      log.warn("pushState called with null supplier");
+      return;
+    }
+    pushState(supplier.get());
   }
 
   /**
@@ -93,10 +97,13 @@ public class ApplicationStateService implements IService {
     if (!stateStack.isEmpty()) {
       ApplicationState poppedState = stateStack.pop();
       log.debug("Popping state: {}", poppedState.getClass().getSimpleName());
+      detachStateSystems(poppedState);
       poppedState.onExit();
       if (!stateStack.isEmpty()) {
         // Resume the now-exposed state
-        stateStack.peek().onResume();
+        ApplicationState resume = stateStack.peek();
+        resume.onResume();
+        attachStateSystems(resume);
       }
     } else {
       log.warn("Attempted to pop state from an empty stack.");
@@ -111,22 +118,22 @@ public class ApplicationStateService implements IService {
   public void changeState(ApplicationState state) {
     log.debug("Changing state to: {}", state.getClass().getSimpleName());
     if (!stateStack.isEmpty()) {
-      stateStack.pop().onExit();
+      ApplicationState old = stateStack.pop();
+      detachStateSystems(old);
+      old.onExit();
     }
     stateStack.push(state);
     state.onEnter();
+    attachStateSystems(state);
   }
 
-  /**
-   * Pops the current state and pushes a new one in a single, atomic operation.
-   * A new instance of the state class will be created by the application context.
-   *
-   * @param stateClass The class of the new state to activate.
-   */
-  public void changeState(Class<? extends ApplicationState> stateClass) {
-    log.debug("Creating and changing state to class: {}", stateClass.getSimpleName());
-    ApplicationState newState = applicationContext.createBean(stateClass);
-    changeState(newState);
+  /** Change state using a Supplier; the service will call get(). */
+  public void changeState(Supplier<? extends ApplicationState> supplier) {
+    if (supplier == null) {
+      log.warn("changeState called with null supplier");
+      return;
+    }
+    changeState(supplier.get());
   }
 
   /**
@@ -136,5 +143,19 @@ public class ApplicationStateService implements IService {
    */
   public boolean isEmpty() {
     return stateStack.isEmpty();
+  }
+
+  private void attachStateSystems(ApplicationState state) {
+    if (state == null) return;
+    var systems = state.systems();
+    if (systems == null) return;
+    systems.stream().filter(Objects::nonNull).forEach(worldService::addSystem);
+  }
+
+  private void detachStateSystems(ApplicationState state) {
+    if (state == null) return;
+    var systems = state.systems();
+    if (systems == null) return;
+    systems.stream().filter(Objects::nonNull).forEach(worldService::removeSystem);
   }
 }

@@ -1,15 +1,19 @@
 package application;
 
-import engine.services.rendering.Camera;
+import engine.services.rendering.CameraService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.window.WindowService;
 import engine.services.world.WorldService;
+import engine.services.world.ISystem;
 import engine.services.world.systems.*;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector3f;
+
+import java.util.Collection;
+import java.util.List;
 
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -17,7 +21,7 @@ public class PlayingState implements ApplicationState {
 
   private final SceneService sceneService;
   private final WorldService worldService;
-  private final Camera camera;
+  private final CameraService cameraService;
   private final WindowService windowService;
 
   // Systems
@@ -33,33 +37,37 @@ public class PlayingState implements ApplicationState {
   private final UISystem uiSystem;
   private final FadeOverlaySystem fadeOverlaySystem;
 
+  private List<ISystem> systems;
+
   @Override
   public void onEnter() {
     // --- Set up the game world ---
     initializeSceneAndSystems();
 
     // --- Configure the main game camera ---
-    camera.setPosition(new Vector3f(0.0f, 0.0f, 5.0f));
-    camera.resize(windowService.getWidth(), windowService.getHeight());
-    windowService.setResizeListener(camera::resize);
+    cameraService.setPosition(new Vector3f(0.0f, 0.0f, 5.0f));
+    cameraService.resize(windowService.getWidth(), windowService.getHeight());
+    windowService.setResizeListener(cameraService::resize);
   }
 
   private void initializeSceneAndSystems() {
     // Load the scene file
     sceneService.load("/scenes/playing-scene.json");
 
-    // Register all game-related systems (ordering managed by SystemManager priority)
-    worldService.addSystem(playerInputSystem);
-    worldService.addSystem(movementSystem);
-    worldService.addSystem(enemyAISystem);
-    worldService.addSystem(collisionSystem);
-    worldService.addSystem(triggerSystem);
-    worldService.addSystem(sequenceSystem);
-    worldService.addSystem(moveToTargetSystem);
-    worldService.addSystem(audioSystem);
-    worldService.addSystem(renderSystem);
-    worldService.addSystem(uiSystem);
-    worldService.addSystem(fadeOverlaySystem);
+    // Register all game-related systems for this state via systems() contract
+    this.systems = List.of(
+      playerInputSystem,
+      movementSystem,
+      enemyAISystem,
+      collisionSystem,
+      triggerSystem,
+      sequenceSystem,
+      moveToTargetSystem,
+      audioSystem,
+      renderSystem,
+      uiSystem,
+      fadeOverlaySystem
+    );
   }
 
   @Override
@@ -69,6 +77,12 @@ public class PlayingState implements ApplicationState {
 
   @Override
   public void onExit() {
-    worldService.clearSystems();
+    // No manual clearing; ApplicationStateService will detach systems
+    this.systems = null;
+  }
+
+  @Override
+  public Collection<ISystem> systems() {
+    return systems != null ? systems : List.of();
   }
 }

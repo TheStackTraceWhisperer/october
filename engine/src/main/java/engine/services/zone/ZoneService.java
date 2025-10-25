@@ -71,15 +71,6 @@ public class ZoneService implements IService {
   }
 
   /**
-   * Gets the currently active zone.
-   * 
-   * @return The current zone, or null if no zone is loaded
-   */
-  public Zone getCurrentZone() {
-    return currentZone;
-  }
-
-  /**
    * Minimal Zone implementation used if no resource is available.
    */
   private static class BasicZone implements Zone {

@@ -1,6 +1,6 @@
 package engine.services.world.systems;
 
-import engine.services.rendering.Camera;
+import engine.services.rendering.CameraService;
 import engine.services.rendering.Mesh;
 import engine.services.rendering.RenderingService;
 import engine.services.rendering.Texture;
@@ -26,11 +26,11 @@ public class RenderSystem implements ISystem {
 
   private final RenderingService renderingService;
   private final AssetCacheService resourceManager;
-  private final Camera camera;
+  private final CameraService cameraService;
 
   @Override
   public void update(World world, float deltaTime) {
-    renderingService.beginScene(camera);
+    renderingService.beginScene(cameraService);
 
     // Get all entities that have the components required for sprite rendering
     var renderableEntities = world.getEntitiesWith(TransformComponent.class, SpriteComponent.class);

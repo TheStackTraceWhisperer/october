@@ -153,7 +153,7 @@ public class DeviceMappingService implements IService {
    * Ensures player 0 always has a binding (prefer gamepad 0, fallback to keyboard).
    */
   public void refreshAssignments() {
-    // Clear all bindings except explicit keyboard bindings
+    // Clear all bindings and rebuild based on current device state
     playerBindings.clear();
 
     // Auto-assign connected gamepads to players
