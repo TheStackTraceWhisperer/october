@@ -1,13 +1,15 @@
 package engine.services.state;
 
 import io.micronaut.context.ApplicationContext;
-import jakarta.inject.Provider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import engine.services.world.WorldService;
+
+import jakarta.inject.Provider;
 
 import static org.mockito.Mockito.*;
 
@@ -22,14 +24,16 @@ class ApplicationStateServiceTest {
     private ApplicationState initialState;
     @Mock
     private ApplicationState newState;
+    @Mock
+    private WorldService worldService;
 
     private ApplicationStateService stateService;
 
     @BeforeEach
     void setUp() {
-        // Leniently stub the provider to avoid issues in tests that don't call start()
+        // Leniently stub the supplier to avoid issues in tests that don't call start()
         lenient().when(initialStateProvider.get()).thenReturn(initialState);
-        stateService = new ApplicationStateService(applicationContext, initialStateProvider);
+        stateService = new ApplicationStateService(applicationContext, worldService, initialStateProvider);
     }
 
     @Test

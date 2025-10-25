@@ -16,7 +16,7 @@ Quick checklist
 - [x] Verify UI button event strings or switch to typed events
 - [x] Improve device hotplug assignment handling
 - [x] Provide real zone assets and hook them up
-- [x] Add Fade service/system and camera/UI integration as needed (overlay rendering)
+- [x] Add Fade service/system and cameraService/UI integration as needed (overlay rendering)
 - [x] Fix FADE_SCREEN IT by adjusting SequenceSystem completion semantics (see item 13)
 
 1) ZoneService + TriggerSystem/SequenceSystem
@@ -93,7 +93,7 @@ Quick checklist
 - Status: Done (minimal)
   - Added `zones/intro_cutscene_zone.json` and wired it up.
 
-12) Fade and camera integration during UI
+12) Fade and cameraService integration during UI
 - Status: Done (overlay)
   - Added `FadeOverlaySystem`, shader tinting via `uColor`, and a procedural white texture for tinting.
 
@@ -108,7 +108,7 @@ Quick checklist
 
 Prioritized next steps
 - High priority
-  - [ ] Implement `TilemapRenderSystem` that draws visible layers (bottom → top) with camera parallax as needed.
+  - [ ] Implement `TilemapRenderSystem` that draws visible layers (bottom → top) with cameraService parallax as needed.
   - [ ] Choose collision strategy for tilemap (generate static colliders at zone load vs. query checks in `CollisionSystem`).
   - [ ] Load actual tile images from tilesheet assets and slice them into individual tiles.
 - Medium priority

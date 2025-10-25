@@ -25,8 +25,8 @@ public class RenderingService implements IService {
     this.renderer.start();
   }
 
-  public void beginScene(Camera camera) {
-    renderer.beginScene(camera);
+  public void beginScene(CameraService cameraService) {
+    renderer.beginScene(cameraService);
   }
 
   public void submit(Mesh mesh, Texture texture, Matrix4f transform) {

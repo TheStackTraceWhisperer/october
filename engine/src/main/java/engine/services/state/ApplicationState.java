@@ -1,5 +1,10 @@
 package engine.services.state;
 
+import engine.services.world.ISystem;
+
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Represents a distinct state of the application, such as a main menu, playing, or paused.
  * Each state is responsible for its own logic and rendering.
@@ -35,4 +40,11 @@ public interface ApplicationState {
    * Called when the state is being covered by another pushed state. Default no-op.
    */
   default void onSuspend() { }
+
+  /**
+   * Declares the set of world systems this state needs when active. ApplicationStateService
+   * will add them after onEnter/onResume and remove them on suspend/exit.
+   * Default is an empty list.
+   */
+  default Collection<ISystem> systems() { return List.of(); }
 }
