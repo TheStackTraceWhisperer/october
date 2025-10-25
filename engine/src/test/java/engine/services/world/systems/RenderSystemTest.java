@@ -1,6 +1,6 @@
 package engine.services.world.systems;
 
-import engine.services.rendering.Camera;
+import engine.services.rendering.CameraService;
 import engine.services.rendering.Mesh;
 import engine.services.rendering.RenderingService;
 import engine.services.rendering.Texture;
@@ -26,7 +26,7 @@ class RenderSystemTest {
     @Mock
     private AssetCacheService resourceManager;
     @Mock
-    private Camera camera;
+    private CameraService cameraService;
     @Mock
     private World world;
 
@@ -42,7 +42,7 @@ class RenderSystemTest {
         renderSystem.update(world, 0.1f);
 
         // Assert
-        verify(renderingService).beginScene(camera);
+        verify(renderingService).beginScene(cameraService);
         verify(renderingService).endScene();
     }
 

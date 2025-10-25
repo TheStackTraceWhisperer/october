@@ -10,7 +10,7 @@ import org.joml.Vector3f;
  * This camera can operate in either a 2D (Orthographic) or 3D (Perspective) mode.
  */
 @Singleton
-public class Camera {
+public class CameraService {
 
   private enum ProjectionType {
     ORTHOGRAPHIC,
@@ -34,7 +34,7 @@ public class Camera {
   /**
    * Creates a new camera with a default 2D orthographic projection (16 units wide, 9 units tall).
    */
-  public Camera() {
+  public CameraService() {
     this.projectionMatrix = new Matrix4f();
     this.viewMatrix = new Matrix4f();
     this.position = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -49,7 +49,7 @@ public class Camera {
    * @param worldWidth  The visible width of the game world.
    * @param worldHeight The visible height of the game world.
    */
-  public Camera(float worldWidth, float worldHeight) {
+  public CameraService(float worldWidth, float worldHeight) {
     this(); // Call the default constructor to initialize fields
     setOrthographic(worldWidth, worldHeight);
   }

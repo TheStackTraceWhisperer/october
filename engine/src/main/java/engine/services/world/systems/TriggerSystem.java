@@ -10,7 +10,6 @@ import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Trigger;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.event.ApplicationEventListener;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -21,10 +20,8 @@ import java.util.Map;
  */
 @Slf4j
 @Prototype
-@RequiredArgsConstructor
 public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoadedEvent> {
   private final ZoneService zoneService;
-  private final World world;
 
   // Track which triggers have already fired (for non-repeatable triggers)
   private final Map<String, Boolean> firedTriggers = new HashMap<>();
@@ -32,6 +29,10 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
   // Track time since zone loaded (for ON_LOAD triggers with delay)
   private float timeSinceZoneLoaded = 0.0f;
   private boolean zoneJustLoaded = false;
+
+  public TriggerSystem(ZoneService zoneService) {
+    this.zoneService = zoneService;
+  }
 
   @Override
   public void onApplicationEvent(ZoneLoadedEvent event) {
@@ -64,7 +65,7 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
       // Check if the trigger's condition is met
       if (isTriggerConditionMet(trigger)) {
         log.debug("Trigger condition met: {}", trigger.getId());
-        executeTrigger(trigger);
+        executeTrigger(world, trigger);
         firedTriggers.put(trigger.getId(), true);
       }
     }
@@ -103,7 +104,7 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
   /**
    * Executes the events associated with a trigger.
    */
-  private void executeTrigger(Trigger trigger) {
+  private void executeTrigger(World world, Trigger trigger) {
     for (GameEvent event : trigger.getEvents()) {
       if ("START_SEQUENCE".equals(event.getType())) {
         String sequenceId = (String) event.getProperties().get("sequenceId");

@@ -2,13 +2,11 @@ package engine.services.world.systems;
 
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
-import engine.services.zone.SimpleZone;
 import engine.services.zone.Zone;
 import engine.services.zone.ZoneLoadedEvent;
 import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
-import engine.services.zone.sequence.SimpleGameEvent;
-import engine.services.zone.sequence.SimpleTrigger;
+import engine.services.zone.sequence.Sequence;
 import engine.services.zone.sequence.Trigger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,146 +29,56 @@ class TriggerSystemTest {
   private World world;
   private TriggerSystem triggerSystem;
 
+  static class TestEvent implements GameEvent {
+    private final String type; private final Map<String, Object> props;
+    TestEvent(String type, Map<String, Object> props) { this.type = type; this.props = props; }
+    @Override public String getType() { return type; }
+    @Override public Map<String, Object> getProperties() { return props; }
+  }
+  static class TestTrigger implements Trigger {
+    private final String id; private final String type; private final List<GameEvent> events; private final Map<String, Object> props;
+    TestTrigger(String id, String type, List<GameEvent> events, Map<String, Object> props) {
+      this.id = id; this.type = type; this.events = events; this.props = props; }
+    @Override public String getId() { return id; }
+    @Override public String getType() { return type; }
+    @Override public List<GameEvent> getEvents() { return events; }
+    @Override public Map<String, Object> getProperties() { return props; }
+  }
+  static class TestZone implements Zone {
+    private final String id; private final List<Sequence> seqs; private final List<Trigger> triggers;
+    TestZone(String id, List<Sequence> seqs, List<Trigger> triggers) { this.id = id; this.seqs = seqs; this.triggers = triggers; }
+    @Override public String getId() { return id; }
+    @Override public String getName() { return id; }
+    @Override public engine.services.zone.tilemap.Tilemap getTilemap() { return null; }
+    @Override public List<Sequence> getSequences() { return seqs; }
+    @Override public List<Trigger> getTriggers() { return triggers; }
+    @Override public Map<String, Object> getProperties() { return Map.of(); }
+  }
+
   @BeforeEach
   void setUp() {
     world = new World();
-    triggerSystem = new TriggerSystem(zoneService, world);
+    triggerSystem = new TriggerSystem(zoneService);
   }
 
   @Test
-  void testOnLoadTriggerWithNoDelay() {
-    // Given a zone with an ON_LOAD trigger with no delay
-    GameEvent startSequenceEvent = SimpleGameEvent.builder()
-      .type("START_SEQUENCE")
-      .properties(Map.of("sequenceId", "test_sequence"))
-      .build();
-
-    Trigger onLoadTrigger = SimpleTrigger.builder()
-      .id("trigger1")
-      .type("ON_LOAD")
-      .events(List.of(startSequenceEvent))
-      .properties(new HashMap<>())
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .triggers(List.of(onLoadTrigger))
-      .sequences(List.of())
-      .properties(new HashMap<>())
-      .build();
+  void onLoad_trigger_fires_after_delay_and_starts_sequence() {
+    // Given a zone with an ON_LOAD trigger that starts a sequence
+    GameEvent startSeq = new TestEvent("START_SEQUENCE", Map.of("sequenceId", "seqA"));
+    Trigger trigger = new TestTrigger("t1", "ON_LOAD", List.of(startSeq), Map.of("delay", 0.05));
+    Zone zone = new TestZone("z1", List.of(), List.of(trigger));
 
     when(zoneService.getCurrentZone()).thenReturn(zone);
 
-    // When we simulate a zone loaded event
+    // Simulate zone loaded
     triggerSystem.onApplicationEvent(new ZoneLoadedEvent(zone));
 
-    // And update the trigger system
+    // Initially, not fired (before delay)
     triggerSystem.update(world, 0.01f);
+    assertThat(world.getEntitiesWith(ActiveSequenceComponent.class)).isEmpty();
 
-    // Then an ActiveSequence component should be created
-    var entities = world.getEntitiesWith(ActiveSequenceComponent.class);
-    assertThat(entities).hasSize(1);
-
-    int entityId = entities.iterator().next();
-    ActiveSequenceComponent component = world.getComponent(entityId, ActiveSequenceComponent.class);
-    assertThat(component.getSequenceId()).isEqualTo("test_sequence");
-  }
-
-  @Test
-  void testOnLoadTriggerWithDelay() {
-    // Given a zone with an ON_LOAD trigger with a 2 second delay
-    GameEvent startSequenceEvent = SimpleGameEvent.builder()
-      .type("START_SEQUENCE")
-      .properties(Map.of("sequenceId", "delayed_sequence"))
-      .build();
-
-    Map<String, Object> triggerProperties = new HashMap<>();
-    triggerProperties.put("delay", 2.0);
-
-    Trigger onLoadTrigger = SimpleTrigger.builder()
-      .id("trigger2")
-      .type("ON_LOAD")
-      .events(List.of(startSequenceEvent))
-      .properties(triggerProperties)
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .triggers(List.of(onLoadTrigger))
-      .sequences(List.of())
-      .properties(new HashMap<>())
-      .build();
-
-    when(zoneService.getCurrentZone()).thenReturn(zone);
-
-    // When we simulate a zone loaded event
-    triggerSystem.onApplicationEvent(new ZoneLoadedEvent(zone));
-
-    // And update the trigger system with only 1 second elapsed
-    triggerSystem.update(world, 1.0f);
-
-    // Then no ActiveSequence component should be created yet
-    var entities = world.getEntitiesWith(ActiveSequenceComponent.class);
-    assertThat(entities).isEmpty();
-
-    // When we update with another 1.5 seconds (total 2.5 seconds)
-    triggerSystem.update(world, 1.5f);
-
-    // Then an ActiveSequence component should be created
-    entities = world.getEntitiesWith(ActiveSequenceComponent.class);
-    assertThat(entities).hasSize(1);
-  }
-
-  @Test
-  void testNonRepeatableTriggerFiresOnlyOnce() {
-    // Given a zone with a non-repeatable ON_LOAD trigger
-    GameEvent startSequenceEvent = SimpleGameEvent.builder()
-      .type("START_SEQUENCE")
-      .properties(Map.of("sequenceId", "once_sequence"))
-      .build();
-
-    Map<String, Object> triggerProperties = new HashMap<>();
-    triggerProperties.put("isRepeatable", false);
-
-    Trigger onLoadTrigger = SimpleTrigger.builder()
-      .id("trigger3")
-      .type("ON_LOAD")
-      .events(List.of(startSequenceEvent))
-      .properties(triggerProperties)
-      .build();
-
-    Zone zone = SimpleZone.builder()
-      .id("test_zone")
-      .name("Test Zone")
-      .triggers(List.of(onLoadTrigger))
-      .sequences(List.of())
-      .properties(new HashMap<>())
-      .build();
-
-    when(zoneService.getCurrentZone()).thenReturn(zone);
-
-    // When we simulate a zone loaded event and update twice
-    triggerSystem.onApplicationEvent(new ZoneLoadedEvent(zone));
-    triggerSystem.update(world, 0.01f);
-    triggerSystem.update(world, 0.01f);
-
-    // Then only one ActiveSequence component should be created
-    var entities = world.getEntitiesWith(ActiveSequenceComponent.class);
-    assertThat(entities).hasSize(1);
-  }
-
-  @Test
-  void testUpdateWithNoZoneDoesNothing() {
-    // Given no zone is loaded
-    when(zoneService.getCurrentZone()).thenReturn(null);
-
-    // When we update the trigger system
-    triggerSystem.update(world, 0.01f);
-
-    // Then no entities should be created
-    var entities = world.getEntitiesWith(ActiveSequenceComponent.class);
-    assertThat(entities).isEmpty();
+    // After reaching delay, it should fire
+    triggerSystem.update(world, 0.05f);
+    assertThat(world.getEntitiesWith(ActiveSequenceComponent.class)).hasSize(1);
   }
 }

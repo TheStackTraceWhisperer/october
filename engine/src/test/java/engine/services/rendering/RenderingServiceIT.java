@@ -5,7 +5,6 @@ import engine.services.resources.AssetCacheService;
 import engine.services.window.WindowService;
 import jakarta.inject.Inject;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.system.MemoryUtil;
 
@@ -23,7 +22,7 @@ public class RenderingServiceIT extends EngineTestHarness {
     @Inject
     private WindowService windowService;
     @Inject
-    private Camera camera;
+    private CameraService cameraService;
 
     @Test
     void testServiceDirectSubmission() {
@@ -36,7 +35,7 @@ public class RenderingServiceIT extends EngineTestHarness {
         Matrix4f transform = new Matrix4f().identity().scale(5.0f); // A large quad
 
         // When: We directly call the rendering service to submit and render the sprite
-        renderingService.beginScene(camera);
+        renderingService.beginScene(cameraService);
         renderingService.submit(quadMesh, redTexture, transform);
         renderingService.endScene(); // This is where the instanced drawing happens
 

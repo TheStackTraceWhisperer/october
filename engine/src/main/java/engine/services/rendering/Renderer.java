@@ -37,15 +37,15 @@ public class Renderer {
     this.quadMesh = new InstancedMesh(vertices, indices);
   }
 
-  public void beginScene(Camera camera) {
+  public void beginScene(CameraService cameraService) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     spriteBatch.clear();
 
     instancedShader.bind();
-    instancedShader.setUniform("uProjection", camera.getProjectionMatrix());
-    instancedShader.setUniform("uView", camera.getViewMatrix());
+    instancedShader.setUniform("uProjection", cameraService.getProjectionMatrix());
+    instancedShader.setUniform("uView", cameraService.getViewMatrix());
   }
 
   public void submit(Mesh mesh, Texture texture, Matrix4f transform) {

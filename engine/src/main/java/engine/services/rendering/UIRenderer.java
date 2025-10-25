@@ -23,11 +23,11 @@ public class UIRenderer {
 
   private final AssetCacheService assetCacheService;
   private final WindowService windowService;
-  private Camera uiCamera;
+  private CameraService uiCameraService;
   private Shader uiShader;
 
   public void start() {
-    this.uiCamera = new Camera();
+    this.uiCameraService = new CameraService();
     this.uiShader = assetCacheService.loadShader("ui", "/shaders/ui.vert", "/shaders/ui.frag");
     windowService.setResizeListener(this::resize);
     resize(windowService.getWidth(), windowService.getHeight());
@@ -37,7 +37,7 @@ public class UIRenderer {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     uiShader.bind();
-    uiShader.setUniform("uProjection", uiCamera.getProjectionMatrix());
+    uiShader.setUniform("uProjection", uiCameraService.getProjectionMatrix());
     uiShader.setUniform("uView", new Matrix4f().identity());
   }
 
@@ -67,8 +67,8 @@ public class UIRenderer {
   }
 
   public void resize(int width, int height) {
-    if (uiCamera != null) {
-      uiCamera.getProjectionMatrix().identity().ortho(0.0f, width, 0.0f, height, -1.0f, 1.0f);
+    if (uiCameraService != null) {
+      uiCameraService.getProjectionMatrix().identity().ortho(0.0f, width, 0.0f, height, -1.0f, 1.0f);
     }
   }
 
