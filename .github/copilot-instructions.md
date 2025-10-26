@@ -16,8 +16,9 @@
     * Constants: `SCREAMING_SNAKE_CASE` (e.g., `MAX_RETRIES`).
     * Packages: `lowercase.dotted.notation` (e.g., `engine.services.rendering`).
 3.  **Immutability:** Favor immutable objects where possible. Use:
-    * Java records for simple data carriers (e.g., `record EnemyComponent() implements IComponent`)
-    * Lombok's `@Getter` with private final fields for components with state
+    * Java records for simple data carriers with fields (e.g., `record HealthComponent(int maxHealth, int currentHealth) implements IComponent`)
+    * Empty records for marker components (e.g., `record EnemyComponent() implements IComponent`)
+    * Lombok's `@Getter` with private final fields for components requiring additional behavior
     * Immutable collections (e.g., `List.copyOf()`, `Collections.emptyList()`) when returning collections from interfaces
 4.  **Error Handling:** Use specific exceptions for recoverable errors. Use unchecked exceptions (`IllegalArgumentException`, `NullPointerException`) for programming errors. Always catch and handle exceptions gracefully; avoid catching `Exception` directly unless re-throwing or logging with extreme care.
 5.  **Logging:** Use SLF4J with Logback. Use Lombok's `@Slf4j` annotation for logger instances. Log at appropriate levels (`DEBUG`, `INFO`, `WARN`, `ERROR`). Never log sensitive information.
@@ -43,7 +44,7 @@
     * **Integration Tests:** Name test classes `ClassNameIT.java` (e.g., `ZoneServiceIT`, `PlayerMovementIT`)
     * **Test Methods:** Use descriptive names with underscores for readability (e.g., `constructor_shouldSetMaxHealthAndCurrentHealth`, `takeDamage_shouldReduceCurrentHealth`)
 * **Test Location:** Tests for `src/main/java/package/ClassName.java` must be located at `src/test/java/package/ClassNameTest.java` or `ClassNameIT.java`.
-* **Test Isolation:** Unit tests must be independent and not rely on external services (GLFW windows, OpenGL context, network calls). Use mocks or skip tests that require graphical context.
+* **Test Isolation:** Unit tests must be independent and not rely on external services (databases, file system, network calls, GLFW windows, OpenGL context). Use mocks or skip tests that require external resources.
 * **Test Data:** Use dedicated test data that is representative but isolated from production data. Avoid hardcoding IDs or external state.
 
 ## Documentation Requirements
