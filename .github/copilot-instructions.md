@@ -9,55 +9,71 @@
 
 ## General Java Standards
 
-1.  **Code Formatting:** Adhere strictly to Google Java Format or the project's `.editorconfig` if present. Ensure proper indentation, bracing, and line length.
+1.  **Code Formatting:** Follow standard Java conventions with consistent indentation, bracing, and reasonable line length. The project does not currently enforce a specific formatter (like Google Java Format or Spotless), so maintain consistency with existing code style.
 2.  **Naming Conventions:**
     * Classes/Interfaces: `PascalCase` (e.g., `UserService`, `OrderRepository`).
     * Methods/Variables: `camelCase` (e.g., `calculateTotal`, `userId`).
     * Constants: `SCREAMING_SNAKE_CASE` (e.g., `MAX_RETRIES`).
-    * Packages: `lowercase.dotted.notation` (e.g., `com.example.app.service`).
-3.  **Immutability:** Favor immutable objects where possible, especially for data transfer objects (DTOs) and configuration.
-4.  **Error Handling:** Use specific checked exceptions for recoverable errors and unchecked exceptions for programming errors. Always catch and handle exceptions gracefully; avoid catching `Exception` directly unless re-throwing or logging with extreme care.
-5.  **Logging:** Use SLF4J and a chosen logging implementation (e.g., Logback, Log4j2). Log at appropriate levels (`DEBUG`, `INFO`, `WARN`, `ERROR`). Never log sensitive information.
-6.  **Dependency Injection:** Utilize a dependency injection framework (e.g., Spring, Guice) for managing component lifecycles and dependencies. Avoid direct instantiation of services within other services.
+    * Packages: `lowercase.dotted.notation` (e.g., `engine.services.rendering`).
+3.  **Immutability:** Favor immutable objects where possible. Use:
+    * Java records for simple data carriers (e.g., `record EnemyComponent() implements IComponent`)
+    * Lombok's `@Getter` with private final fields for components with state
+    * Immutable collections (e.g., `List.copyOf()`, `Collections.emptyList()`) when returning collections from interfaces
+4.  **Error Handling:** Use specific exceptions for recoverable errors. Use unchecked exceptions (`IllegalArgumentException`, `NullPointerException`) for programming errors. Always catch and handle exceptions gracefully; avoid catching `Exception` directly unless re-throwing or logging with extreme care.
+5.  **Logging:** Use SLF4J with Logback. Use Lombok's `@Slf4j` annotation for logger instances. Log at appropriate levels (`DEBUG`, `INFO`, `WARN`, `ERROR`). Never log sensitive information.
+6.  **Dependency Injection:** This project uses **Micronaut** for dependency injection. Use:
+    * `@Singleton` for service classes
+    * `@RequiredArgsConstructor` (Lombok) for constructor injection
+    * `jakarta.inject.Singleton` and related annotations
+    * Avoid direct instantiation of services; let Micronaut manage the lifecycle
 
 ## Testing Requirements
 
 * **Mandatory Test Coverage:**
-    * All new public methods, services, and API endpoints MUST have corresponding **unit tests**.
-    * Any interaction between major components (e.g., service layer to repository, controller to service) MUST have **integration tests**.
-    * New features or significant bug fixes should include **acceptance/end-to-end tests** where applicable (e.g., using Spring Boot's test capabilities, WireMock for external services).
-* **Test Frameworks:** Use JUnit 5 for unit and integration tests. Use Mockito for mocking dependencies. AssertJ is preferred for assertions over Hamcrest.
-* **Test Location:** Tests for `src/main/java/com/example/package/ClassName.java` must be located at `src/test/java/com/example/package/ClassNameTest.java` or `ClassNameIntegrationTest.java`.
-* **Test Isolation:** Unit tests must be independent and not rely on external services (databases, network calls). Use mocks or in-memory equivalents.
-* **Clear Test Names:** Test method names should clearly describe the behavior being tested (e.g., `shouldReturnUserWhenIdIsValid`, `throwsNotFoundExceptionWhenUserDoesNotExist`).
+    * All new public methods, services, and major components MUST have corresponding **unit tests**.
+    * Any interaction between major components (e.g., service-to-service, system integration) MUST have **integration tests**.
+    * New features or significant bug fixes should include integration tests where applicable.
+* **Test Frameworks:** 
+    * Use JUnit 5 for all tests (unit and integration)
+    * Use Mockito for mocking dependencies
+    * Use both JUnit assertions (`assertEquals`, `assertTrue`, `assertThrows`, etc.) and AssertJ (`assertThat`) based on readability and test complexity
+    * Use `@MicronautTest` for integration tests that require dependency injection
+* **Test Naming:**
+    * **Unit Tests:** Name test classes `ClassNameTest.java` (e.g., `CameraTest`, `HealthComponentTest`)
+    * **Integration Tests:** Name test classes `ClassNameIT.java` (e.g., `ZoneServiceIT`, `PlayerMovementIT`)
+    * **Test Methods:** Use descriptive names with underscores for readability (e.g., `constructor_shouldSetMaxHealthAndCurrentHealth`, `takeDamage_shouldReduceCurrentHealth`)
+* **Test Location:** Tests for `src/main/java/package/ClassName.java` must be located at `src/test/java/package/ClassNameTest.java` or `ClassNameIT.java`.
+* **Test Isolation:** Unit tests must be independent and not rely on external services (GLFW windows, OpenGL context, network calls). Use mocks or skip tests that require graphical context.
 * **Test Data:** Use dedicated test data that is representative but isolated from production data. Avoid hardcoding IDs or external state.
 
 ## Documentation Requirements
 
 * **Javadoc:**
-    * All public classes, interfaces, enums, constructors, and methods MUST have comprehensive Javadoc comments.
-    * Explain the purpose, parameters (`@param`), return value (`@return`), and potential exceptions (`@throws`).
+    * All public interfaces, classes, enums, and their public methods SHOULD have Javadoc comments explaining their purpose.
+    * Simple marker interfaces (e.g., `IComponent`) and simple records without fields (e.g., `record EnemyComponent()`) may omit class-level Javadoc if self-explanatory.
+    * For non-trivial public methods, include:
+        * Purpose description
+        * Parameters (`@param`) with constraints/expectations
+        * Return value (`@return`) with description
+        * Exceptions (`@throws`) if applicable
     * **Example:**
         ```java
         /**
-         * Fetches a user by their unique identifier.
-         *
-         * @param userId The unique ID of the user to fetch. Must not be null.
-         * @return The User object if found.
-         * @throws UserNotFoundException If no user with the given ID exists.
-         * @throws IllegalArgumentException If the userId is null or invalid.
+         * Loads a zone from the given zone ID by attempting to read a JSON file from classpath.
+         * On success, sets it as current and publishes ZoneLoadedEvent.
+         * If the resource is not found or fails to parse, falls back to a minimal BasicZone.
+         * 
+         * @param zoneId The unique identifier for the zone to load
          */
-        public User getUserById(String userId) throws UserNotFoundException { ... }
+        public void loadZone(String zoneId) { ... }
         ```
-* **External Library References:**
-    * When utilizing a complex or non-standard function/API from an external library, include a comment directly above the code block with a link to its official documentation.
-    * **Example:**
-        ```java
-        // Using Apache Commons Collections4: ListUtils.union()
-        // See: [https://commons.apache.org/proper/commons-collections/javadocs/api-4.4/org/apache/commons/collections4/ListUtils.html#union-java.util.List-java.util.List-](https://commons.apache.org/proper/commons-collections/javadocs/api-4.4/org/apache/commons/collections4/ListUtils.html#union-java.util.List-java.util.List-)
-        List<String> combinedList = ListUtils.union(listA, listB);
-        ```
-* **Internal API/Service Usage:** For calls to complex internal APIs or services, add a brief inline comment explaining the purpose of the call, especially if it's not immediately obvious from the method name.
+* **Inline Comments:**
+    * Use inline comments sparingly for complex logic that isn't self-evident from the code
+    * Prefer self-documenting code (clear variable/method names) over excessive comments
+    * When using external libraries with complex APIs, a brief comment or link to documentation may be helpful but is not mandatory
+* **Code Clarity:**
+    * Write code that is self-documenting through clear naming and structure
+    * Comments should explain "why" not "what" when the "what" is already clear from the code
 
 ## Handling Ambiguity and Missing Information (`NEEDS_INFO` Protocol)
 
@@ -75,9 +91,13 @@ If you encounter a situation where crucial information (documentation, specific 
 
 ## Build and Test Execution
 
-* **Maven/Gradle:** Assume Maven or Gradle as the build tool.
-* **Build Command:** Use `mvn clean install` (Maven) or `./gradlew build` (Gradle) for a full build.
-* **Test Command:** Use `mvn test` (Maven) or `./gradlew test` (Gradle) for running tests.
-* **Linter/Formatter:** If `maven-checkstyle-plugin` or `spotless-maven-plugin` (or their Gradle equivalents) are configured, ensure code adheres to their rules.
+* **Build Tool:** This project uses Maven.
+* **Build Command:** Use `mvn clean install` for a full build including tests.
+* **Compile Command:** Use `mvn clean compile` for compilation without tests.
+* **Unit Test Command:** Use `mvn test` for running unit tests only.
+* **Integration Test Command:** Use `mvn verify` for running both unit and integration tests.
+* **Code Coverage:** JaCoCo is configured to generate coverage reports. Reports are available in `target/site/jacoco/` after running `mvn verify`.
+* **Linter/Formatter:** The project does not currently use checkstyle or spotless plugins. Follow the existing code style and conventions in the codebase.
+* **Java Version:** Java 21 is required for compilation and execution.
 
 ---
