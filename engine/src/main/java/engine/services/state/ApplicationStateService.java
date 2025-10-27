@@ -9,7 +9,6 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Supplier;
 
@@ -149,13 +148,21 @@ public class ApplicationStateService implements IService {
     if (state == null) return;
     var systems = state.systems();
     if (systems == null) return;
-    systems.stream().filter(Objects::nonNull).forEach(worldService::addSystem);
+    for (Class<? extends engine.services.world.ISystem> cls : systems) {
+      if (cls != null) {
+        worldService.enableSystem(cls);
+      }
+    }
   }
 
   private void detachStateSystems(ApplicationState state) {
     if (state == null) return;
     var systems = state.systems();
     if (systems == null) return;
-    systems.stream().filter(Objects::nonNull).forEach(worldService::removeSystem);
+    for (Class<? extends engine.services.world.ISystem> cls : systems) {
+      if (cls != null) {
+        worldService.disableSystem(cls);
+      }
+    }
   }
 }

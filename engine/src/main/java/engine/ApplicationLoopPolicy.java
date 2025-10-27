@@ -7,30 +7,22 @@ import java.time.Duration;
 public interface ApplicationLoopPolicy {
   boolean continueRunning(int frames, long windowHandle);
 
-  /**
-   * Continue until the window signals it should close.
-   */
+  /** Continue until the window requests close. */
   static ApplicationLoopPolicy standard() {
     return (f, h) -> !GLFW.glfwWindowShouldClose(h);
   }
 
-  /**
-   * Limit by frame count (0 => no frames). Negative values yield zero frames (f < negative is false initially).
-   */
+  /** Limit by frame count (0 => no frames). */
   static ApplicationLoopPolicy frames(int maxFrames) {
     return (f, h) -> f < maxFrames;
   }
 
-  /**
-   * Alias for frames(0).
-   */
+  /** Alias for frames(0). */
   static ApplicationLoopPolicy skip() {
     return frames(0);
   }
 
-  /**
-   * Time limited & window-open requirement. Null duration => NPE. Negative treated naturally via toNanos (still compares).
-   */
+  /** Time limited and window-open requirement. */
   static ApplicationLoopPolicy timed(Duration duration) {
     final long limitNanos = duration.toNanos();
     final long start = System.nanoTime();
@@ -40,9 +32,7 @@ public interface ApplicationLoopPolicy {
     return (f, h) -> !GLFW.glfwWindowShouldClose(h) && (System.nanoTime() - start) < limitNanos;
   }
 
-  /**
-   * Logical AND. Empty => true (vacuous truth).
-   */
+  /** Logical AND; empty => true. */
   static ApplicationLoopPolicy all(ApplicationLoopPolicy... policies) {
     return (f, h) -> {
       for (ApplicationLoopPolicy p : policies)
@@ -53,9 +43,7 @@ public interface ApplicationLoopPolicy {
     };
   }
 
-  /**
-   * Logical OR. Empty => false.
-   */
+  /** Logical OR; empty => false. */
   static ApplicationLoopPolicy any(ApplicationLoopPolicy... policies) {
     return (f, h) -> {
       for (ApplicationLoopPolicy p : policies)

@@ -3,10 +3,7 @@ package engine.game;
 
 import engine.services.world.components.ColliderComponent;
 
-/**
- * Defines the specific types of colliders for this particular game.
- * This enum implements the engine's generic ColliderType interface.
- */
+/** Game-specific collider categories. */
 public enum GameColliderType implements ColliderComponent.ColliderType {
     PLAYER,
     WALL,

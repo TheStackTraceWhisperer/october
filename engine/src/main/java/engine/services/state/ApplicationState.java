@@ -12,8 +12,8 @@ import java.util.List;
 public interface ApplicationState {
   /**
    * Called once when the state becomes the active state.
-   * Use this to set up systems, load scene data, and initialize the state.
-   *
+   * Use this to initialize state-specific data. System enabling is handled by ApplicationStateService
+   * and WorldService, based on the classes returned by systems().
    */
   void onEnter();
 
@@ -42,9 +42,9 @@ public interface ApplicationState {
   default void onSuspend() { }
 
   /**
-   * Declares the set of world systems this state needs when active. ApplicationStateService
-   * will add them after onEnter/onResume and remove them on suspend/exit.
+   * Declares the set of world system classes this state needs when active. ApplicationStateService
+   * will request WorldService to enable them before calling onEnter/onResume, and disable them on suspend/exit.
    * Default is an empty list.
    */
-  default Collection<ISystem> systems() { return List.of(); }
+  default Collection<Class<? extends ISystem>> systems() { return List.of(); }
 }
