@@ -1,6 +1,5 @@
 package application;
 
-import engine.game.GameAction;
 import engine.services.state.ApplicationState;
 import engine.services.state.ApplicationStateService;
 import engine.services.input.InputService;
@@ -26,9 +25,7 @@ import application.ui.TimerOverlayProvider;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * The IntroCutsceneState demonstrates the integration of the Zone, Tilemap, and Sequence components.
- */
+/** Intro cutscene that ties together zone, tilemap, and sequences. */
 @Singleton
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -41,18 +38,8 @@ public class IntroCutsceneState implements ApplicationState {
   private final WorldService worldService;
   private final SceneService sceneService;
   private final ZoneService zoneService;
-  private final TriggerSystem triggerSystem;
-  private final SequenceSystem sequenceSystem;
-  private final MovementSystem movementSystem;
-  private final AudioSystem audioSystem;
-  private final MoveToTargetSystem moveToTargetSystem;
-  private final FadeOverlaySystem fadeOverlaySystem;
-  private final RenderSystem renderSystem;
-  private final UISystem uiSystem;
   private final TimerOverlayProvider timerOverlayProvider;
 
-  private TimerOverlaySystem timerOverlaySystem;
-  private List<ISystem> systems;
   private float cutsceneTimer;
 
   @Override
@@ -63,19 +50,9 @@ public class IntroCutsceneState implements ApplicationState {
     // Clear any existing entities (e.g., main menu UI) so the cutscene fully takes over
     sceneService.load("/scenes/cutscene-blank.json");
 
-    // Prepare progress overlay and declare systems needed for this state
-    this.timerOverlaySystem = timerOverlayProvider.introCutscene(() -> cutsceneTimer / CUTSCENE_DURATION);
-    this.systems = List.of(
-      triggerSystem,
-      sequenceSystem,
-      movementSystem,
-      moveToTargetSystem,
-      audioSystem,
-      renderSystem,
-      uiSystem,
-      fadeOverlaySystem,
-      timerOverlaySystem
-    );
+    // Configure progress overlay; WorldService will enable the system using classes
+    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
+    timerOverlayProvider.configureIntroCutscene(overlay, () -> cutsceneTimer / CUTSCENE_DURATION);
 
     // Load the intro cutscene zone (publishes ZoneLoadedEvent)
     zoneService.loadZone("intro_cutscene_zone");
@@ -86,13 +63,21 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
-    this.timerOverlaySystem = null;
-    this.systems = null;
   }
 
   @Override
-  public Collection<ISystem> systems() {
-    return systems != null ? systems : List.of();
+  public Collection<Class<? extends ISystem>> systems() {
+    return List.of(
+      TriggerSystem.class,
+      SequenceSystem.class,
+      MovementSystem.class,
+      MoveToTargetSystem.class,
+      AudioSystem.class,
+      RenderSystem.class,
+      UISystem.class,
+      FadeOverlaySystem.class,
+      TimerOverlaySystem.class
+    );
   }
 
   @Override

@@ -29,14 +29,10 @@ public class MainMenuState implements ApplicationState {
   private final SceneService sceneService;
   private final WorldService worldService;
   private final ApplicationStateService applicationStateService;
-  private final UISystem uiSystem;
   private final InputService inputService;
   private final BeanProvider<IntroCutsceneState> introCutsceneStateProvider;
   private final BeanProvider<PlayingState> playingStateProvider;
   private final TimerOverlayProvider timerOverlayProvider;
-
-  private TimerOverlaySystem timerOverlaySystem;
-  private List<ISystem> systems;
 
   private float idleTimer;
 
@@ -45,9 +41,9 @@ public class MainMenuState implements ApplicationState {
     resetIdleTimer();
     sceneService.load("/scenes/main_menu.json");
 
-    // Build timer overlay via provider and capture systems list for this state
-    this.timerOverlaySystem = timerOverlayProvider.mainMenu(() -> idleTimer / IDLE_TIMEOUT);
-    this.systems = List.of(uiSystem, timerOverlaySystem);
+    // Configure overlay system instance now that WorldService has enabled it
+    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
+    timerOverlayProvider.configureMainMenu(overlay, () -> idleTimer / IDLE_TIMEOUT);
   }
 
   @Override
@@ -55,23 +51,25 @@ public class MainMenuState implements ApplicationState {
     // Reset idle tracking and reload the main menu scene (cutscene cleared entities)
     resetIdleTimer();
     sceneService.load("/scenes/main_menu.json");
+
+    // Reconfigure overlay in case it was recreated
+    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
+    timerOverlayProvider.configureMainMenu(overlay, () -> idleTimer / IDLE_TIMEOUT);
   }
 
   @Override
   public void onSuspend() {
-    // No manual system management needed; ApplicationStateService handles attach/detach.
+    // No manual system management needed; ApplicationStateService handles enable/disable.
   }
 
   @Override
   public void onExit() {
-    // No manual system clearing; managed by ApplicationStateService
-    this.timerOverlaySystem = null;
-    this.systems = null;
+    // No manual system clearing; managed by WorldService
   }
 
   @Override
-  public Collection<ISystem> systems() {
-    return systems != null ? systems : List.of();
+  public Collection<Class<? extends ISystem>> systems() {
+    return List.of(UISystem.class, TimerOverlaySystem.class);
   }
 
   @EventListener
@@ -84,7 +82,7 @@ public class MainMenuState implements ApplicationState {
   @Override
   public void onUpdate(float deltaTime) {
     handleInput();
-    
+
     this.idleTimer += deltaTime;
     if (this.idleTimer >= IDLE_TIMEOUT) {
       applicationStateService.pushState(introCutsceneStateProvider::get);

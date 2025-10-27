@@ -38,9 +38,7 @@ public class GlfwContextService implements IService {
     this.initialized = true;
   }
 
-  /**
-   * Terminates GLFW and frees the error callback. Safe to call multiple times.
-   */
+  /** Terminate GLFW and free the error callback; idempotent. */
   public void stop() {
     if (!initialized) {
       return;

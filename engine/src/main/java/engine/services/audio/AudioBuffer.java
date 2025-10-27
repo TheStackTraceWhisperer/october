@@ -16,25 +16,13 @@ import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 
-/**
- * Represents an OpenAL audio buffer that holds audio data.
- * This is analogous to how a Texture holds image data for rendering.
- * <p>
- * Audio buffers are immutable once created and can be shared among multiple AudioSources.
- * This class manages the native OpenAL buffer lifecycle and provides automatic cleanup.
- */
+/** Immutable OpenAL audio buffer. */
 public final class AudioBuffer implements AutoCloseable {
 
   private final int bufferId;
   private boolean closed = false;
 
-  /**
-   * Creates an AudioBuffer from raw PCM audio data.
-   *
-   * @param data       The audio data as 16-bit signed integers
-   * @param channels   Number of audio channels (1 for mono, 2 for stereo)
-   * @param sampleRate Sample rate in Hz (e.g., 44100)
-   */
+  /** Create from PCM16 data. */
   public AudioBuffer(ShortBuffer data, int channels, int sampleRate) {
     this.bufferId = alGenBuffers();
 
@@ -46,21 +34,14 @@ public final class AudioBuffer implements AutoCloseable {
     }
   }
 
-  /**
-   * Creates an AudioBuffer by loading an OGG Vorbis file from the classpath.
-   *
-   * @param resourcePath The classpath path to the OGG file
-   * @return A new AudioBuffer containing the loaded audio data
-   */
+  /** Load from a classpath OGG file. */
   public static AudioBuffer loadFromOggFile(String resourcePath) {
     try (MemoryStack stack = MemoryStack.stackPush()) {
-      // Load the OGG file into a ByteBuffer
       ByteBuffer oggData = loadResourceAsBuffer(resourcePath);
       if (oggData == null) {
         throw new RuntimeException("Failed to load audio file: " + resourcePath);
       }
 
-      // Decode the OGG file
       IntBuffer channelsBuffer = stack.mallocInt(1);
       IntBuffer sampleRateBuffer = stack.mallocInt(1);
 
@@ -76,12 +57,8 @@ public final class AudioBuffer implements AutoCloseable {
     }
   }
 
-  /**
-   * Helper method to load a resource file into a ByteBuffer.
-   * This follows the same pattern used elsewhere in the engine for asset loading.
-   */
+  /** Load a classpath resource into a ByteBuffer. */
   private static ByteBuffer loadResourceAsBuffer(String resourcePath) {
-    // Ensure the resource path starts with / for classpath lookup
     String correctedPath = resourcePath.startsWith("/") ? resourcePath : "/" + resourcePath;
 
     try (var inputStream = AudioBuffer.class.getResourceAsStream(correctedPath)) {
@@ -99,12 +76,7 @@ public final class AudioBuffer implements AutoCloseable {
     }
   }
 
-  /**
-   * Gets the OpenAL buffer ID for this audio buffer.
-   * This is used internally by AudioSource to bind the buffer.
-   *
-   * @return The OpenAL buffer ID
-   */
+  /** OpenAL buffer id. */
   public int getBufferId() {
     if (closed) {
       throw new IllegalStateException("AudioBuffer has been closed");
@@ -120,11 +92,7 @@ public final class AudioBuffer implements AutoCloseable {
     }
   }
 
-  /**
-   * Checks if this buffer has been closed.
-   *
-   * @return true if the buffer has been closed, false otherwise
-   */
+  /** true if closed. */
   public boolean isClosed() {
     return closed;
   }
