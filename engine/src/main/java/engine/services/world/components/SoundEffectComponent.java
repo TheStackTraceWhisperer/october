@@ -1,8 +1,10 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import lombok.RequiredArgsConstructor;
 
+@Introspected
 @RequiredArgsConstructor
 public class SoundEffectComponent implements IComponent {
 

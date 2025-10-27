@@ -1,6 +1,7 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import org.joml.Vector4f;
 
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Objects;
  * It holds a handle to the texture to be rendered and an optional color tint.
  * This is a record, which is an immutable data carrier.
  */
+@Introspected
 public record SpriteComponent(String textureHandle, Vector4f color) implements IComponent {
 
   /**

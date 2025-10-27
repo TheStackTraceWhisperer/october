@@ -1,11 +1,13 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import lombok.RequiredArgsConstructor;
 
 /**
  * A component for background music with advanced playback control.
  */
+@Introspected
 @RequiredArgsConstructor
 public class MusicComponent implements IComponent {
 
