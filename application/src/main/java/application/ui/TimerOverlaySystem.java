@@ -1,4 +1,4 @@
- package application.ui;
+package application.ui;
 
 import engine.services.rendering.UIRendererService;
 import engine.services.window.WindowService;
@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.function.Supplier;
 
-/**
- * Renders a simple progress bar overlay in a screen corner using the 1x1 white texture tinted with colors.
- */
+/** Render a simple progress bar overlay in a screen corner. */
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class TimerOverlaySystem implements ISystem {
@@ -30,13 +28,13 @@ public class TimerOverlaySystem implements ISystem {
   private float barWidth = 200f;
   private float barHeight = 10f;
   private float margin = 16f;
-  private float barPadding = 2f; // inner padding for fill vs background
+  private static final float BAR_PADDING = 2f; // inner padding for fill vs background
 
   // Colors RGBA
   private float bgR = 0f, bgG = 0f, bgB = 0f, bgA = 0.35f;
   private float fillR = 0.2f, fillG = 0.7f, fillB = 1f, fillA = 0.95f;
   private float borderR = 1f, borderG = 1f, borderB = 1f, borderA = 0.6f;
-  private float borderThickness = 1f;
+  private static final float BORDER_THICKNESS = 1f;
 
   public void setProgressSupplier(Supplier<Float> progressSupplier) {
     this.progressSupplier = progressSupplier != null ? progressSupplier : () -> 0f;
@@ -78,11 +76,12 @@ public class TimerOverlaySystem implements ISystem {
 
   @Override
   public void update(World world, float deltaTime) {
-    float p = 0f;
+    float p;
+    Supplier<Float> ps = this.progressSupplier;
     try {
-      Float v = progressSupplier != null ? progressSupplier.get() : 0f;
-      p = v != null ? v : 0f;
-    } catch (Exception ignored) { }
+      Float v = (ps != null) ? ps.get() : 0f;
+      p = (v != null) ? v : 0f;
+    } catch (Exception ignored) { p = 0f; }
     if (Float.isNaN(p) || Float.isInfinite(p)) p = 0f;
     if (p < 0f) p = 0f; if (p > 1f) p = 1f;
 
@@ -114,16 +113,16 @@ public class TimerOverlaySystem implements ISystem {
     bg.screenBounds[3] = maxY;
 
     // Border rectangles (top/bottom/left/right)
-    UITransformComponent top = rect(minX, maxY - borderThickness, maxX, maxY);
-    UITransformComponent bottom = rect(minX, minY, maxX, minY + borderThickness);
-    UITransformComponent left = rect(minX, minY, minX + borderThickness, maxY);
-    UITransformComponent right = rect(maxX - borderThickness, minY, maxX, maxY);
+    UITransformComponent top = rect(minX, maxY - BORDER_THICKNESS, maxX, maxY);
+    UITransformComponent bottom = rect(minX, minY, maxX, minY + BORDER_THICKNESS);
+    UITransformComponent left = rect(minX, minY, minX + BORDER_THICKNESS, maxY);
+    UITransformComponent right = rect(maxX - BORDER_THICKNESS, minY, maxX, maxY);
 
     // Fill rectangle (inside padding)
-    float innerMinX = minX + barPadding;
-    float innerMinY = minY + barPadding;
-    float innerMaxX = maxX - barPadding;
-    float innerMaxY = maxY - barPadding;
+    float innerMinX = minX + BAR_PADDING;
+    float innerMinY = minY + BAR_PADDING;
+    float innerMaxX = maxX - BAR_PADDING;
+    float innerMaxY = maxY - BAR_PADDING;
 
     float innerWidth = innerMaxX - innerMinX;
     float fillMaxX = innerMinX + innerWidth * p;

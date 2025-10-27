@@ -2,22 +2,19 @@ package engine;
 
 public interface IService {
 
-  // Called on start
-  default void start() {};
+  /** Lifecycle start hook. */
+  default void start() {}
 
-  // Called on stop
-  default void stop() {};
+  /** Lifecycle stop hook. */
+  default void stop() {}
 
-  // Called for all services BEFORE update(float dt)
-  default void update() {};
+  /** Pre-frame update hook (runs before update(float)). */
+  default void update() {}
 
-  // Called for all services AFTER update();
-  default void update(float dt) { };
+  /** Per-frame update with delta time (runs after update()). */
+  default void update(float dt) {}
 
-  /**
-   * Determines the order of service execution. Lower numbers execute earlier.
-   * @return The execution order value.
-   */
-  default int executionOrder() { return 0; };
+  /** Execution order; lower values run earlier. */
+  default int executionOrder() { return 0; }
 
 }

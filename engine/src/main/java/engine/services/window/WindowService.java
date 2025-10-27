@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.IntBuffer;
 
-/**
- * GLFW window wrapper that creates an OpenGL 4.6 core profile context.
- */
+/** GLFW window wrapper that creates an OpenGL 4.6 core context. */
 @Singleton
 @RequiredArgsConstructor
 public final class WindowService implements IService {
@@ -38,14 +36,13 @@ public final class WindowService implements IService {
     int height = defaults.height();
     String title = defaults.title();
 
-    // Single attempt: request OpenGL 4.6 core profile
     GLFW.glfwDefaultWindowHints();
     GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_OPENGL_API);
     GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4);
     GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 6);
     GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-    GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE); // Added for resize support
-    GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE); // Create hidden, show after setup
+    GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
+    GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 
     log.info("Creating GLFW window with OpenGL 4.6 core profile");
     long window = GLFW.glfwCreateWindow(width, height, title, 0L, 0L);
@@ -55,23 +52,19 @@ public final class WindowService implements IService {
     }
 
     this.handle = window;
-    //this.created = true;
 
-    // Make context current
     GLFW.glfwMakeContextCurrent(window);
     if (GLFW.glfwGetCurrentContext() != window) {
       GLFW.glfwDestroyWindow(window);
       this.handle = 0L;
-      //this.created = false;
       throw new IllegalStateException("Failed to make OpenGL context current");
     }
 
     try {
       GL.createCapabilities();
       OpenGLDebugger.init();
-      // Set initial state
-      GLFW.glfwSwapInterval(1); // Enable v-sync
-      GL30.glViewport(0, 0, width, height); // Set initial viewport
+      GLFW.glfwSwapInterval(1);
+      GL30.glViewport(0, 0, width, height);
 
       try {
         String glVersion = GL11.glGetString(GL11.GL_VERSION);
@@ -86,7 +79,6 @@ public final class WindowService implements IService {
     } catch (IllegalStateException ise) {
       GLFW.glfwDestroyWindow(window);
       this.handle = 0L;
-      //this.created = false;
       throw ise;
     }
 
@@ -116,27 +108,18 @@ public final class WindowService implements IService {
     GLFW.glfwSwapBuffers(handle);
   }
 
-  /**
-   * Processes all pending events for the window.
-   */
+  /** Process pending window events. */
   public void pollEvents() {
     GLFW.glfwPollEvents();
   }
 
-  /**
-   * Sets a listener to be called when the window's framebuffer is resized. This method handles
-   * setting the GLFW callback and managing the GL viewport.
-   *
-   * @param listener The listener that will handle the resize event for game logic (e.g., camera).
-   */
+  /** Set a resize listener; also updates GL viewport. */
   public void setResizeListener(WindowResizeListener listener) {
     GLFW.glfwSetFramebufferSizeCallback(
       handle,
       (win, w, h) -> {
         if (w > 0 && h > 0) {
-          // The context is responsible for the GL call
           GL30.glViewport(0, 0, w, h);
-          // The listener is responsible for game-logic updates (like camera)
           if (listener != null) {
             listener.onResize(w, h);
           }
@@ -145,16 +128,12 @@ public final class WindowService implements IService {
   }
 
   public void stop() {
-//    if (!created) {
-//      return;
-//    }
     if (handle != 0L) {
       log.info("Destroying GLFW window: handle={}", handle);
       GLFW.glfwDestroyWindow(handle);
       handle = 0L;
     }
     OpenGLDebugger.cleanup();
-    //created = false;
   }
 
 }

@@ -9,11 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A mapping service that supports both keyboard and gamepad inputs.
- * Automatically assigns players to connected gamepads and provides keyboard fallback
- * for player 0 when no gamepad is available.
- */
+/** Maps players to keyboard/gamepad inputs with hotplug support. */
 @Singleton
 @RequiredArgsConstructor
 public class DeviceMappingService implements IService {
@@ -115,45 +111,27 @@ public class DeviceMappingService implements IService {
     }
   }
 
-  /**
-   * Bind a player to keyboard input.
-   *
-   * @param playerId The player ID (0-7).
-   */
+  /** Bind a player to keyboard input. */
   public void bindPlayerToKeyboard(int playerId) {
     if (playerId >= 0 && playerId < MAX_PLAYERS) {
       playerBindings.put(playerId, new DeviceBinding(DeviceType.KEYBOARD, -1));
     }
   }
 
-  /**
-   * Bind a player to a specific gamepad.
-   *
-   * @param playerId The player ID (0-7).
-   * @param gamepadIndex The gamepad index (0-7).
-   */
+  /** Bind a player to a specific gamepad. */
   public void bindPlayerToGamepad(int playerId, int gamepadIndex) {
     if (playerId >= 0 && playerId < MAX_PLAYERS && gamepadIndex >= 0 && gamepadIndex < MAX_PLAYERS) {
       playerBindings.put(playerId, new DeviceBinding(DeviceType.GAMEPAD, gamepadIndex));
     }
   }
 
-  /**
-   * Get the maximum number of supported players.
-   *
-   * @return Maximum supported players (8).
-   */
+  /** Maximum supported players. */
   public int getMaxSupportedPlayers() {
     return MAX_PLAYERS;
   }
 
-  /**
-   * Refresh device assignments by scanning for connected gamepads.
-   * Auto-assigns players 0..N-1 to gamepads 0..N-1 when connected.
-   * Ensures player 0 always has a binding (prefer gamepad 0, fallback to keyboard).
-   */
+  /** Refresh device assignments and ensure player 0 is bound. */
   public void refreshAssignments() {
-    // Clear all bindings and rebuild based on current device state
     playerBindings.clear();
 
     // Auto-assign connected gamepads to players

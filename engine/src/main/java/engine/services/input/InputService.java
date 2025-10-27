@@ -41,10 +41,7 @@ public class InputService implements IService {
     return 15;
   }
 
-  /**
-   * Installs the necessary GLFW callbacks on the given window service to capture input events.
-   *
-   */
+  /** Install GLFW callbacks to capture input events. */
   @Override
   public void start() {
     GLFW.glfwSetKeyCallback(windowService.getHandle(), new GLFWKeyCallback() {
@@ -74,10 +71,7 @@ public class InputService implements IService {
     });
   }
 
-  /**
-   * Clears all input states. Useful for resetting state between frames if needed,
-   * though the callback approach makes this less necessary.
-   */
+  /** Clear all input states. */
   public void clear() {
     Arrays.fill(keys, false);
     Arrays.fill(mouseButtons, false);
@@ -99,7 +93,7 @@ public class InputService implements IService {
     return mouseButtons[button];
   }
 
-  // Convenience helpers to avoid looping in callers
+  /** true if any key is pressed. */
   public boolean isAnyKeyPressed() {
     for (int i = 0; i <= GLFW.GLFW_KEY_LAST; i++) {
       if (keys[i]) return true;
@@ -107,6 +101,7 @@ public class InputService implements IService {
     return false;
   }
 
+  /** true if any mouse button is pressed. */
   public boolean isAnyMouseButtonPressed() {
     for (int i = 0; i <= GLFW.GLFW_MOUSE_BUTTON_LAST; i++) {
       if (mouseButtons[i]) return true;
@@ -114,6 +109,7 @@ public class InputService implements IService {
     return false;
   }
 
+  /** true if any gamepad button is pressed. */
   public boolean isAnyGamepadButtonPressed() {
     for (int port = 0; port < MAX_GAMEPADS; port++) {
       if (!isGamepadConnected(port)) continue;
@@ -124,6 +120,7 @@ public class InputService implements IService {
     return false;
   }
 
+  /** true if any key was just pressed this frame. */
   public boolean isAnyKeyJustPressed() {
     for (int i = 0; i <= GLFW.GLFW_KEY_LAST; i++) {
       if (keys[i] && !keysLastFrame[i]) return true;
@@ -131,6 +128,7 @@ public class InputService implements IService {
     return false;
   }
 
+  /** true if any mouse button was just pressed this frame. */
   public boolean isAnyMouseButtonJustPressed() {
     for (int i = 0; i <= GLFW.GLFW_MOUSE_BUTTON_LAST; i++) {
       if (mouseButtons[i] && !mouseButtonsLastFrame[i]) return true;
@@ -138,6 +136,7 @@ public class InputService implements IService {
     return false;
   }
 
+  /** true if any gamepad button was just pressed this frame. */
   public boolean isAnyGamepadButtonJustPressed() {
     for (int port = 0; port < MAX_GAMEPADS; port++) {
       if (!isGamepadConnected(port)) continue;
@@ -193,24 +192,13 @@ public class InputService implements IService {
     }
   }
 
-  /**
-   * Returns the current cursor position as a Vector2d.
-   * 
-   * @return A new Vector2d containing the current cursor position.
-   */
+  /** Current cursor position. */
   public Vector2d getCursorPos() {
     return new Vector2d(mouseX, mouseY);
   }
 
-  /**
-   * Checks if a GameAction was just pressed this frame (pressed now, but not last frame).
-   * This checks keyboard input for the default player 0 key mappings.
-   * 
-   * @param action The GameAction to check.
-   * @return true if the action was just pressed this frame.
-   */
+  /** true if the GameAction was just pressed this frame (keyboard mapping). */
   public boolean isActionJustPressed(GameAction action) {
-    // Map GameAction to key codes for player 0 (default WASD + Space)
     int keyCode = getKeyCodeForAction(action);
     if (keyCode < 0) {
       return false;
@@ -218,12 +206,7 @@ public class InputService implements IService {
     return isKeyJustPressed(keyCode);
   }
 
-  /**
-   * Checks if a key was just pressed this frame (pressed now, but not last frame).
-   * 
-   * @param keyCode The GLFW key code to check.
-   * @return true if the key was just pressed this frame.
-   */
+  /** true if the key was just pressed this frame. */
   public boolean isKeyJustPressed(int keyCode) {
     if (keyCode < 0 || keyCode > GLFW.GLFW_KEY_LAST) {
       return false;
@@ -231,12 +214,7 @@ public class InputService implements IService {
     return keys[keyCode] && !keysLastFrame[keyCode];
   }
 
-  /**
-   * Checks if a mouse button was just pressed this frame.
-   * 
-   * @param button The GLFW mouse button code.
-   * @return true if the button was just pressed this frame.
-   */
+  /** true if the mouse button was just pressed this frame. */
   public boolean isMouseButtonJustPressed(int button) {
     if (button < 0 || button > GLFW.GLFW_MOUSE_BUTTON_LAST) {
       return false;
@@ -244,10 +222,7 @@ public class InputService implements IService {
     return mouseButtons[button] && !mouseButtonsLastFrame[button];
   }
 
-  /**
-   * Maps a GameAction to its corresponding key code for player 0.
-   * Returns -1 if the action has no keyboard mapping.
-   */
+  /** Map a GameAction to its default key code for player 0; -1 if none. */
   private int getKeyCodeForAction(GameAction action) {
     return switch (action) {
       case MOVE_UP -> GLFW.GLFW_KEY_W;

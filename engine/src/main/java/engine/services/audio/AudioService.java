@@ -22,15 +22,7 @@ import static org.lwjgl.openal.ALC10.alcDestroyContext;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 
-/**
- * Manages the OpenAL audio context and provides high-level audio services.
- * This is analogous to how the Engine class manages the OpenGL context.
- * <p>
- * The AudioService is responsible for:
- * - Initializing and cleaning up the OpenAL context
- * - Managing global audio settings (master volume, listener properties)
- * - Providing factory methods for creating audio resources
- */
+/** Manage OpenAL context and basic audio operations. */
 @Singleton
 @Slf4j
 public final class AudioService implements IService {
@@ -45,11 +37,7 @@ public final class AudioService implements IService {
     return 10;
   }
 
-  /**
-   * Initializes the OpenAL audio system.
-   * This must be called before any other audio operations.
-   * If initialization fails (e.g., no audio device available), audio features will be disabled.
-   */
+  /** Initialize the audio system; idempotent guard. */
   @Override
   public void start() {
     if (initialized) {
@@ -101,11 +89,7 @@ public final class AudioService implements IService {
     }
   }
 
-  /**
-   * Sets the master volume for all audio playback.
-   *
-   * @param volume Master volume level (0.0f = silent, 1.0f = full volume)
-   */
+  /** Set master volume (0..1). */
   public void setMasterVolume(float volume) {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
@@ -114,11 +98,7 @@ public final class AudioService implements IService {
     alListenerf(AL_GAIN, Math.max(0.0f, volume));
   }
 
-  /**
-   * Gets the current master volume.
-   *
-   * @return The current master volume level
-   */
+  /** Current master volume. */
   public float getMasterVolume() {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
@@ -127,13 +107,7 @@ public final class AudioService implements IService {
     return alGetListenerf(AL_GAIN);
   }
 
-  /**
-   * Sets the position of the audio listener (the "ear" in the 3D audio space).
-   *
-   * @param x X coordinate
-   * @param y Y coordinate
-   * @param z Z coordinate
-   */
+  /** Set listener position. */
   public void setListenerPosition(float x, float y, float z) {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
@@ -142,16 +116,7 @@ public final class AudioService implements IService {
     alListener3f(AL_POSITION, x, y, z);
   }
 
-  /**
-   * Sets the orientation of the audio listener.
-   *
-   * @param forwardX Forward vector X component
-   * @param forwardY Forward vector Y component
-   * @param forwardZ Forward vector Z component
-   * @param upX      Up vector X component
-   * @param upY      Up vector Y component
-   * @param upZ      Up vector Z component
-   */
+  /** Set listener orientation (forward xyz, up xyz). */
   public void setListenerOrientation(float forwardX, float forwardY, float forwardZ,
                                      float upX, float upY, float upZ) {
     if (!initialized) {
@@ -162,12 +127,7 @@ public final class AudioService implements IService {
     alListenerfv(AL_ORIENTATION, orientation);
   }
 
-  /**
-   * Creates a new AudioSource.
-   * The caller is responsible for closing the returned source.
-   *
-   * @return A new AudioSource instance
-   */
+  /** Create a new AudioSource. */
   public AudioSource createSource() {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
@@ -176,15 +136,7 @@ public final class AudioService implements IService {
     return new AudioSource();
   }
 
-  /**
-   * Creates a new AudioBuffer from raw audio data.
-   * The caller is responsible for closing the returned buffer.
-   *
-   * @param data       The audio data
-   * @param channels   Number of channels
-   * @param sampleRate Sample rate in Hz
-   * @return A new AudioBuffer instance
-   */
+  /** Create an AudioBuffer from PCM16 data. */
   public AudioBuffer createBuffer(java.nio.ShortBuffer data, int channels, int sampleRate) {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
@@ -193,13 +145,7 @@ public final class AudioService implements IService {
     return new AudioBuffer(data, channels, sampleRate);
   }
 
-  /**
-   * Loads an AudioBuffer from an OGG Vorbis file.
-   * The caller is responsible for closing the returned buffer.
-   *
-   * @param resourcePath The classpath path to the OGG file
-   * @return A new AudioBuffer instance
-   */
+  /** Load an AudioBuffer from a classpath OGG resource. */
   public AudioBuffer loadAudioBuffer(String resourcePath) {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
@@ -208,6 +154,7 @@ public final class AudioService implements IService {
     return AudioBuffer.loadFromOggFile(resourcePath);
   }
 
+  /** Tear down the audio system and free resources. */
   @Override
   public void stop() {
     if (initialized) {
