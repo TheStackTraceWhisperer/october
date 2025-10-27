@@ -63,6 +63,13 @@ public class MyGameState implements ApplicationState {
 }
 ```
 
+For a more comprehensive example, see `engine.services.imgui.ImGuiExampleState` which demonstrates:
+- Menu bars
+- Interactive controls (buttons, sliders, checkboxes)
+- Collapsing headers
+- System information display
+- Integration with ImGui's demo window
+
 ## Key Features
 
 - **Docking Support**: The ImGui context is configured with `ImGuiConfigFlags.DockingEnable`
