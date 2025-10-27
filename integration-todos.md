@@ -6,7 +6,9 @@ Quick checklist
 - [x] Implement Zone loading and ZoneLoadedEvent publishing
 - [x] Register AudioSystem in relevant states and wire sequence audio
 - [x] Implement Sequence actions (PLAY_SOUND, TELEPORT_ENTITY, MOVE_ENTITY, FADE_SCREEN)
-- [ ] Add Tilemap rendering and collisions integration
+- [x] Add Tilemap data model and JSON deserialization
+- [ ] Add Tilemap rendering system (TilemapRenderSystem)
+- [ ] Add Tilemap collision integration
 - [x] Decide on triggers/sequences in gameplay and register systems accordingly
 - [x] Extend asset pipeline to preload audio buffers
 - [x] Fix EnemyAISystem double-update per frame
@@ -54,8 +56,14 @@ Quick checklist
   - `FADE_SCREEN` blocks on `FadeService.isFading()` and now visibly renders via overlay.
 
 4) Tilemap: rendering and collisions
-- Status: Pending
-  - No tilemap assets/loader wired yet; needs a `TilemapRenderSystem` and a collision strategy (colliders or checks).
+- Status: Partially Done
+  - Tilemap data model and JSON deserialization implemented in `ZoneService`.
+  - Added `JsonTilemap`, `JsonTileset`, `JsonTilelayer`, and `JsonTile` classes.
+  - Created `tilesets.yml` configuration file with draft tileset definitions for dungeon-tileset and tileset-world.
+  - Added sample zone `test_tilemap_zone.json` with complete tilemap data.
+  - Comprehensive tests added: `TilemapDeserializationTest` and `TilemapLoadingIT`.
+  - Documentation added in `docs/tilemap-configuration.md`.
+  - Still pending: `TilemapRenderSystem` implementation and collision strategy integration.
 
 5) Triggers/sequences in gameplay
 - Status: Done
@@ -102,9 +110,11 @@ Prioritized next steps
 - High priority
   - [ ] Implement `TilemapRenderSystem` that draws visible layers (bottom → top) with camera parallax as needed.
   - [ ] Choose collision strategy for tilemap (generate static colliders at zone load vs. query checks in `CollisionSystem`).
+  - [ ] Load actual tile images from tilesheet assets and slice them into individual tiles.
 - Medium priority
-  - [ ] Extend `ZoneService` loader to parse tilemap/tilesets.
-  - [ ] Provide at least one real zone with tilemap + triggers to validate rendering and collisions.
+  - [x] Extend `ZoneService` loader to parse tilemap/tilesets.
+  - [x] Provide at least one real zone with tilemap + triggers to validate rendering and collisions.
+  - [ ] Create a real gameplay zone with complete tilemap, triggers, and sequences.
 - Low priority / polish
   - [ ] Optionally switch UI event strings to a typed event class.
-  - [ ] Add tests for fade overlay rendering path and zone JSON loading.
+  - [x] Add tests for tilemap JSON loading and deserialization.
