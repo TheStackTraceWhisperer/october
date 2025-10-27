@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpriteSheetTest {
@@ -24,7 +23,7 @@ class SpriteSheetTest {
     
     assertNotNull(sheet);
     assertEquals(mockTexture, sheet.getTexture());
-    assertThat(sheet.getRegions()).isEmpty();
+    assertTrue(sheet.getRegions().isEmpty());
   }
 
   @Test

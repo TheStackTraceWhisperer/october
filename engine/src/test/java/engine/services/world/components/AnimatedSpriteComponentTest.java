@@ -3,7 +3,6 @@ package engine.services.world.components;
 import engine.services.rendering.Direction;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnimatedSpriteComponentTest {

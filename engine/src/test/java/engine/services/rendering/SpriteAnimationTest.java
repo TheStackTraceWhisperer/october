@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpriteAnimationTest {
@@ -137,8 +136,8 @@ class SpriteAnimationTest {
     SpriteAnimation animation = new SpriteAnimation("walk", frames, 0.1f, true);
     
     // Original list and animation's list should be independent
-    assertThat(animation.getFrameNames()).isEqualTo(frames);
-    assertThat(animation.getFrameNames()).isNotSameAs(frames);
+    assertEquals(frames, animation.getFrameNames());
+    assertNotSame(frames, animation.getFrameNames());
   }
 
   @Test
