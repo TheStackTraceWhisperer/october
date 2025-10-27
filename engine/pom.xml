@@ -126,6 +126,17 @@
       <groupId>org.lwjgl</groupId>
       <artifactId>lwjgl-stb</artifactId>
     </dependency>
+
+    <!-- Dear ImGui -->
+    <dependency>
+      <groupId>io.github.spair</groupId>
+      <artifactId>imgui-java-binding</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.spair</groupId>
+      <artifactId>imgui-java-lwjgl3</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -199,6 +210,10 @@
           <artifactId>lwjgl-openal</artifactId>
           <classifier>natives-windows</classifier>
         </dependency>
+        <dependency>
+          <groupId>io.github.spair</groupId>
+          <artifactId>imgui-java-natives-windows</artifactId>
+        </dependency>
       </dependencies>
     </profile>
 
@@ -235,6 +250,10 @@
           <artifactId>lwjgl-openal</artifactId>
           <classifier>natives-linux</classifier>
         </dependency>
+        <dependency>
+          <groupId>io.github.spair</groupId>
+          <artifactId>imgui-java-natives-linux</artifactId>
+        </dependency>
       </dependencies>
     </profile>
 
@@ -270,6 +289,10 @@
           <groupId>org.lwjgl</groupId>
           <artifactId>lwjgl-openal</artifactId>
           <classifier>natives-macos</classifier>
+        </dependency>
+        <dependency>
+          <groupId>io.github.spair</groupId>
+          <artifactId>imgui-java-natives-macos</artifactId>
         </dependency>
       </dependencies>
     </profile>
