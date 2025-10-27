@@ -10,6 +10,7 @@ import engine.services.zone.tilemap.Tilemap;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
@@ -110,32 +111,36 @@ public class ZoneService implements IService {
   }
 
   // --- JSON data classes for simple zone deserialization ---
+  @Getter
+  @Setter
   public static class JsonGameEvent implements GameEvent {
     private String type;
     private Map<String, Object> properties;
 
     public JsonGameEvent() {}
 
-    @Override public String getType() { return type; }
-    @Override public Map<String, Object> getProperties() { return properties != null ? properties : Collections.emptyMap(); }
-
-    public void setType(String type) { this.type = type; }
-    public void setProperties(Map<String, Object> properties) { this.properties = properties; }
+    @Override 
+    public Map<String, Object> getProperties() { 
+      return properties != null ? properties : Collections.emptyMap(); 
+    }
   }
 
+  @Getter
+  @Setter
   public static class JsonSequence implements Sequence {
     private String id;
     private List<JsonGameEvent> events;
 
     public JsonSequence() {}
 
-    @Override public String getId() { return id; }
-    @Override public List<GameEvent> getEvents() { return events != null ? List.copyOf(events) : List.of(); }
-
-    public void setId(String id) { this.id = id; }
-    public void setEvents(List<JsonGameEvent> events) { this.events = events; }
+    @Override 
+    public List<GameEvent> getEvents() { 
+      return events != null ? List.copyOf(events) : List.of(); 
+    }
   }
 
+  @Getter
+  @Setter
   public static class JsonTrigger implements Trigger {
     private String id;
     private String type;
@@ -144,39 +149,123 @@ public class ZoneService implements IService {
 
     public JsonTrigger() {}
 
-    @Override public String getId() { return id; }
-    @Override public String getType() { return type; }
-    @Override public List<GameEvent> getEvents() { return events != null ? List.copyOf(events) : List.of(); }
-    @Override public Map<String, Object> getProperties() { return properties != null ? properties : Collections.emptyMap(); }
-
-    public void setId(String id) { this.id = id; }
-    public void setType(String type) { this.type = type; }
-    public void setEvents(List<JsonGameEvent> events) { this.events = events; }
-    public void setProperties(Map<String, Object> properties) { this.properties = properties; }
+    @Override 
+    public List<GameEvent> getEvents() { 
+      return events != null ? List.copyOf(events) : List.of(); 
+    }
+    
+    @Override 
+    public Map<String, Object> getProperties() { 
+      return properties != null ? properties : Collections.emptyMap(); 
+    }
   }
 
+  // --- JSON data classes for tilemap deserialization ---
+  @Getter
+  @Setter
+  public static class JsonTile implements engine.services.zone.tilemap.Tile {
+    private int id;
+    private java.awt.Image image;
+    private Map<String, Object> properties;
+
+    public JsonTile() {}
+
+    @Override 
+    public Map<String, Object> getProperties() { 
+      return properties != null ? properties : Collections.emptyMap(); 
+    }
+  }
+
+  @Getter
+  @Setter
+  public static class JsonTileset implements engine.services.zone.tilemap.Tileset {
+    private String name;
+    private java.awt.Image sourceImage;
+    private int tileWidth;
+    private int tileHeight;
+    private List<JsonTile> tiles;
+
+    public JsonTileset() {}
+
+    @Override 
+    public List<engine.services.zone.tilemap.Tile> getTiles() { 
+      return tiles != null ? List.copyOf(tiles) : List.of(); 
+    }
+    
+    @Override 
+    public engine.services.zone.tilemap.Tile getTileById(int id) {
+      if (tiles == null) return null;
+      return tiles.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
+    }
+  }
+
+  @Getter
+  @Setter
+  public static class JsonTilelayer implements engine.services.zone.tilemap.Tilelayer {
+    private String name;
+    private int width;
+    private int height;
+    private int[][] tileIds;
+    private boolean visible = true;
+    private float opacity = 1.0f;
+
+    public JsonTilelayer() {}
+  }
+
+  @Getter
+  @Setter
+  public static class JsonTilemap implements engine.services.zone.tilemap.Tilemap {
+    private int width;
+    private int height;
+    private int tileWidth;
+    private int tileHeight;
+    private List<JsonTileset> tilesets;
+    private List<JsonTilelayer> tilelayers;
+    private Map<String, Object> properties;
+
+    public JsonTilemap() {}
+
+    @Override 
+    public List<engine.services.zone.tilemap.Tileset> getTilesets() {
+      return tilesets != null ? List.copyOf(tilesets) : List.of();
+    }
+    
+    @Override 
+    public List<engine.services.zone.tilemap.Tilelayer> getTilelayers() {
+      return tilelayers != null ? List.copyOf(tilelayers) : List.of();
+    }
+    
+    @Override 
+    public Map<String, Object> getProperties() { 
+      return properties != null ? properties : Collections.emptyMap(); 
+    }
+  }
+
+  @Getter
+  @Setter
   public static class JsonZone implements Zone {
     private String id;
     private String name;
-    private Tilemap tilemap; // not parsed yet
+    private JsonTilemap tilemap;
     private List<JsonSequence> sequences;
     private List<JsonTrigger> triggers;
     private Map<String, Object> properties;
 
     public JsonZone() {}
 
-    @Override public String getId() { return id; }
-    @Override public String getName() { return name; }
-    @Override public Tilemap getTilemap() { return null; }
-    @Override public List<Sequence> getSequences() { return sequences != null ? List.copyOf(sequences) : List.of(); }
-    @Override public List<Trigger> getTriggers() { return triggers != null ? List.copyOf(triggers) : List.of(); }
-    @Override public Map<String, Object> getProperties() { return properties != null ? properties : Collections.emptyMap(); }
-
-    public void setId(String id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setTilemap(Tilemap tilemap) { this.tilemap = tilemap; }
-    public void setSequences(List<JsonSequence> sequences) { this.sequences = sequences; }
-    public void setTriggers(List<JsonTrigger> triggers) { this.triggers = triggers; }
-    public void setProperties(Map<String, Object> properties) { this.properties = properties; }
+    @Override 
+    public List<Sequence> getSequences() { 
+      return sequences != null ? List.copyOf(sequences) : List.of(); 
+    }
+    
+    @Override 
+    public List<Trigger> getTriggers() { 
+      return triggers != null ? List.copyOf(triggers) : List.of(); 
+    }
+    
+    @Override 
+    public Map<String, Object> getProperties() { 
+      return properties != null ? properties : Collections.emptyMap(); 
+    }
   }
 }
