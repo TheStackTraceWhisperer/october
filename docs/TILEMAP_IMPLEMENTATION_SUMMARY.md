@@ -38,12 +38,12 @@ These classes:
 #### tilesets.yml (Draft Configuration)
 Created a YAML configuration documenting the available tilesets:
 
-- **dungeon-tileset**: 96x80px (16x16 tiles, 6x5 grid = 30 tiles)
+- **dungeon-tileset**: 96x80px (16x16 tiles, 6×5 grid = 30 tiles)
   - Floor tiles (IDs 0-1): non-collidable
   - Wall tiles (IDs 6-8): collidable
   - Decoration tiles (IDs 12-13): non-collidable
 
-- **tileset-world**: 112x272px (16x16 tiles, 7x17 grid = 119 tiles)
+- **tileset-world**: 112x272px (16x16 tiles, 7×17 grid = 119 tiles)
   - Grass tiles (IDs 0-2): non-collidable
   - Dirt/path tiles (IDs 7-8): non-collidable
   - Water tiles (IDs 14-15): collidable
@@ -163,14 +163,11 @@ These are high-priority items for making tilemaps functional in the game.
 
 ## Testing Results
 
-All unit tests pass:
-```
-Tests run: 201, Failures: 0, Errors: 0, Skipped: 4
-```
+All unit tests pass successfully. The implementation adds 9 new tests for tilemap functionality:
+- `TilemapDeserializationTest`: 7 unit tests for JSON deserialization
+- `TilemapLoadingIT`: 2 integration tests for end-to-end zone loading
 
-Specific tilemap tests:
-- `TilemapDeserializationTest`: 7 tests, all passing
-- `TilemapLoadingIT`: 2 tests, all passing
+No existing tests were broken by these changes.
 
 ## Summary
 
