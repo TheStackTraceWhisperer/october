@@ -22,8 +22,8 @@ public class ImGuiService implements IService {
 
   private final WindowService windowService;
 
-  private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
-  private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
+  private ImGuiImplGlfw imGuiGlfw;
+  private ImGuiImplGl3 imGuiGl3;
 
   @Override
   public int executionOrder() {
@@ -43,7 +43,10 @@ public class ImGuiService implements IService {
     io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
     
     // Initialize platform bindings
+    imGuiGlfw = new ImGuiImplGlfw();
     imGuiGlfw.init(windowService.getHandle(), true);
+    
+    imGuiGl3 = new ImGuiImplGl3();
     imGuiGl3.init("#version 460 core");
     
     log.info("Dear ImGui initialized successfully");
@@ -54,8 +57,10 @@ public class ImGuiService implements IService {
    * Should be called before any ImGui rendering commands.
    */
   public void beginFrame() {
-    imGuiGlfw.newFrame();
-    ImGui.newFrame();
+    if (imGuiGlfw != null) {
+      imGuiGlfw.newFrame();
+      ImGui.newFrame();
+    }
   }
 
   /**
@@ -63,15 +68,21 @@ public class ImGuiService implements IService {
    * Should be called after all ImGui rendering commands.
    */
   public void endFrame() {
-    ImGui.render();
-    imGuiGl3.renderDrawData(ImGui.getDrawData());
+    if (imGuiGl3 != null) {
+      ImGui.render();
+      imGuiGl3.renderDrawData(ImGui.getDrawData());
+    }
   }
 
   @Override
   public void stop() {
     log.info("Shutting down Dear ImGui");
-    imGuiGl3.shutdown();
-    imGuiGlfw.shutdown();
+    if (imGuiGl3 != null) {
+      imGuiGl3.shutdown();
+    }
+    if (imGuiGlfw != null) {
+      imGuiGlfw.shutdown();
+    }
     ImGui.destroyContext();
     log.info("Dear ImGui shut down successfully");
   }
