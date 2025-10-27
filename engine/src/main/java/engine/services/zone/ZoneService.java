@@ -155,10 +155,114 @@ public class ZoneService implements IService {
     public void setProperties(Map<String, Object> properties) { this.properties = properties; }
   }
 
+  // --- JSON data classes for tilemap deserialization ---
+  public static class JsonTile implements engine.services.zone.tilemap.Tile {
+    private int id;
+    private java.awt.Image image;
+    private Map<String, Object> properties;
+
+    public JsonTile() {}
+
+    @Override public int getId() { return id; }
+    @Override public java.awt.Image getImage() { return image; }
+    @Override public Map<String, Object> getProperties() { return properties != null ? properties : Collections.emptyMap(); }
+
+    public void setId(int id) { this.id = id; }
+    public void setImage(java.awt.Image image) { this.image = image; }
+    public void setProperties(Map<String, Object> properties) { this.properties = properties; }
+  }
+
+  public static class JsonTileset implements engine.services.zone.tilemap.Tileset {
+    private String name;
+    private java.awt.Image sourceImage;
+    private int tileWidth;
+    private int tileHeight;
+    private List<JsonTile> tiles;
+
+    public JsonTileset() {}
+
+    @Override public String getName() { return name; }
+    @Override public java.awt.Image getSourceImage() { return sourceImage; }
+    @Override public int getTileWidth() { return tileWidth; }
+    @Override public int getTileHeight() { return tileHeight; }
+    @Override public List<engine.services.zone.tilemap.Tile> getTiles() { 
+      return tiles != null ? List.copyOf(tiles) : List.of(); 
+    }
+    @Override public engine.services.zone.tilemap.Tile getTileById(int id) {
+      if (tiles == null) return null;
+      return tiles.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
+    }
+
+    public void setName(String name) { this.name = name; }
+    public void setSourceImage(java.awt.Image sourceImage) { this.sourceImage = sourceImage; }
+    public void setTileWidth(int tileWidth) { this.tileWidth = tileWidth; }
+    public void setTileHeight(int tileHeight) { this.tileHeight = tileHeight; }
+    public void setTiles(List<JsonTile> tiles) { this.tiles = tiles; }
+  }
+
+  public static class JsonTilelayer implements engine.services.zone.tilemap.Tilelayer {
+    private String name;
+    private int width;
+    private int height;
+    private int[][] tileIds;
+    private boolean visible = true;
+    private float opacity = 1.0f;
+
+    public JsonTilelayer() {}
+
+    @Override public String getName() { return name; }
+    @Override public int getWidth() { return width; }
+    @Override public int getHeight() { return height; }
+    @Override public int[][] getTileIds() { return tileIds; }
+    @Override public boolean isVisible() { return visible; }
+    @Override public float getOpacity() { return opacity; }
+
+    public void setName(String name) { this.name = name; }
+    public void setWidth(int width) { this.width = width; }
+    public void setHeight(int height) { this.height = height; }
+    public void setTileIds(int[][] tileIds) { this.tileIds = tileIds; }
+    public void setVisible(boolean visible) { this.visible = visible; }
+    public void setOpacity(float opacity) { this.opacity = opacity; }
+  }
+
+  public static class JsonTilemap implements engine.services.zone.tilemap.Tilemap {
+    private int width;
+    private int height;
+    private int tileWidth;
+    private int tileHeight;
+    private List<JsonTileset> tilesets;
+    private List<JsonTilelayer> tilelayers;
+    private Map<String, Object> properties;
+
+    public JsonTilemap() {}
+
+    @Override public int getWidth() { return width; }
+    @Override public int getHeight() { return height; }
+    @Override public int getTileWidth() { return tileWidth; }
+    @Override public int getTileHeight() { return tileHeight; }
+    @Override public List<engine.services.zone.tilemap.Tileset> getTilesets() {
+      return tilesets != null ? List.copyOf(tilesets) : List.of();
+    }
+    @Override public List<engine.services.zone.tilemap.Tilelayer> getTilelayers() {
+      return tilelayers != null ? List.copyOf(tilelayers) : List.of();
+    }
+    @Override public Map<String, Object> getProperties() { 
+      return properties != null ? properties : Collections.emptyMap(); 
+    }
+
+    public void setWidth(int width) { this.width = width; }
+    public void setHeight(int height) { this.height = height; }
+    public void setTileWidth(int tileWidth) { this.tileWidth = tileWidth; }
+    public void setTileHeight(int tileHeight) { this.tileHeight = tileHeight; }
+    public void setTilesets(List<JsonTileset> tilesets) { this.tilesets = tilesets; }
+    public void setTilelayers(List<JsonTilelayer> tilelayers) { this.tilelayers = tilelayers; }
+    public void setProperties(Map<String, Object> properties) { this.properties = properties; }
+  }
+
   public static class JsonZone implements Zone {
     private String id;
     private String name;
-    private Tilemap tilemap; // not parsed yet
+    private JsonTilemap tilemap;
     private List<JsonSequence> sequences;
     private List<JsonTrigger> triggers;
     private Map<String, Object> properties;
@@ -167,14 +271,14 @@ public class ZoneService implements IService {
 
     @Override public String getId() { return id; }
     @Override public String getName() { return name; }
-    @Override public Tilemap getTilemap() { return null; }
+    @Override public engine.services.zone.tilemap.Tilemap getTilemap() { return tilemap; }
     @Override public List<Sequence> getSequences() { return sequences != null ? List.copyOf(sequences) : List.of(); }
     @Override public List<Trigger> getTriggers() { return triggers != null ? List.copyOf(triggers) : List.of(); }
     @Override public Map<String, Object> getProperties() { return properties != null ? properties : Collections.emptyMap(); }
 
     public void setId(String id) { this.id = id; }
     public void setName(String name) { this.name = name; }
-    public void setTilemap(Tilemap tilemap) { this.tilemap = tilemap; }
+    public void setTilemap(JsonTilemap tilemap) { this.tilemap = tilemap; }
     public void setSequences(List<JsonSequence> sequences) { this.sequences = sequences; }
     public void setTriggers(List<JsonTrigger> triggers) { this.triggers = triggers; }
     public void setProperties(Map<String, Object> properties) { this.properties = properties; }
