@@ -1,11 +1,13 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import lombok.Getter;
 
 /**
  * A component that gives an entity health and makes it susceptible to damage.
  */
+@Introspected
 @Getter
 public class HealthComponent implements IComponent {
 

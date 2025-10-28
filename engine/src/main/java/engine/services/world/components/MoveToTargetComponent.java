@@ -1,7 +1,9 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 
+@Introspected
 public class MoveToTargetComponent implements IComponent {
   public float targetX;
   public float targetY;

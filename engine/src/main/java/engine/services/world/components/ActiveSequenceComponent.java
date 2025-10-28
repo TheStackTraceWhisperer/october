@@ -1,6 +1,7 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import lombok.Setter;
  * A stateful "bookmark" component added to an entity to signify that a sequence is currently running.
  * The SequenceSystem acts upon entities that have this component.
  */
+@Introspected
 @Getter
 @Setter
 public class ActiveSequenceComponent implements IComponent {

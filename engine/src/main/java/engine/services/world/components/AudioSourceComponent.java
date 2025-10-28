@@ -1,11 +1,13 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import lombok.RequiredArgsConstructor;
 
 /**
  * A component that allows an entity to play audio through a positioned 3D audio source.
  */
+@Introspected
 @RequiredArgsConstructor
 public class AudioSourceComponent implements IComponent {
 
