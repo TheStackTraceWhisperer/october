@@ -1,6 +1,8 @@
 package engine.services.zone.tilemap;
 
-/** A single layer of a map, represented as a 2D grid of tile IDs. */
+/**
+ * A single layer of a map, represented as a 2D grid of tile IDs.
+ */
 public interface Tilelayer {
   /**
    * @return The name of the layer (e.g., "background", "foreground").

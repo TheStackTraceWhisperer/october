@@ -5,15 +5,16 @@ import io.micronaut.core.beans.BeanIntrospection;
 import io.micronaut.core.beans.BeanIntrospector;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.extern.slf4j.Slf4j;
 
 /**
- * Registry for component types that auto-discovers all IComponent implementations using Micronaut's
- * bean introspection capabilities. This eliminates the need for manual registration of component
- * classes.
+ * Registry for component types that auto-discovers all IComponent implementations
+ * using Micronaut's bean introspection capabilities. This eliminates the need for
+ * manual registration of component classes.
  */
 @Slf4j
 @Singleton
@@ -27,14 +28,16 @@ public class ComponentRegistry {
     discoverComponents();
   }
 
-  /** Auto-discovers all classes that implement IComponent and are annotated with @Introspected. */
+  /**
+   * Auto-discovers all classes that implement IComponent and are annotated
+   * with @Introspected.
+   */
   private void discoverComponents() {
     Collection<BeanIntrospection<Object>> introspections =
-        BeanIntrospector.SHARED.findIntrospections(
-            ref -> {
-              Class<?> beanType = ref.getBeanType();
-              return IComponent.class.isAssignableFrom(beanType);
-            });
+      BeanIntrospector.SHARED.findIntrospections(ref -> {
+        Class<?> beanType = ref.getBeanType();
+        return IComponent.class.isAssignableFrom(beanType);
+      });
 
     for (BeanIntrospection<Object> introspection : introspections) {
       Class<?> beanType = introspection.getBeanType();

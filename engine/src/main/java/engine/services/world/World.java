@@ -42,15 +42,14 @@ public class World {
 
     // Filter the list down to only those that have all the required components.
     return activeEntities.stream()
-        .filter(
-            entityId -> {
-              for (Class<?> componentClass : componentClasses) {
-                if (!componentManager.hasComponent(entityId, componentClass)) {
-                  return false; // This entity doesn't have one of the required components.
-                }
-              }
-              return true; // This entity has all required components.
-            })
-        .collect(Collectors.toSet());
+      .filter(entityId -> {
+        for (Class<?> componentClass : componentClasses) {
+          if (!componentManager.hasComponent(entityId, componentClass)) {
+            return false; // This entity doesn't have one of the required components.
+          }
+        }
+        return true; // This entity has all required components.
+      })
+      .collect(Collectors.toSet());
   }
 }

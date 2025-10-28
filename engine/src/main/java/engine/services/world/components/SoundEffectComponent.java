@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SoundEffectComponent implements IComponent {
 
-  public interface SoundEffectType {}
+  public interface SoundEffectType {
+  }
 
   public final String soundBufferHandle;
   public final SoundEffectType soundType;

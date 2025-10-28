@@ -1,5 +1,6 @@
 package engine.services.time;
 
+
 import engine.IService;
 import jakarta.inject.Singleton;
 import lombok.Getter;
@@ -12,9 +13,11 @@ public class SystemTimeService implements IService {
   private long startTimeNanos;
   private long lastFrameNanos;
 
-  @Getter private float deltaTimeSeconds;
+  @Getter
+  private float deltaTimeSeconds;
 
-  @Getter private double totalTimeSeconds;
+  @Getter
+  private double totalTimeSeconds;
 
   @Override
   public int executionOrder() {

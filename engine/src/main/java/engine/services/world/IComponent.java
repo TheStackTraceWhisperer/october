@@ -1,3 +1,4 @@
 package engine.services.world;
 
-public interface IComponent {}
+public interface IComponent {
+}

@@ -1,9 +1,9 @@
 package engine.services.world;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import engine.services.world.components.*;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ComponentRegistryTest {
 
@@ -14,23 +14,23 @@ class ComponentRegistryTest {
 
     // Then - should have discovered all @Introspected component classes
     assertThat(registry.size()).isGreaterThan(0);
-    assertThat(registry.getComponentNames())
-        .contains(
-            "AudioSourceComponent",
-            "ColliderComponent",
-            "ControllableComponent",
-            "EnemyComponent",
-            "HealthComponent",
-            "MeshComponent",
-            "MovementStatsComponent",
-            "MusicComponent",
-            "PlayerComponent",
-            "SoundEffectComponent",
-            "SpriteComponent",
-            "TransformComponent",
-            "UIButtonComponent",
-            "UIImageComponent",
-            "UITransformComponent");
+    assertThat(registry.getComponentNames()).contains(
+      "AudioSourceComponent",
+      "ColliderComponent",
+      "ControllableComponent",
+      "EnemyComponent",
+      "HealthComponent",
+      "MeshComponent",
+      "MovementStatsComponent",
+      "MusicComponent",
+      "PlayerComponent",
+      "SoundEffectComponent",
+      "SpriteComponent",
+      "TransformComponent",
+      "UIButtonComponent",
+      "UIImageComponent",
+      "UITransformComponent"
+    );
   }
 
   @Test
@@ -40,9 +40,11 @@ class ComponentRegistryTest {
 
     // When/Then
     assertThat(registry.getComponentClass("TransformComponent"))
-        .isEqualTo(TransformComponent.class);
-    assertThat(registry.getComponentClass("SpriteComponent")).isEqualTo(SpriteComponent.class);
-    assertThat(registry.getComponentClass("HealthComponent")).isEqualTo(HealthComponent.class);
+      .isEqualTo(TransformComponent.class);
+    assertThat(registry.getComponentClass("SpriteComponent"))
+      .isEqualTo(SpriteComponent.class);
+    assertThat(registry.getComponentClass("HealthComponent"))
+      .isEqualTo(HealthComponent.class);
   }
 
   @Test

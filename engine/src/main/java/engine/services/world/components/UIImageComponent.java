@@ -13,7 +13,8 @@ public class UIImageComponent implements IComponent {
 
   @JsonCreator
   public UIImageComponent(
-      @JsonProperty("textureHandle") String textureHandle, @JsonProperty("color") Vector4f color) {
+    @JsonProperty("textureHandle") String textureHandle,
+    @JsonProperty("color") Vector4f color) {
     this.textureHandle = textureHandle;
     this.color = color != null ? color : new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
   }

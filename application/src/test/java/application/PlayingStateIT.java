@@ -1,21 +1,21 @@
-// package application;
+//package application;
 //
-// import engine.EngineTestHarness;
-// import engine.services.state.ApplicationStateService;
-// import engine.services.world.WorldService;
-// import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-// import jakarta.inject.Inject;
-// import org.junit.jupiter.api.Test;
+//import engine.EngineTestHarness;
+//import engine.services.state.ApplicationStateService;
+//import engine.services.world.WorldService;
+//import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+//import jakarta.inject.Inject;
+//import org.junit.jupiter.api.Test;
 //
-// import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 //
 //// Assuming these components exist in the application module
-// import application.components.PlayerComponent;
-// import application.components.EnemyComponent;
+//import application.components.PlayerComponent;
+//import application.components.EnemyComponent;
 //
 //// Add packages to scan to include both application and engine beans
-// @MicronautTest(packages = {"application", "engine"})
-// public class PlayingStateIT extends EngineTestHarness {
+//@MicronautTest(packages = {"application", "engine"})
+//public class PlayingStateIT extends EngineTestHarness {
 //
 //    @Inject
 //    private ApplicationStateService stateService;
@@ -36,4 +36,4 @@
 //        assertEquals(1, playerEntities.size(), "There should be exactly one Player entity.");
 //        assertEquals(1, enemyEntities.size(), "There should be exactly one Enemy entity.");
 //    }
-// }
+//}

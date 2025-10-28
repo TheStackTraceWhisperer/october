@@ -3,6 +3,7 @@ package engine.services.world;
 import engine.IService;
 import io.micronaut.context.ApplicationContext;
 import jakarta.inject.Singleton;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -94,13 +95,11 @@ public class WorldService implements IService {
   /** Enable a system by class (bean-backed). */
   public void enableSystem(Class<? extends ISystem> systemClass) {
     if (systemClass == null) return;
-    activeSystems.computeIfAbsent(
-        systemClass,
-        cls -> {
-          ISystem instance = getBean(cls);
-          systemManager.addSystem(instance);
-          return instance;
-        });
+    activeSystems.computeIfAbsent(systemClass, cls -> {
+      ISystem instance = getBean(cls);
+      systemManager.addSystem(instance);
+      return instance;
+    });
   }
 
   /** Disable a system by class. */

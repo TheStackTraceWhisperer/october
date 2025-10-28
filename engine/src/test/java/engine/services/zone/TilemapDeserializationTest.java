@@ -1,12 +1,18 @@
 package engine.services.zone;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import engine.services.zone.tilemap.Tile;
+import engine.services.zone.tilemap.Tilelayer;
 import engine.services.zone.tilemap.Tilemap;
-import java.util.Map;
+import engine.services.zone.tilemap.Tileset;
 import org.junit.jupiter.api.Test;
 
-/** Tests for Tilemap JSON deserialization via ZoneService. */
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Tests for Tilemap JSON deserialization via ZoneService.
+ */
 class TilemapDeserializationTest {
 
   @Test
@@ -86,7 +92,7 @@ class TilemapDeserializationTest {
     layer.setName("test");
     layer.setWidth(1);
     layer.setHeight(1);
-    layer.setTileIds(new int[][] {{0}});
+    layer.setTileIds(new int[][]{{0}});
 
     // When/Then - defaults
     assertThat(layer.isVisible()).isTrue();
@@ -130,7 +136,7 @@ class TilemapDeserializationTest {
   void jsonTilemap_shouldReturnEmptyCollectionsWhenNull() {
     // Given
     ZoneService.JsonTilemap tilemap = new ZoneService.JsonTilemap();
-
+    
     // When/Then
     assertThat(tilemap.getTilesets()).isEmpty();
     assertThat(tilemap.getTilelayers()).isEmpty();

@@ -3,12 +3,15 @@ package engine.services.zone;
 import engine.services.zone.sequence.Sequence;
 import engine.services.zone.sequence.Trigger;
 import engine.services.zone.tilemap.Tilemap;
-import java.util.List;
-import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 
-/** Simple implementation of Zone for testing purposes. */
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Simple implementation of Zone for testing purposes.
+ */
 @Getter
 @Builder
 public class SimpleZone implements Zone {

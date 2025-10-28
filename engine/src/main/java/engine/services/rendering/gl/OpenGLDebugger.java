@@ -1,5 +1,13 @@
 package engine.services.rendering.gl;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL43;
+import org.lwjgl.system.Callback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.function.IntSupplier;
+
 import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
 import static org.lwjgl.opengl.GL11.GL_INVALID_ENUM;
 import static org.lwjgl.opengl.GL11.GL_INVALID_OPERATION;
@@ -15,17 +23,10 @@ import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
 import static org.lwjgl.opengl.GL43.GL_INVALID_FRAMEBUFFER_OPERATION;
 import static org.lwjgl.opengl.GL43.glDebugMessageControl;
 
-import java.util.function.IntSupplier;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL43;
-import org.lwjgl.system.Callback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Utility to enable OpenGL debug output. Provides much more informative error messages than
- * glGetError. This class assumes it is being run in an OpenGL 4.3+ context, where debug output is
- * guaranteed to be available.
+ * Utility to enable OpenGL debug output.
+ * Provides much more informative error messages than glGetError.
+ * This class assumes it is being run in an OpenGL 4.3+ context, where debug output is guaranteed to be available.
  */
 public final class OpenGLDebugger {
 
@@ -33,8 +34,8 @@ public final class OpenGLDebugger {
   private static Callback debugCallback;
 
   /**
-   * Initializes and enables OpenGL debug output. Must be called after a GL context has been created
-   * (e.g., after GL.createCapabilities()).
+   * Initializes and enables OpenGL debug output.
+   * Must be called after a GL context has been created (e.g., after GL.createCapabilities()).
    */
   public static void init() {
     log.info("Initializing OpenGL Debugger...");
@@ -44,16 +45,15 @@ public final class OpenGLDebugger {
     GL43.glDebugMessageCallback((Slf4jGLDebugCallback) debugCallback, 0);
 
     // Set the debug level. Use GL_DEBUG_SEVERITY_NOTIFICATION for verbose output.
-    glDebugMessageControl(
-        GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, (int[]) null, true);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, (int[]) null, true);
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     log.info("OpenGL Debugger Initialized.");
   }
 
   /**
-   * Checks for any accumulated OpenGL errors and throws a RuntimeException if any are found. This
-   * is the public entry point that uses the real OpenGL error supplier.
+   * Checks for any accumulated OpenGL errors and throws a RuntimeException if any are found.
+   * This is the public entry point that uses the real OpenGL error supplier.
    */
   public static void checkErrors() {
     checkErrors(GL11::glGetError);
@@ -91,7 +91,9 @@ public final class OpenGLDebugger {
     };
   }
 
-  /** Cleans up the debug callback. Should be called before the context is destroyed. */
+  /**
+   * Cleans up the debug callback. Should be called before the context is destroyed.
+   */
   public static void cleanup() {
     if (debugCallback != null) {
       debugCallback.free();

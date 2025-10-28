@@ -1,28 +1,29 @@
 package application;
 
-import application.ui.TimerOverlayProvider;
-import application.ui.TimerOverlaySystem;
-import engine.services.input.InputService;
-import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.state.ApplicationStateService;
-import engine.services.world.ISystem;
+import engine.services.input.InputService;
+import engine.services.scene.SceneService;
 import engine.services.world.WorldService;
-import engine.services.world.systems.AudioSystem;
-import engine.services.world.systems.FadeOverlaySystem;
-import engine.services.world.systems.MoveToTargetSystem;
-import engine.services.world.systems.MovementSystem;
-import engine.services.world.systems.RenderSystem;
-import engine.services.world.systems.SequenceSystem;
+import engine.services.world.ISystem;
 import engine.services.world.systems.TriggerSystem;
+import engine.services.world.systems.SequenceSystem;
+import engine.services.world.systems.MovementSystem;
+import engine.services.world.systems.AudioSystem;
+import engine.services.world.systems.MoveToTargetSystem;
+import engine.services.world.systems.FadeOverlaySystem;
+import engine.services.world.systems.RenderSystem;
 import engine.services.world.systems.UISystem;
 import engine.services.zone.ZoneService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.Collection;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import application.ui.TimerOverlaySystem;
+import application.ui.TimerOverlayProvider;
+
+import java.util.Collection;
+import java.util.List;
 
 /** Intro cutscene that ties together zone, tilemap, and sequences. */
 @Singleton
@@ -67,15 +68,16 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public Collection<Class<? extends ISystem>> systems() {
     return List.of(
-        TriggerSystem.class,
-        SequenceSystem.class,
-        MovementSystem.class,
-        MoveToTargetSystem.class,
-        AudioSystem.class,
-        RenderSystem.class,
-        UISystem.class,
-        FadeOverlaySystem.class,
-        TimerOverlaySystem.class);
+      TriggerSystem.class,
+      SequenceSystem.class,
+      MovementSystem.class,
+      MoveToTargetSystem.class,
+      AudioSystem.class,
+      RenderSystem.class,
+      UISystem.class,
+      FadeOverlaySystem.class,
+      TimerOverlaySystem.class
+    );
   }
 
   @Override
@@ -92,11 +94,8 @@ public class IntroCutsceneState implements ApplicationState {
   }
 
   public void handleInput() {
-    // Skip on any keyboard key, mouse button, or gamepad button just-pressed; ignore cursor
-    // movement
-    if (inputService.isAnyKeyJustPressed()
-        || inputService.isAnyMouseButtonJustPressed()
-        || inputService.isAnyGamepadButtonJustPressed()) {
+    // Skip on any keyboard key, mouse button, or gamepad button just-pressed; ignore cursor movement
+    if (inputService.isAnyKeyJustPressed() || inputService.isAnyMouseButtonJustPressed() || inputService.isAnyGamepadButtonJustPressed()) {
       applicationStateService.popState();
     }
   }

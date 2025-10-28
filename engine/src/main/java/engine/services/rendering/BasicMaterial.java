@@ -1,15 +1,16 @@
 package engine.services.rendering;
 
 import engine.services.rendering.gl.Shader;
+
 import java.util.Objects;
 
 /**
  * A basic implementation of the Material interface that combines a shader and texture.
- *
- * <p>This material represents the most common rendering case: a textured mesh with a shader
- * program. It provides basic binding/unbinding functionality for use in a rendering pipeline.
- *
- * <p>This is a basic material system that is not yet integrated into the main rendering pipeline.
+ * <p>
+ * This material represents the most common rendering case: a textured mesh with a shader program.
+ * It provides basic binding/unbinding functionality for use in a rendering pipeline.
+ * <p>
+ * This is a basic material system that is not yet integrated into the main rendering pipeline.
  */
 public class BasicMaterial implements Material {
 
@@ -20,8 +21,8 @@ public class BasicMaterial implements Material {
   /**
    * Creates a new BasicMaterial with the specified components.
    *
-   * @param name A human-readable name for this material.
-   * @param shader The shader program to use for rendering.
+   * @param name    A human-readable name for this material.
+   * @param shader  The shader program to use for rendering.
    * @param texture The texture to apply, or null for untextured rendering.
    */
   public BasicMaterial(String name, Shader shader, Texture texture) {
@@ -68,6 +69,9 @@ public class BasicMaterial implements Material {
 
   @Override
   public String toString() {
-    return "BasicMaterial{" + "name='" + name + '\'' + ", hasTexture=" + (texture != null) + '}';
+    return "BasicMaterial{" +
+      "name='" + name + '\'' +
+      ", hasTexture=" + (texture != null) +
+      '}';
   }
 }

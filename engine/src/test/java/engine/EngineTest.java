@@ -1,5 +1,18 @@
 package engine;
 
+import engine.services.state.ApplicationStateService;
+import engine.services.time.SystemTimeService;
+import engine.services.window.WindowService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyLong;
@@ -12,32 +25,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import engine.services.state.ApplicationStateService;
-import engine.services.time.SystemTimeService;
-import engine.services.window.WindowService;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
- * Unit tests for the {@link Engine} class, focusing on its lifecycle and state management. This
- * test is isolated from the Micronaut context and uses mocks for all dependencies.
+ * Unit tests for the {@link Engine} class, focusing on its lifecycle and state management.
+ * This test is isolated from the Micronaut context and uses mocks for all dependencies.
  */
 @ExtendWith(MockitoExtension.class)
 class EngineTest {
 
-  @Mock private ApplicationLoopPolicy loopPolicy;
-  @Mock private ApplicationStateService applicationStateService;
-  @Mock private WindowService windowService;
-  @Mock private SystemTimeService systemTimeService;
-  @Mock private IService serviceEarly; // e.g., executionOrder 1
-  @Mock private IService serviceLate; // e.g., executionOrder 10
-  @Mock private IService serviceMiddle; // e.g., executionOrder 5
+  @Mock
+  private ApplicationLoopPolicy loopPolicy;
+  @Mock
+  private ApplicationStateService applicationStateService;
+  @Mock
+  private WindowService windowService;
+  @Mock
+  private SystemTimeService systemTimeService;
+  @Mock
+  private IService serviceEarly; // e.g., executionOrder 1
+  @Mock
+  private IService serviceLate;  // e.g., executionOrder 10
+  @Mock
+  private IService serviceMiddle; // e.g., executionOrder 5
 
   private Engine engine;
   private List<IService> mutableServices;
@@ -52,9 +60,7 @@ class EngineTest {
     // The Engine requires a mutable list to sort, so we must provide an ArrayList.
     // Add them in a non-sorted order to ensure the engine's sorting logic is tested.
     mutableServices = new ArrayList<>(List.of(serviceLate, serviceEarly, serviceMiddle));
-    engine =
-        new Engine(
-            loopPolicy, applicationStateService, mutableServices, windowService, systemTimeService);
+    engine = new Engine(loopPolicy, applicationStateService, mutableServices, windowService, systemTimeService);
 
     // Default mock behavior for loop policy and application state for most tests.
     // Marked as lenient to avoid UnnecessaryStubbingException if not used in every test.
@@ -200,7 +206,7 @@ class EngineTest {
     // Act & Assert
     RuntimeException thrown = assertThrows(RuntimeException.class, () -> engine.run());
     // Verify that the exception from init is rethrown
-    assert (thrown.getMessage().contains("Engine initialization failed"));
+    assert(thrown.getMessage().contains("Engine initialization failed"));
 
     // Verify that shutdown was called on services that might have started.
     // In this case, serviceEarly failed to start, but shutdown() is still called in finally.

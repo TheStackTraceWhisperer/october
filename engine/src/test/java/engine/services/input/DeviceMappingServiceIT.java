@@ -1,24 +1,26 @@
 package engine.services.input;
 
+import engine.EngineTestHarness;
+import engine.game.GameAction;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import io.micronaut.test.annotation.MockBean;
+import org.lwjgl.glfw.GLFW;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import engine.EngineTestHarness;
-import engine.game.GameAction;
-import io.micronaut.test.annotation.MockBean;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
-import org.junit.jupiter.api.Test;
-import org.lwjgl.glfw.GLFW;
-import org.mockito.Mockito;
-
 @MicronautTest
 public class DeviceMappingServiceIT extends EngineTestHarness {
 
-  @Inject DeviceMappingService mappingService;
+  @Inject
+  DeviceMappingService mappingService;
 
-  @Inject InputService inputService; // This will be the mocked bean
+  @Inject
+  InputService inputService; // This will be the mocked bean
 
   @MockBean(InputService.class)
   InputService inputService() {
@@ -69,3 +71,4 @@ public class DeviceMappingServiceIT extends EngineTestHarness {
     assertFalse(mappingService.isActionActive(0, GameAction.MOVE_DOWN));
   }
 }
+

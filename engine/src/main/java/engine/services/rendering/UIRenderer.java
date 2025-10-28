@@ -1,5 +1,12 @@
 package engine.services.rendering;
 
+import engine.services.rendering.gl.Shader;
+import engine.services.resources.AssetCacheService;
+import engine.services.window.WindowService;
+import engine.services.world.components.UITransformComponent;
+import lombok.RequiredArgsConstructor;
+import org.joml.Matrix4f;
+
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -10,13 +17,6 @@ import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-
-import engine.services.rendering.gl.Shader;
-import engine.services.resources.AssetCacheService;
-import engine.services.window.WindowService;
-import engine.services.world.components.UITransformComponent;
-import lombok.RequiredArgsConstructor;
-import org.joml.Matrix4f;
 
 @RequiredArgsConstructor
 public class UIRenderer {
@@ -45,8 +45,7 @@ public class UIRenderer {
     submitColored(transform, textureHandle, 1.0f, 1.0f, 1.0f, 1.0f);
   }
 
-  public void submitColored(
-      UITransformComponent transform, String textureHandle, float r, float g, float b, float a) {
+  public void submitColored(UITransformComponent transform, String textureHandle, float r, float g, float b, float a) {
     if (textureHandle == null) return;
     Texture texture = assetCacheService.resolveTextureHandle(textureHandle);
     Matrix4f modelMatrix = calculateModelMatrix(transform);
@@ -69,10 +68,7 @@ public class UIRenderer {
 
   public void resize(int width, int height) {
     if (uiCameraService != null) {
-      uiCameraService
-          .getProjectionMatrix()
-          .identity()
-          .ortho(0.0f, width, 0.0f, height, -1.0f, 1.0f);
+      uiCameraService.getProjectionMatrix().identity().ortho(0.0f, width, 0.0f, height, -1.0f, 1.0f);
     }
   }
 

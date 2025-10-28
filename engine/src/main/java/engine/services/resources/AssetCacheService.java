@@ -7,6 +7,7 @@ import engine.services.rendering.Texture;
 import engine.services.rendering.gl.Shader;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
+
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class AssetCacheService implements IService {
   private final Map<String, Shader> shaderCache = new HashMap<>();
   private final Map<String, AudioBuffer> audioBufferCache = new HashMap<>();
 
+
   @Override
   public int executionOrder() {
     return 20;
@@ -30,16 +32,16 @@ public class AssetCacheService implements IService {
     // Define the vertices for a standard quad mesh
     float[] vertices = {
       // Position           // UV Coords
-      0.5f, 0.5f, 0.0f, 1.0f, 1.0f, // Top Right
-      0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Bottom Right
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // Bottom Left
-      -0.5f, 0.5f, 0.0f, 0.0f, 1.0f // Top Left
+      0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
+      0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
+      -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
+      -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top Left
     };
 
     // Define the indices for the quad
     int[] indices = {
       0, 1, 3, // First Triangle
-      1, 2, 3 // Second Triangle
+      1, 2, 3  // Second Triangle
     };
 
     // Programmatically create and load the quad mesh
@@ -53,11 +55,11 @@ public class AssetCacheService implements IService {
   }
 
   /**
-   * Adds a pre-existing Texture object to the cache. If a texture with the same handle already
-   * exists, it will be closed and replaced. This is useful for procedurally generated textures in
-   * tests.
+   * Adds a pre-existing Texture object to the cache.
+   * If a texture with the same handle already exists, it will be closed and replaced.
+   * This is useful for procedurally generated textures in tests.
    *
-   * @param handle The unique handle for this texture.
+   * @param handle  The unique handle for this texture.
    * @param texture The Texture object to cache.
    */
   public void addTexture(String handle, Texture texture) {
@@ -68,10 +70,10 @@ public class AssetCacheService implements IService {
   }
 
   /**
-   * Loads a texture from a file, stores it in the cache, and returns it. If the texture is already
-   * cached, returns the existing instance.
+   * Loads a texture from a file, stores it in the cache, and returns it.
+   * If the texture is already cached, returns the existing instance.
    *
-   * @param handle The unique handle for this texture.
+   * @param handle   The unique handle for this texture.
    * @param filePath The classpath path to the image file.
    * @return The cached or newly loaded Texture.
    */
@@ -80,26 +82,25 @@ public class AssetCacheService implements IService {
   }
 
   /**
-   * Loads a shader program from two files, stores it, and returns it. If the shader is already
-   * cached, returns the existing instance.
+   * Loads a shader program from two files, stores it, and returns it.
+   * If the shader is already cached, returns the existing instance.
    *
-   * @param handle The unique handle for this shader.
-   * @param vertexPath The classpath path to the vertex shader file.
+   * @param handle       The unique handle for this shader.
+   * @param vertexPath   The classpath path to the vertex shader file.
    * @param fragmentPath The classpath path to the fragment shader file.
    * @return The cached or newly loaded Shader.
    */
   public Shader loadShader(String handle, String vertexPath, String fragmentPath) {
-    return shaderCache.computeIfAbsent(
-        handle, h -> AssetLoaderUtility.loadShader(vertexPath, fragmentPath));
+    return shaderCache.computeIfAbsent(handle, h -> AssetLoaderUtility.loadShader(vertexPath, fragmentPath));
   }
 
   /**
-   * Creates a new Mesh from raw vertex data and stores it under a given handle. If a mesh with the
-   * same handle already exists, it will be closed and replaced.
+   * Creates a new Mesh from raw vertex data and stores it under a given handle.
+   * If a mesh with the same handle already exists, it will be closed and replaced.
    *
-   * @param handle The unique string identifier for this mesh.
+   * @param handle   The unique string identifier for this mesh.
    * @param vertices The vertex data (e.g., positions, UVs).
-   * @param indices The index data defining the triangles.
+   * @param indices  The index data defining the triangles.
    */
   public void loadProceduralMesh(String handle, float[] vertices, int[] indices) {
     if (meshCache.containsKey(handle)) {
@@ -121,10 +122,10 @@ public class AssetCacheService implements IService {
   }
 
   /**
-   * Loads an audio buffer from an OGG Vorbis file, stores it in the cache, and returns it. If the
-   * audio buffer is already cached, returns the existing instance.
+   * Loads an audio buffer from an OGG Vorbis file, stores it in the cache, and returns it.
+   * If the audio buffer is already cached, returns the existing instance.
    *
-   * @param handle The unique handle for this audio buffer.
+   * @param handle   The unique handle for this audio buffer.
    * @param filePath The classpath path to the OGG file.
    * @return The cached or newly loaded AudioBuffer.
    */
@@ -145,8 +146,8 @@ public class AssetCacheService implements IService {
   }
 
   /**
-   * Frees all managed resources. This iterates through all cached assets and calls their respective
-   * close() methods to release native resources.
+   * Frees all managed resources. This iterates through all cached assets
+   * and calls their respective close() methods to release native resources.
    */
   @PreDestroy
   public void close() {

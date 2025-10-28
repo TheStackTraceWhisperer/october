@@ -1,18 +1,18 @@
 package engine.services.rendering.gl;
 
+import org.lwjgl.opengl.GLDebugMessageCallback;
+import org.slf4j.Logger;
+
+import java.util.function.BiFunction;
+
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_HIGH;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_LOW;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_MEDIUM;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
 
-import java.util.function.BiFunction;
-import org.lwjgl.opengl.GLDebugMessageCallback;
-import org.slf4j.Logger;
-
 /**
  * A custom GLDebugMessageCallback that routes OpenGL debug messages to a provided SLF4J logger.
- * This class is designed for testability by allowing the message-retrieving function to be
- * injected.
+ * This class is designed for testability by allowing the message-retrieving function to be injected.
  */
 public class Slf4jGLDebugCallback extends GLDebugMessageCallback {
 
@@ -31,9 +31,8 @@ public class Slf4jGLDebugCallback extends GLDebugMessageCallback {
   /**
    * Test-visible constructor for injecting a message supplier.
    *
-   * @param logger The SLF4J logger to use.
-   * @param messageSupplier A function that takes a length and a long pointer and returns a message
-   *     string.
+   * @param logger          The SLF4J logger to use.
+   * @param messageSupplier A function that takes a length and a long pointer and returns a message string.
    */
   Slf4jGLDebugCallback(Logger logger, BiFunction<Integer, Long, String> messageSupplier) {
     this.log = logger;
@@ -41,8 +40,7 @@ public class Slf4jGLDebugCallback extends GLDebugMessageCallback {
   }
 
   @Override
-  public void invoke(
-      int source, int type, int id, int severity, int length, long message, long userParam) {
+  public void invoke(int source, int type, int id, int severity, int length, long message, long userParam) {
     String msg = messageSupplier.apply(length, message);
     switch (severity) {
       case GL_DEBUG_SEVERITY_HIGH:

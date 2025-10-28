@@ -1,113 +1,60 @@
 package engine.services.world.systems;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import engine.services.rendering.FadeService;
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.zone.Zone;
 import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Sequence;
-import java.util.*;
+import engine.services.rendering.FadeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class SequenceSystemTest {
 
-  @Mock private ZoneService zoneService;
+  @Mock
+  private ZoneService zoneService;
 
-  @Mock private AudioSystem audioSystem;
+  @Mock
+  private AudioSystem audioSystem;
 
-  @Mock private FadeService fadeService;
+  @Mock
+  private FadeService fadeService;
 
   private World world;
   private SequenceSystem sequenceSystem;
 
   // --- Test helpers ---
   static class TestEvent implements GameEvent {
-    private final String type;
-    private final Map<String, Object> props;
-
-    TestEvent(String type, Map<String, Object> props) {
-      this.type = type;
-      this.props = props;
-    }
-
-    @Override
-    public String getType() {
-      return type;
-    }
-
-    @Override
-    public Map<String, Object> getProperties() {
-      return props;
-    }
+    private final String type; private final Map<String, Object> props;
+    TestEvent(String type, Map<String, Object> props) { this.type = type; this.props = props; }
+    @Override public String getType() { return type; }
+    @Override public Map<String, Object> getProperties() { return props; }
   }
-
   static class TestSequence implements Sequence {
-    private final String id;
-    private final List<GameEvent> events;
-
-    TestSequence(String id, List<GameEvent> events) {
-      this.id = id;
-      this.events = events;
-    }
-
-    @Override
-    public String getId() {
-      return id;
-    }
-
-    @Override
-    public List<GameEvent> getEvents() {
-      return events;
-    }
+    private final String id; private final List<GameEvent> events;
+    TestSequence(String id, List<GameEvent> events) { this.id = id; this.events = events; }
+    @Override public String getId() { return id; }
+    @Override public List<GameEvent> getEvents() { return events; }
   }
-
   static class TestZone implements Zone {
-    private final String id;
-    private final List<Sequence> seqs;
-
-    TestZone(String id, List<Sequence> seqs) {
-      this.id = id;
-      this.seqs = seqs;
-    }
-
-    @Override
-    public String getId() {
-      return id;
-    }
-
-    @Override
-    public String getName() {
-      return id;
-    }
-
-    @Override
-    public engine.services.zone.tilemap.Tilemap getTilemap() {
-      return null;
-    }
-
-    @Override
-    public List<Sequence> getSequences() {
-      return seqs;
-    }
-
-    @Override
-    public List<engine.services.zone.sequence.Trigger> getTriggers() {
-      return Collections.emptyList();
-    }
-
-    @Override
-    public Map<String, Object> getProperties() {
-      return Collections.emptyMap();
-    }
+    private final String id; private final List<Sequence> seqs;
+    TestZone(String id, List<Sequence> seqs) { this.id = id; this.seqs = seqs; }
+    @Override public String getId() { return id; }
+    @Override public String getName() { return id; }
+    @Override public engine.services.zone.tilemap.Tilemap getTilemap() { return null; }
+    @Override public List<Sequence> getSequences() { return seqs; }
+    @Override public List<engine.services.zone.sequence.Trigger> getTriggers() { return Collections.emptyList(); }
+    @Override public Map<String, Object> getProperties() { return Collections.emptyMap(); }
   }
 
   @BeforeEach

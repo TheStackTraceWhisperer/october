@@ -1,5 +1,10 @@
 package engine.services.rendering;
 
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
@@ -22,15 +27,12 @@ import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import org.lwjgl.system.MemoryStack;
-
 /**
  * Represents a 2D texture stored on the GPU.
- *
- * <p>This class encapsulates an OpenGL texture ID and handles loading image data from a file using
- * STB. It is an AutoCloseable resource that must be managed by a ResourceManager.
+ * <p>
+ * This class encapsulates an OpenGL texture ID and handles loading image data
+ * from a file using STB. It is an AutoCloseable resource that must be managed
+ * by a ResourceManager.
  */
 public class Texture implements AutoCloseable {
   private final int textureId;
@@ -55,8 +57,7 @@ public class Texture implements AutoCloseable {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(
-        GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -74,14 +75,11 @@ public class Texture implements AutoCloseable {
       IntBuffer h = stack.mallocInt(1);
       IntBuffer channels = stack.mallocInt(1);
 
-      // Tell STB to flip the image vertically on load, which is necessary for OpenGL's coordinate
-      // system.
+      // Tell STB to flip the image vertically on load, which is necessary for OpenGL's coordinate system.
       stbi_set_flip_vertically_on_load(true);
-      decodedImage =
-          stbi_load_from_memory(imageBuffer, w, h, channels, 4); // Request 4 channels (RGBA)
+      decodedImage = stbi_load_from_memory(imageBuffer, w, h, channels, 4); // Request 4 channels (RGBA)
       if (decodedImage == null) {
-        throw new RuntimeException(
-            "Failed to load a texture from memory! Reason: " + stbi_failure_reason());
+        throw new RuntimeException("Failed to load a texture from memory! Reason: " + stbi_failure_reason());
       }
       this.width = w.get(0);
       this.height = h.get(0);
@@ -99,16 +97,8 @@ public class Texture implements AutoCloseable {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // Upload the image data to the texture
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA,
-        this.width,
-        this.height,
-        0,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        decodedImage);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0,
+      GL_RGBA, GL_UNSIGNED_BYTE, decodedImage);
 
     // Generate mipmaps for better quality at smaller scales (optional but good practice)
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -130,7 +120,9 @@ public class Texture implements AutoCloseable {
     glBindTexture(GL_TEXTURE_2D, textureId);
   }
 
-  /** Unbinds the texture from the currently active texture unit. */
+  /**
+   * Unbinds the texture from the currently active texture unit.
+   */
   public void unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
   }

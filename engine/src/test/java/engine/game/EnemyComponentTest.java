@@ -1,47 +1,47 @@
 package engine.game;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import engine.services.world.IComponent;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class EnemyComponentTest {
 
-  @Test
-  void constructor_shouldCreateEnemyComponent() {
-    EnemyComponent enemy = new EnemyComponent();
+    @Test
+    void constructor_shouldCreateEnemyComponent() {
+        EnemyComponent enemy = new EnemyComponent();
+        
+        assertNotNull(enemy);
+    }
 
-    assertNotNull(enemy);
-  }
+    @Test
+    void isInstanceOfIComponent() {
+        EnemyComponent enemy = new EnemyComponent();
+        
+        assertTrue(enemy instanceof IComponent);
+    }
 
-  @Test
-  void isInstanceOfIComponent() {
-    EnemyComponent enemy = new EnemyComponent();
+    @Test
+    void equals_shouldReturnTrueForAllInstances() {
+        EnemyComponent enemy1 = new EnemyComponent();
+        EnemyComponent enemy2 = new EnemyComponent();
+        
+        // Records with no fields are equal to all instances of the same type
+        assertEquals(enemy1, enemy2);
+    }
 
-    assertTrue(enemy instanceof IComponent);
-  }
+    @Test
+    void hashCode_shouldBeConsistent() {
+        EnemyComponent enemy1 = new EnemyComponent();
+        EnemyComponent enemy2 = new EnemyComponent();
+        
+        assertEquals(enemy1.hashCode(), enemy2.hashCode());
+    }
 
-  @Test
-  void equals_shouldReturnTrueForAllInstances() {
-    EnemyComponent enemy1 = new EnemyComponent();
-    EnemyComponent enemy2 = new EnemyComponent();
-
-    // Records with no fields are equal to all instances of the same type
-    assertEquals(enemy1, enemy2);
-  }
-
-  @Test
-  void hashCode_shouldBeConsistent() {
-    EnemyComponent enemy1 = new EnemyComponent();
-    EnemyComponent enemy2 = new EnemyComponent();
-
-    assertEquals(enemy1.hashCode(), enemy2.hashCode());
-  }
-
-  @Test
-  void toString_shouldNotBeNull() {
-    EnemyComponent enemy = new EnemyComponent();
-
-    assertNotNull(enemy.toString());
-  }
+    @Test
+    void toString_shouldNotBeNull() {
+        EnemyComponent enemy = new EnemyComponent();
+        
+        assertNotNull(enemy.toString());
+    }
 }

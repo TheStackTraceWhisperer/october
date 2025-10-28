@@ -9,8 +9,8 @@ import io.micronaut.context.annotation.Prototype;
 import org.joml.Vector3f;
 
 /**
- * This system is responsible for moving entities based on their ControllableComponent state. It
- * reads the player's intent and applies it to the entity's TransformComponent.
+ * This system is responsible for moving entities based on their ControllableComponent state.
+ * It reads the player's intent and applies it to the entity's TransformComponent.
  */
 @Prototype
 public class MovementSystem implements ISystem {
@@ -18,12 +18,15 @@ public class MovementSystem implements ISystem {
   // Re-use a single vector object per frame to avoid creating garbage
   private final Vector3f velocity = new Vector3f();
 
+
   @Override
   public void update(World world, float deltaTime) {
     // Get all entities that can be moved by the player
-    var entities =
-        world.getEntitiesWith(
-            ControllableComponent.class, TransformComponent.class, MovementStatsComponent.class);
+    var entities = world.getEntitiesWith(
+      ControllableComponent.class,
+      TransformComponent.class,
+      MovementStatsComponent.class
+    );
 
     for (int entityId : entities) {
       ControllableComponent control = world.getComponent(entityId, ControllableComponent.class);

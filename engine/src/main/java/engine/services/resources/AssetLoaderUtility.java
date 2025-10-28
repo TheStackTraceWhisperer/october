@@ -2,21 +2,22 @@ package engine.services.resources;
 
 import engine.services.rendering.Texture;
 import engine.services.rendering.gl.Shader;
+import org.lwjgl.BufferUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import org.lwjgl.BufferUtils;
 
 public class AssetLoaderUtility {
 
   /**
-   * Loads a shader program by reading vertex and fragment shader source files. This method
-   * recursively processes #include directives.
+   * Loads a shader program by reading vertex and fragment shader source files.
+   * This method recursively processes #include directives.
    *
-   * @param vertexPath The classpath resource path to the vertex shader file.
+   * @param vertexPath   The classpath resource path to the vertex shader file.
    * @param fragmentPath The classpath resource path to the fragment shader file.
    * @return A new, compiled Shader object.
    */
@@ -62,8 +63,7 @@ public class AssetLoaderUtility {
       String trimmedLine = line.trim();
       if (trimmedLine.startsWith("#include")) {
         // Extract path from quotes
-        String includePath =
-            trimmedLine.substring(trimmedLine.indexOf('"') + 1, trimmedLine.lastIndexOf('"'));
+        String includePath = trimmedLine.substring(trimmedLine.indexOf('"') + 1, trimmedLine.lastIndexOf('"'));
         // Recursively load and append the included source
         finalSource.append(loadShaderSourceWithIncludes(basePath + includePath));
         finalSource.append(System.lineSeparator());
@@ -82,8 +82,7 @@ public class AssetLoaderUtility {
    */
   public static String readResourceToString(String filePath) {
     String correctedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-    try (InputStream is =
-        AssetLoaderUtility.class.getClassLoader().getResourceAsStream(correctedPath)) {
+    try (InputStream is = AssetLoaderUtility.class.getClassLoader().getResourceAsStream(correctedPath)) {
       if (is == null) {
         throw new IOException("Resource not found: " + filePath);
       }
@@ -101,16 +100,15 @@ public class AssetLoaderUtility {
   }
 
   /**
-   * Reads a resource file from the classpath into a direct ByteBuffer. This method reads the
-   * resource in chunks and is robust for use inside JARs.
+   * Reads a resource file from the classpath into a direct ByteBuffer.
+   * This method reads the resource in chunks and is robust for use inside JARs.
    *
    * @param filePath The classpath resource path.
    * @return A ByteBuffer containing the file data.
    */
   public static ByteBuffer readResourceToByteBuffer(String filePath) throws IOException {
     String correctedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-    InputStream source =
-        AssetLoaderUtility.class.getClassLoader().getResourceAsStream(correctedPath);
+    InputStream source = AssetLoaderUtility.class.getClassLoader().getResourceAsStream(correctedPath);
     if (source == null) {
       throw new IOException("Resource not found: " + filePath);
     }

@@ -4,8 +4,9 @@ import engine.services.world.IComponent;
 import io.micronaut.core.annotation.Introspected;
 
 /**
- * A component that marks an entity as being controllable by a player. It stores the player's input
- * intent for the current frame, which other systems (like a movement system) can then act upon.
+ * A component that marks an entity as being controllable by a player.
+ * It stores the player's input intent for the current frame, which other
+ * systems (like a movement system) can then act upon.
  */
 @Introspected
 public class ControllableComponent implements IComponent {

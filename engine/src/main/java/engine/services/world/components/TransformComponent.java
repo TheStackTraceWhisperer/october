@@ -7,17 +7,15 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 /**
- * Represents the position, rotation, and scale of an entity in 3D space. This is a fundamental
- * component for any entity that exists in the game world.
+ * Represents the position, rotation, and scale of an entity in 3D space.
+ * This is a fundamental component for any entity that exists in the game world.
  */
 @Introspected
 public class TransformComponent implements IComponent {
 
   public final Vector3f position;
-  public final Vector3f
-      previousPosition; // Stores the position from the previous frame for collision response
-  public final Quaternionf
-      rotation; // Using quaternions is more robust than Euler angles for rotation
+  public final Vector3f previousPosition; // Stores the position from the previous frame for collision response
+  public final Quaternionf rotation; // Using quaternions is more robust than Euler angles for rotation
   public final Vector3f scale;
 
   private final transient Matrix4f transformMatrix;
@@ -31,28 +29,31 @@ public class TransformComponent implements IComponent {
   }
 
   /**
-   * Stores the current position as the previous position. This should be called once per frame
-   * before any movement logic.
+   * Stores the current position as the previous position.
+   * This should be called once per frame before any movement logic.
    */
   public void updatePreviousPosition() {
     this.previousPosition.set(this.position);
   }
 
   /**
-   * Reverts the current position to the stored previous position. This is the core of our collision
-   * response.
+   * Reverts the current position to the stored previous position.
+   * This is the core of our collision response.
    */
   public void revertPosition() {
     this.position.set(this.previousPosition);
   }
 
   /**
-   * Calculates and returns the model-to-world transformation matrix for this transform. This matrix
-   * is what will be passed to the shader to render the object in the correct location.
+   * Calculates and returns the model-to-world transformation matrix for this transform.
+   * This matrix is what will be passed to the shader to render the object in the correct location.
    *
    * @return A Matrix4f representing the combined transformation.
    */
   public Matrix4f getTransformMatrix() {
-    return transformMatrix.identity().translate(position).rotate(rotation).scale(scale);
+    return transformMatrix.identity()
+      .translate(position)
+      .rotate(rotation)
+      .scale(scale);
   }
 }

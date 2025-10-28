@@ -1,10 +1,11 @@
 package engine.services.audio;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.nio.ShortBuffer;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class AudioServiceTest {
 
@@ -22,8 +23,7 @@ class AudioServiceTest {
     assertThrows(IllegalStateException.class, () -> audioService.setListenerPosition(0, 0, 0));
 
     // setListenerOrientation
-    assertThrows(
-        IllegalStateException.class, () -> audioService.setListenerOrientation(0, 0, -1, 0, 1, 0));
+    assertThrows(IllegalStateException.class, () -> audioService.setListenerOrientation(0, 0, -1, 0, 1, 0));
 
     // createSource
     assertThrows(IllegalStateException.class, audioService::createSource);
@@ -33,8 +33,7 @@ class AudioServiceTest {
     assertThrows(IllegalStateException.class, () -> audioService.createBuffer(data, 1, 44100));
 
     // loadAudioBuffer
-    assertThrows(
-        IllegalStateException.class, () -> audioService.loadAudioBuffer("audio/test-sound.ogg"));
+    assertThrows(IllegalStateException.class, () -> audioService.loadAudioBuffer("audio/test-sound.ogg"));
 
     // stop should be a no-op when not initialized
     assertDoesNotThrow(audioService::stop);
@@ -53,3 +52,4 @@ class AudioServiceTest {
     assertTrue(ex.getMessage().contains("already initialized"));
   }
 }
+

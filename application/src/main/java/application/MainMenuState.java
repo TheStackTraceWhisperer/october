@@ -1,22 +1,23 @@
 package application;
 
-import application.ui.TimerOverlayProvider;
-import application.ui.TimerOverlaySystem;
 import engine.services.input.InputService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.state.ApplicationStateService;
-import engine.services.world.ISystem;
 import engine.services.world.WorldService;
+import engine.services.world.ISystem;
 import engine.services.world.systems.UISystem;
 import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import lombok.RequiredArgsConstructor;
+import application.ui.TimerOverlaySystem;
+import application.ui.TimerOverlayProvider;
+
 import java.util.Collection;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 
 @Prototype
 @Named("initial")

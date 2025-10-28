@@ -12,7 +12,8 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 @Singleton
 @RequiredArgsConstructor
 public class GlfwContextService implements IService {
-  @Getter private boolean initialized = false;
+  @Getter
+  private boolean initialized = false;
   private GLFWErrorCallback errorCallback;
 
   @Override
@@ -22,13 +23,9 @@ public class GlfwContextService implements IService {
 
   public void start() {
     // Install an error callback that logs to our SLF4J logger.
-    this.errorCallback =
-        GLFWErrorCallback.create(
-            (error, description) ->
-                log.error(
-                    "[GLFW Error] Code: {}, Description: {}",
-                    error,
-                    GLFWErrorCallback.getDescription(description)));
+    this.errorCallback = GLFWErrorCallback.create((error, description) ->
+      log.error("[GLFW Error] Code: {}, Description: {}", error, GLFWErrorCallback.getDescription(description))
+    );
     this.errorCallback.set();
 
     if (!GLFW.glfwInit()) {

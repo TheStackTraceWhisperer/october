@@ -8,11 +8,10 @@ public class MoveToTargetComponent implements IComponent {
   public float targetX;
   public float targetY;
   public float targetZ;
-  public float speed; // units per second
-  public float tolerance; // distance threshold to consider arrived
+  public float speed;      // units per second
+  public float tolerance;  // distance threshold to consider arrived
 
-  public MoveToTargetComponent(
-      float targetX, float targetY, float targetZ, float speed, float tolerance) {
+  public MoveToTargetComponent(float targetX, float targetY, float targetZ, float speed, float tolerance) {
     this.targetX = targetX;
     this.targetY = targetY;
     this.targetZ = targetZ;
@@ -20,3 +19,4 @@ public class MoveToTargetComponent implements IComponent {
     this.tolerance = tolerance;
   }
 }
+

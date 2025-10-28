@@ -6,12 +6,15 @@ import io.micronaut.context.ApplicationContext;
 import jakarta.inject.Named;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
-import java.util.Stack;
-import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/** A stack-based Finite State Machine (FSM) for managing the game's high-level states. */
+import java.util.Stack;
+import java.util.function.Supplier;
+
+/**
+ * A stack-based Finite State Machine (FSM) for managing the game's high-level states.
+ */
 @Slf4j
 @Singleton
 @RequiredArgsConstructor
@@ -86,7 +89,9 @@ public class ApplicationStateService implements IService {
     pushState(supplier.get());
   }
 
-  /** Removes the current state from the stack, returning to the previous state. */
+  /**
+   * Removes the current state from the stack, returning to the previous state.
+   */
   public void popState() {
     if (!stateStack.isEmpty()) {
       ApplicationState poppedState = stateStack.pop();

@@ -6,8 +6,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
- * Represents a camera in the game world, responsible for the view and projection matrices. This
- * camera can operate in either a 2D (Orthographic) or 3D (Perspective) mode.
+ * Represents a camera in the game world, responsible for the view and projection matrices.
+ * This camera can operate in either a 2D (Orthographic) or 3D (Perspective) mode.
  */
 @Singleton
 public class CameraService {
@@ -17,7 +17,8 @@ public class CameraService {
     PERSPECTIVE
   }
 
-  @Getter private final Matrix4f projectionMatrix;
+  @Getter
+  private final Matrix4f projectionMatrix;
   private final Matrix4f viewMatrix;
   private final Vector3f position;
   private final Vector3f front;
@@ -45,7 +46,7 @@ public class CameraService {
   /**
    * Creates a new camera with a specific 2D orthographic projection.
    *
-   * @param worldWidth The visible width of the game world.
+   * @param worldWidth  The visible width of the game world.
    * @param worldHeight The visible height of the game world.
    */
   public CameraService(float worldWidth, float worldHeight) {
@@ -73,10 +74,10 @@ public class CameraService {
   }
 
   /**
-   * Configures the camera for 2D rendering with an orthographic projection. The view will be
-   * centered at the origin.
+   * Configures the camera for 2D rendering with an orthographic projection.
+   * The view will be centered at the origin.
    *
-   * @param worldWidth The desired visible width of the world.
+   * @param worldWidth  The desired visible width of the world.
    * @param worldHeight The desired visible height of the world.
    */
   public final void setOrthographic(float worldWidth, float worldHeight) {
@@ -91,26 +92,24 @@ public class CameraService {
   /**
    * Configures the camera for 3D rendering with a perspective projection.
    *
-   * @param fov The vertical field of view, in degrees.
+   * @param fov         The vertical field of view, in degrees.
    * @param aspectRatio The aspect ratio of the viewport (width / height).
-   * @param nearPlane The distance to the near clipping plane.
-   * @param farPlane The distance to the far clipping plane.
+   * @param nearPlane   The distance to the near clipping plane.
+   * @param farPlane    The distance to the far clipping plane.
    */
   public final void setPerspective(float fov, float aspectRatio, float nearPlane, float farPlane) {
     this.projectionType = ProjectionType.PERSPECTIVE;
     this.fov = fov;
     this.nearPlane = nearPlane;
     this.farPlane = farPlane;
-    projectionMatrix
-        .identity()
-        .perspective((float) Math.toRadians(fov), aspectRatio, nearPlane, farPlane);
+    projectionMatrix.identity().perspective((float) Math.toRadians(fov), aspectRatio, nearPlane, farPlane);
   }
 
   /**
-   * Updates the camera's projection matrix to match a new screen size, maintaining the original
-   * aspect ratio to prevent distortion.
+   * Updates the camera's projection matrix to match a new screen size,
+   * maintaining the original aspect ratio to prevent distortion.
    *
-   * @param screenWidth The new width of the window's framebuffer.
+   * @param screenWidth  The new width of the window's framebuffer.
    * @param screenHeight The new height of the window's framebuffer.
    */
   public void resize(int screenWidth, int screenHeight) {

@@ -27,13 +27,13 @@ public final class UIButtonComponent implements IComponent {
 
   @JsonCreator
   public UIButtonComponent(
-      @JsonProperty("actionEvent") String actionEvent,
-      @JsonProperty("normalTexture") String normalTexture,
-      @JsonProperty("hoveredTexture") String hoveredTexture,
-      @JsonProperty("pressedTexture") String pressedTexture,
-      @JsonProperty("normalColor") Vector4f normalColor,
-      @JsonProperty("hoveredColor") Vector4f hoveredColor,
-      @JsonProperty("pressedColor") Vector4f pressedColor) {
+    @JsonProperty("actionEvent") String actionEvent,
+    @JsonProperty("normalTexture") String normalTexture,
+    @JsonProperty("hoveredTexture") String hoveredTexture,
+    @JsonProperty("pressedTexture") String pressedTexture,
+    @JsonProperty("normalColor") Vector4f normalColor,
+    @JsonProperty("hoveredColor") Vector4f hoveredColor,
+    @JsonProperty("pressedColor") Vector4f pressedColor) {
     this.actionEvent = actionEvent;
     this.normalTexture = normalTexture;
     this.hoveredTexture = hoveredTexture;

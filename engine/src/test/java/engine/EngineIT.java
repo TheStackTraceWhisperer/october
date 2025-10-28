@@ -1,21 +1,23 @@
 package engine;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import engine.services.time.SystemTimeService;
 import engine.services.window.WindowService;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
- * Integration test to verify that the EngineTestHarness can successfully bootstrap the engine and
- * its core services.
+ * Integration test to verify that the EngineTestHarness can successfully
+ * bootstrap the engine and its core services.
  */
 class EngineIT extends EngineTestHarness {
 
-  @Inject private WindowService windowService;
+  @Inject
+  private WindowService windowService;
 
-  @Inject private SystemTimeService systemTimeService;
+  @Inject
+  private SystemTimeService systemTimeService;
 
   @Test
   void engineAndWindowServiceShouldBeInitialized() {
@@ -25,8 +27,8 @@ class EngineIT extends EngineTestHarness {
     // The WindowService should be injected and have created a valid window handle.
     assertThat(windowService).isNotNull();
     assertThat(windowService.getHandle())
-        .withFailMessage("Window handle should have been created by the EngineTestHarness")
-        .isNotZero();
+      .withFailMessage("Window handle should have been created by the EngineTestHarness")
+      .isNotZero();
   }
 
   @Test
@@ -47,14 +49,13 @@ class EngineIT extends EngineTestHarness {
     // Assert
     // After ticking, delta and total time should be greater than zero
     assertThat(systemTimeService.getDeltaTimeSeconds())
-        .withFailMessage("Delta time should be greater than 0 after engine ticks")
-        .isGreaterThan(0.0f);
+      .withFailMessage("Delta time should be greater than 0 after engine ticks")
+      .isGreaterThan(0.0f);
     assertThat(systemTimeService.getTotalTimeSeconds())
-        .withFailMessage("Total time should be greater than 0 after engine ticks")
-        .isGreaterThan(0.0);
+      .withFailMessage("Total time should be greater than 0 after engine ticks")
+      .isGreaterThan(0.0);
 
     // Verify that total time is greater than delta time (assuming multiple ticks)
-    assertThat(systemTimeService.getTotalTimeSeconds())
-        .isGreaterThanOrEqualTo(systemTimeService.getDeltaTimeSeconds());
+    assertThat(systemTimeService.getTotalTimeSeconds()).isGreaterThanOrEqualTo(systemTimeService.getDeltaTimeSeconds());
   }
 }

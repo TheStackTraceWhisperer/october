@@ -10,11 +10,14 @@ import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Trigger;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.context.event.ApplicationEventListener;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
-/** A stateless system that observes game state and fires events from Trigger data. */
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * A stateless system that observes game state and fires events from Trigger data.
+ */
 @Slf4j
 @Prototype
 public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoadedEvent> {
@@ -22,7 +25,7 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
 
   // Track which triggers have already fired (for non-repeatable triggers)
   private final Map<String, Boolean> firedTriggers = new HashMap<>();
-
+  
   // Track time since zone loaded (for ON_LOAD triggers with delay)
   private float timeSinceZoneLoaded = 0.0f;
   private boolean zoneJustLoaded = false;
@@ -68,10 +71,12 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
     }
   }
 
-  /** Checks if the condition for a trigger is met. */
+  /**
+   * Checks if the condition for a trigger is met.
+   */
   private boolean isTriggerConditionMet(Trigger trigger) {
     String type = trigger.getType();
-
+    
     return switch (type) {
       case "ON_LOAD" -> {
         // Check if enough time has passed since zone load
@@ -96,7 +101,9 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
     };
   }
 
-  /** Executes the events associated with a trigger. */
+  /**
+   * Executes the events associated with a trigger.
+   */
   private void executeTrigger(World world, Trigger trigger) {
     for (GameEvent event : trigger.getEvents()) {
       if ("START_SEQUENCE".equals(event.getType())) {

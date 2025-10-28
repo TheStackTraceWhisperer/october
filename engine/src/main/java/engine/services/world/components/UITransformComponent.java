@@ -17,7 +17,8 @@ public class UITransformComponent implements IComponent {
   public final Vector3f offset;
   public boolean relativeSize = false;
 
-  @JsonIgnore public final float[] screenBounds = new float[4];
+  @JsonIgnore
+  public final float[] screenBounds = new float[4];
 
   public UITransformComponent() {
     this.anchor = new Vector2f(0.5f, 0.5f);
@@ -28,10 +29,10 @@ public class UITransformComponent implements IComponent {
 
   @JsonCreator
   public UITransformComponent(
-      @JsonProperty("anchor") Vector2f anchor,
-      @JsonProperty("pivot") Vector2f pivot,
-      @JsonProperty("size") Vector2f size,
-      @JsonProperty("offset") Vector3f offset) {
+    @JsonProperty("anchor") Vector2f anchor,
+    @JsonProperty("pivot") Vector2f pivot,
+    @JsonProperty("size") Vector2f size,
+    @JsonProperty("offset") Vector3f offset) {
     this.anchor = anchor != null ? anchor : new Vector2f(0.5f, 0.5f);
     this.pivot = pivot != null ? pivot : new Vector2f(0.5f, 0.5f);
     this.size = size != null ? size : new Vector2f(100, 30);
