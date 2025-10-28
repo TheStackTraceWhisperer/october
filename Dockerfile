@@ -64,6 +64,14 @@ set -e
 # Configure the virtual display identifier for Xvfb
 export DISPLAY=:99
 
+# Ensure a valid XDG runtime directory for libraries that expect it.
+# Create it with strict permissions to satisfy checks (0700).
+export XDG_RUNTIME_DIR="/tmp/xdg-runtime"
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 0700 "$XDG_RUNTIME_DIR"
+
+# Clear DBUS session address to avoid attempts to connect to a non-existent session bus.
+unset DBUS_SESSION_BUS_ADDRESS
 
 # Configure Java to use system certificate store explicitly
 export JAVA_OPTS="-Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStorePassword=changeit"
