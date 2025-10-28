@@ -3,8 +3,10 @@ package engine.services.world.components;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import org.joml.Vector4f;
 
+@Introspected
 public final class UIButtonComponent implements IComponent {
 
   public final String actionEvent;

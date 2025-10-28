@@ -3,10 +3,10 @@ package engine.services.scene;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import engine.IService;
 import engine.services.resources.AssetCacheService;
+import engine.services.world.ComponentRegistry;
 import engine.services.world.IComponent;
 import engine.services.world.WorldService;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,13 +21,13 @@ public class SceneService implements IService {
 
   private final WorldService worldService;
   private final AssetCacheService resourceManager;
-  private final Map<String, Class<? extends IComponent>> componentRegistry;
+  private final ComponentRegistry componentRegistry;
 
   @Inject
   public SceneService(
     WorldService worldService,
     AssetCacheService resourceManager,
-    @Named("componentRegistry") Map<String, Class<? extends IComponent>> componentRegistry
+    ComponentRegistry componentRegistry
   ) {
     this.worldService = worldService;
     this.resourceManager = resourceManager;
@@ -58,7 +58,7 @@ public class SceneService implements IService {
 
         for (Map.Entry<String, Object> componentEntity : template.components().entrySet()) {
           String componentName = componentEntity.getKey();
-          Class<?> componentClass = componentRegistry.get(componentName);
+          Class<?> componentClass = componentRegistry.getComponentClass(componentName);
 
           if (componentClass != null) {
             Object component = MAPPER.convertValue(componentEntity.getValue(), componentClass);

@@ -1,6 +1,7 @@
 package engine.services.world.components;
 
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -9,6 +10,7 @@ import org.joml.Vector3f;
  * Represents the position, rotation, and scale of an entity in 3D space.
  * This is a fundamental component for any entity that exists in the game world.
  */
+@Introspected
 public class TransformComponent implements IComponent {
 
   public final Vector3f position;
