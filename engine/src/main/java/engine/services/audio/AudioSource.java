@@ -1,17 +1,17 @@
 package engine.services.audio;
 
+import static org.lwjgl.openal.AL10.*;
+
 import lombok.Getter;
 import org.joml.Vector3f;
-
-import static org.lwjgl.openal.AL10.*;
 
 /** OpenAL audio source for playing AudioBuffers. */
 public final class AudioSource implements AutoCloseable {
 
   private final int sourceId;
+
   /** true if this source has been closed. */
-  @Getter
-  private boolean closed = false;
+  @Getter private boolean closed = false;
 
   public AudioSource() {
     this.sourceId = alGenSources();
@@ -145,5 +145,4 @@ public final class AudioSource implements AutoCloseable {
       closed = true;
     }
   }
-
 }

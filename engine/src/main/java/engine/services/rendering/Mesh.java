@@ -1,11 +1,5 @@
 package engine.services.rendering;
 
-import lombok.Getter;
-import org.lwjgl.system.MemoryUtil;
-
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import static org.lwjgl.opengl.GL30.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL30.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL30.GL_FLOAT;
@@ -20,25 +14,30 @@ import static org.lwjgl.opengl.GL30.glGenBuffers;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.opengl.GL30.glVertexAttribPointer;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import lombok.Getter;
+import org.lwjgl.system.MemoryUtil;
+
 /**
  * Represents a 2D or 3D model stored on the GPU.
- * <p>
- * For 2D sprites, this class handles interleaved vertex data (position and texture coordinates)
- * and uses an EBO for indexed drawing. It encapsulates the setup and cleanup of these OpenGL resources.
+ *
+ * <p>For 2D sprites, this class handles interleaved vertex data (position and texture coordinates)
+ * and uses an EBO for indexed drawing. It encapsulates the setup and cleanup of these OpenGL
+ * resources.
  */
 public class Mesh implements AutoCloseable {
-  @Getter
-  private final int vaoId;
+  @Getter private final int vaoId;
   private final int vboId;
   private final int eboId;
-  @Getter
-  private final int vertexCount;
+  @Getter private final int vertexCount;
 
   /**
    * Creates a new mesh with interleaved vertex data (position and texture coordinates).
    *
-   * @param vertices The interleaved vertex data. Expected layout: [posX, posY, posZ, texU, texV, ...]
-   * @param indices  The indices for the EBO.
+   * @param vertices The interleaved vertex data. Expected layout: [posX, posY, posZ, texU, texV,
+   *     ...]
+   * @param indices The indices for the EBO.
    */
   public Mesh(float[] vertices, int[] indices) {
     this.vertexCount = indices.length;

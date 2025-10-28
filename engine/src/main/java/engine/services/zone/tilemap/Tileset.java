@@ -3,9 +3,7 @@ package engine.services.zone.tilemap;
 import java.awt.Image;
 import java.util.List;
 
-/**
- * A collection of tile definitions, typically sourced from a single image (tilesheet).
- */
+/** A collection of tile definitions, typically sourced from a single image (tilesheet). */
 public interface Tileset {
   /**
    * @return The name of the tileset.
@@ -34,7 +32,7 @@ public interface Tileset {
 
   /**
    * Returns the tile definition for a given ID.
-   * 
+   *
    * @param id The tile ID to look up
    * @return The tile with the given ID, or null if not found
    */

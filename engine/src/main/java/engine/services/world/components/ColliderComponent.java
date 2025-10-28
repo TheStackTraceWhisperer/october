@@ -11,17 +11,14 @@ import lombok.Getter;
 public final class ColliderComponent implements IComponent {
 
   /**
-   * A marker interface for defining collider types.
-   * This allows the game to create its own enum of types that implement this interface,
-   * decoupling the engine from game-specific concepts.
+   * A marker interface for defining collider types. This allows the game to create its own enum of
+   * types that implement this interface, decoupling the engine from game-specific concepts.
    */
-  public interface ColliderType {
-  }
+  public interface ColliderType {}
 
   private final ColliderType type;
   private final int width;
   private final int height;
   private final int offsetX;
   private final int offsetY;
-
 }

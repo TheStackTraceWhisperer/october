@@ -1,13 +1,5 @@
 package engine.services.rendering;
 
-import lombok.Getter;
-import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryUtil;
-
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.List;
-
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -30,22 +22,27 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.List;
+import lombok.Getter;
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryUtil;
+
 /**
  * An extension of the basic Mesh class that supports instanced rendering.
- * <p>
- * This mesh can render multiple instances of the same geometry with different
- * transformation matrices in a single draw call using glDrawElementsInstanced.
- * Instance data (transformation matrices) are stored in a separate VBO and
- * updated each frame with the current instance transforms.
+ *
+ * <p>This mesh can render multiple instances of the same geometry with different transformation
+ * matrices in a single draw call using glDrawElementsInstanced. Instance data (transformation
+ * matrices) are stored in a separate VBO and updated each frame with the current instance
+ * transforms.
  */
 public class InstancedMesh implements AutoCloseable {
-  @Getter
-  private final int vaoId;
+  @Getter private final int vaoId;
   private final int vboId;
   private final int eboId;
   private final int instanceVboId;
-  @Getter
-  private final int vertexCount;
+  @Getter private final int vertexCount;
 
   private static final int MAX_INSTANCES = 1000; // Maximum instances per batch
   private static final int MATRIX_SIZE_FLOATS = 16; // 4x4 matrix = 16 floats
@@ -53,8 +50,9 @@ public class InstancedMesh implements AutoCloseable {
   /**
    * Creates a new instanced mesh with interleaved vertex data.
    *
-   * @param vertices The interleaved vertex data. Expected layout: [posX, posY, posZ, texU, texV, ...]
-   * @param indices  The indices for the EBO.
+   * @param vertices The interleaved vertex data. Expected layout: [posX, posY, posZ, texU, texV,
+   *     ...]
+   * @param indices The indices for the EBO.
    */
   public InstancedMesh(float[] vertices, int[] indices) {
     this.vertexCount = indices.length;
@@ -98,7 +96,8 @@ public class InstancedMesh implements AutoCloseable {
       instanceVboId = glGenBuffers();
       glBindBuffer(GL_ARRAY_BUFFER, instanceVboId);
       // Allocate space for MAX_INSTANCES matrices (will be updated dynamically)
-      glBufferData(GL_ARRAY_BUFFER, MAX_INSTANCES * MATRIX_SIZE_FLOATS * Float.BYTES, GL_DYNAMIC_DRAW);
+      glBufferData(
+          GL_ARRAY_BUFFER, MAX_INSTANCES * MATRIX_SIZE_FLOATS * Float.BYTES, GL_DYNAMIC_DRAW);
 
       // --- Instance matrix attributes (locations 2-5 for mat4) ---
       // A mat4 takes up 4 attribute locations, so we need to set up 4 vec4 attributes

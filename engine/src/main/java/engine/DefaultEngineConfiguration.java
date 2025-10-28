@@ -1,6 +1,5 @@
 package engine;
 
-
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
@@ -16,5 +15,4 @@ public class DefaultEngineConfiguration {
     log.debug("Using default loop policy");
     return ApplicationLoopPolicy.standard();
   }
-
 }

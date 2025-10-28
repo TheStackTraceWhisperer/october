@@ -1,25 +1,23 @@
 package engine.services.scene;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
 import engine.services.resources.AssetCacheService;
 import engine.services.world.ComponentRegistry;
 import engine.services.world.WorldService;
 import engine.services.world.components.SpriteComponent;
 import engine.services.world.components.TransformComponent;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-
 class SceneServiceTest {
 
-  @Mock
-  private WorldService worldService;
+  @Mock private WorldService worldService;
 
-  @Mock
-  private AssetCacheService assetCacheService;
+  @Mock private AssetCacheService assetCacheService;
 
   private ComponentRegistry componentRegistry;
   private SceneService sceneService;

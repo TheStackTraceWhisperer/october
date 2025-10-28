@@ -4,6 +4,7 @@ import engine.IService;
 import engine.game.GameAction;
 import engine.services.window.WindowService;
 import jakarta.inject.Singleton;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector2d;
@@ -12,8 +13,6 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWGamepadState;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
-
-import java.util.Arrays;
 
 @Singleton
 @RequiredArgsConstructor
@@ -29,12 +28,11 @@ public class InputService implements IService {
 
   // Track gamepad button states per port for "just pressed" detection
   private final byte[][] gamepadButtons = new byte[MAX_GAMEPADS][GLFW.GLFW_GAMEPAD_BUTTON_LAST + 1];
-  private final byte[][] gamepadButtonsLastFrame = new byte[MAX_GAMEPADS][GLFW.GLFW_GAMEPAD_BUTTON_LAST + 1];
+  private final byte[][] gamepadButtonsLastFrame =
+      new byte[MAX_GAMEPADS][GLFW.GLFW_GAMEPAD_BUTTON_LAST + 1];
 
-  @Getter
-  private double mouseX;
-  @Getter
-  private double mouseY;
+  @Getter private double mouseX;
+  @Getter private double mouseY;
 
   @Override
   public int executionOrder() {
@@ -44,31 +42,37 @@ public class InputService implements IService {
   /** Install GLFW callbacks to capture input events. */
   @Override
   public void start() {
-    GLFW.glfwSetKeyCallback(windowService.getHandle(), new GLFWKeyCallback() {
-      @Override
-      public void invoke(long window, int key, int scancode, int action, int mods) {
-        if (key >= 0 && key <= GLFW.GLFW_KEY_LAST) {
-          keys[key] = (action != GLFW.GLFW_RELEASE);
-        }
-      }
-    });
+    GLFW.glfwSetKeyCallback(
+        windowService.getHandle(),
+        new GLFWKeyCallback() {
+          @Override
+          public void invoke(long window, int key, int scancode, int action, int mods) {
+            if (key >= 0 && key <= GLFW.GLFW_KEY_LAST) {
+              keys[key] = (action != GLFW.GLFW_RELEASE);
+            }
+          }
+        });
 
-    GLFW.glfwSetMouseButtonCallback(windowService.getHandle(), new GLFWMouseButtonCallback() {
-      @Override
-      public void invoke(long window, int button, int action, int mods) {
-        if (button >= 0 && button <= GLFW.GLFW_MOUSE_BUTTON_LAST) {
-          mouseButtons[button] = (action != GLFW.GLFW_RELEASE);
-        }
-      }
-    });
+    GLFW.glfwSetMouseButtonCallback(
+        windowService.getHandle(),
+        new GLFWMouseButtonCallback() {
+          @Override
+          public void invoke(long window, int button, int action, int mods) {
+            if (button >= 0 && button <= GLFW.GLFW_MOUSE_BUTTON_LAST) {
+              mouseButtons[button] = (action != GLFW.GLFW_RELEASE);
+            }
+          }
+        });
 
-    GLFW.glfwSetCursorPosCallback(windowService.getHandle(), new GLFWCursorPosCallback() {
-      @Override
-      public void invoke(long window, double xpos, double ypos) {
-        mouseX = xpos;
-        mouseY = ypos;
-      }
-    });
+    GLFW.glfwSetCursorPosCallback(
+        windowService.getHandle(),
+        new GLFWCursorPosCallback() {
+          @Override
+          public void invoke(long window, double xpos, double ypos) {
+            mouseX = xpos;
+            mouseY = ypos;
+          }
+        });
   }
 
   /** Clear all input states. */
@@ -114,7 +118,9 @@ public class InputService implements IService {
     for (int port = 0; port < MAX_GAMEPADS; port++) {
       if (!isGamepadConnected(port)) continue;
       for (int b = 0; b <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; b++) {
-        if (gamepadButtons[port][b] == GLFW.GLFW_PRESS) { return true; }
+        if (gamepadButtons[port][b] == GLFW.GLFW_PRESS) {
+          return true;
+        }
       }
     }
     return false;
@@ -141,7 +147,8 @@ public class InputService implements IService {
     for (int port = 0; port < MAX_GAMEPADS; port++) {
       if (!isGamepadConnected(port)) continue;
       for (int b = 0; b <= GLFW.GLFW_GAMEPAD_BUTTON_LAST; b++) {
-        if (gamepadButtons[port][b] == GLFW.GLFW_PRESS && gamepadButtonsLastFrame[port][b] == GLFW.GLFW_RELEASE) {
+        if (gamepadButtons[port][b] == GLFW.GLFW_PRESS
+            && gamepadButtonsLastFrame[port][b] == GLFW.GLFW_RELEASE) {
           return true;
         }
       }
@@ -236,8 +243,8 @@ public class InputService implements IService {
   }
 
   /**
-   * Updates the input state tracking for "just pressed" detection.
-   * This is called automatically once per frame by the Engine.
+   * Updates the input state tracking for "just pressed" detection. This is called automatically
+   * once per frame by the Engine.
    */
   @Override
   public void update() {
@@ -245,7 +252,8 @@ public class InputService implements IService {
     System.arraycopy(keys, 0, keysLastFrame, 0, keys.length);
     System.arraycopy(mouseButtons, 0, mouseButtonsLastFrame, 0, mouseButtons.length);
     for (int port = 0; port < MAX_GAMEPADS; port++) {
-      System.arraycopy(gamepadButtons[port], 0, gamepadButtonsLastFrame[port], 0, gamepadButtons[port].length);
+      System.arraycopy(
+          gamepadButtons[port], 0, gamepadButtonsLastFrame[port], 0, gamepadButtons[port].length);
     }
 
     // Poll gamepad states into current arrays
@@ -255,7 +263,6 @@ public class InputService implements IService {
         // Mark all as released if not connected
         Arrays.fill(gamepadButtons[port], (byte) GLFW.GLFW_RELEASE);
         continue;
-
       }
       GLFWGamepadState state = GLFWGamepadState.malloc();
       try {

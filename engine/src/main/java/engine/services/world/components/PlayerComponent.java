@@ -4,5 +4,4 @@ import engine.services.world.IComponent;
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
-public class PlayerComponent implements IComponent {
-}
+public class PlayerComponent implements IComponent {}

@@ -1,20 +1,20 @@
-//package application;
+// package application;
 //
-//import engine.EngineTestHarness;
-//import engine.services.event.EventPublisherService;
-//import engine.services.state.ApplicationStateService;
-//import engine.services.world.WorldService;
-//import engine.services.world.components.UIButtonComponent;
-//import engine.services.world.components.UIImageComponent;
-//import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-//import jakarta.inject.Inject;
-//import org.junit.jupiter.api.Test;
+// import engine.EngineTestHarness;
+// import engine.services.event.EventPublisherService;
+// import engine.services.state.ApplicationStateService;
+// import engine.services.world.WorldService;
+// import engine.services.world.components.UIButtonComponent;
+// import engine.services.world.components.UIImageComponent;
+// import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+// import jakarta.inject.Inject;
+// import org.junit.jupiter.api.Test;
 //
-//import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 //
 //// Add packages to scan to include both application and engine beans
-//@MicronautTest(packages = {"application", "engine"})
-//public class MainMenuStateIT extends EngineTestHarness {
+// @MicronautTest(packages = {"application", "engine"})
+// public class MainMenuStateIT extends EngineTestHarness {
 //
 //    @Inject
 //    private ApplicationStateService stateService;
@@ -42,12 +42,14 @@
 //    void onStartGameEvent_changesStateToPlayingState() {
 //        // Given the MainMenuState is active
 //        stateService.changeState(MainMenuState.class);
-//        assertTrue(stateService.peek() instanceof MainMenuState, "Initial state should be MainMenuState.");
+//        assertTrue(stateService.peek() instanceof MainMenuState, "Initial state should be
+// MainMenuState.");
 //
 //        // When we publish the START_NEW_GAME event
 //        eventPublisher.publish("START_NEW_GAME");
 //
 //        // Then the application state should change to PlayingState
-//        assertTrue(stateService.peek() instanceof PlayingState, "State should have changed to PlayingState.");
+//        assertTrue(stateService.peek() instanceof PlayingState, "State should have changed to
+// PlayingState.");
 //    }
-//}
+// }

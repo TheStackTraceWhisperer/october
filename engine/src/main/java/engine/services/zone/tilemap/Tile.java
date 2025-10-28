@@ -3,9 +3,7 @@ package engine.services.zone.tilemap;
 import java.awt.Image;
 import java.util.Map;
 
-/**
- * Represents a single tile definition from a tileset.
- */
+/** Represents a single tile definition from a tileset. */
 public interface Tile {
   /**
    * @return The unique identifier for this tile within its tileset.

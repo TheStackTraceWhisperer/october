@@ -3,11 +3,10 @@ package engine.services.input;
 import engine.IService;
 import engine.game.GameAction;
 import jakarta.inject.Singleton;
-import lombok.RequiredArgsConstructor;
-import org.lwjgl.glfw.GLFW;
-
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.lwjgl.glfw.GLFW;
 
 /** Maps players to keyboard/gamepad inputs with hotplug support. */
 @Singleton
@@ -120,7 +119,10 @@ public class DeviceMappingService implements IService {
 
   /** Bind a player to a specific gamepad. */
   public void bindPlayerToGamepad(int playerId, int gamepadIndex) {
-    if (playerId >= 0 && playerId < MAX_PLAYERS && gamepadIndex >= 0 && gamepadIndex < MAX_PLAYERS) {
+    if (playerId >= 0
+        && playerId < MAX_PLAYERS
+        && gamepadIndex >= 0
+        && gamepadIndex < MAX_PLAYERS) {
       playerBindings.put(playerId, new DeviceBinding(DeviceType.GAMEPAD, gamepadIndex));
     }
   }

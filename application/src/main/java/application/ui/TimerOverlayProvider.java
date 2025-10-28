@@ -1,12 +1,10 @@
 package application.ui;
 
 import io.micronaut.context.BeanProvider;
-
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import lombok.RequiredArgsConstructor;
-
 import java.util.function.Supplier;
+import lombok.RequiredArgsConstructor;
 
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)

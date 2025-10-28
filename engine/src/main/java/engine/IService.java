@@ -15,6 +15,7 @@ public interface IService {
   default void update(float dt) {}
 
   /** Execution order; lower values run earlier. */
-  default int executionOrder() { return 0; }
-
+  default int executionOrder() {
+    return 0;
+  }
 }

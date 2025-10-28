@@ -1,8 +1,10 @@
 package engine.services.world.systems;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import engine.services.audio.AudioService;
 import engine.services.rendering.FadeService;
 import engine.services.resources.AssetCacheService;
-import engine.services.audio.AudioService;
 import engine.services.world.WorldService;
 import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.world.components.SoundEffectComponent;
@@ -14,18 +16,14 @@ import engine.services.zone.sequence.Sequence;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import java.util.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 public class SequenceSystemIT {
 
-  @Inject
-  WorldService worldService;
+  @Inject WorldService worldService;
 
   @AfterEach
   void cleanup() {
@@ -35,40 +33,109 @@ public class SequenceSystemIT {
 
   // --- Test helpers ---
   static class TestEvent implements GameEvent {
-    private final String type; private final Map<String, Object> props;
-    TestEvent(String type, Map<String, Object> props) { this.type = type; this.props = props; }
-    @Override public String getType() { return type; }
-    @Override public Map<String, Object> getProperties() { return props; }
+    private final String type;
+    private final Map<String, Object> props;
+
+    TestEvent(String type, Map<String, Object> props) {
+      this.type = type;
+      this.props = props;
+    }
+
+    @Override
+    public String getType() {
+      return type;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return props;
+    }
   }
+
   static class TestSequence implements Sequence {
-    private final String id; private final List<GameEvent> events;
-    TestSequence(String id, List<GameEvent> events) { this.id = id; this.events = events; }
-    @Override public String getId() { return id; }
-    @Override public List<GameEvent> getEvents() { return events; }
+    private final String id;
+    private final List<GameEvent> events;
+
+    TestSequence(String id, List<GameEvent> events) {
+      this.id = id;
+      this.events = events;
+    }
+
+    @Override
+    public String getId() {
+      return id;
+    }
+
+    @Override
+    public List<GameEvent> getEvents() {
+      return events;
+    }
   }
+
   static class TestZone implements Zone {
-    private final String id; private final List<Sequence> seqs;
-    TestZone(String id, List<Sequence> seqs) { this.id = id; this.seqs = seqs; }
-    @Override public String getId() { return id; }
-    @Override public String getName() { return id; }
-    @Override public engine.services.zone.tilemap.Tilemap getTilemap() { return null; }
-    @Override public List<Sequence> getSequences() { return seqs; }
-    @Override public List<engine.services.zone.sequence.Trigger> getTriggers() { return Collections.emptyList(); }
-    @Override public Map<String, Object> getProperties() { return Collections.emptyMap(); }
+    private final String id;
+    private final List<Sequence> seqs;
+
+    TestZone(String id, List<Sequence> seqs) {
+      this.id = id;
+      this.seqs = seqs;
+    }
+
+    @Override
+    public String getId() {
+      return id;
+    }
+
+    @Override
+    public String getName() {
+      return id;
+    }
+
+    @Override
+    public engine.services.zone.tilemap.Tilemap getTilemap() {
+      return null;
+    }
+
+    @Override
+    public List<Sequence> getSequences() {
+      return seqs;
+    }
+
+    @Override
+    public List<engine.services.zone.sequence.Trigger> getTriggers() {
+      return Collections.emptyList();
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return Collections.emptyMap();
+    }
   }
+
   static class TestZoneService extends ZoneService {
     private final Zone zone;
+
     public TestZoneService(Zone z) {
-      super(new engine.services.event.EventPublisherService(new ApplicationEventPublisher() {
-        @Override public void publishEvent(Object event) { /* no-op */ }
-      }));
+      super(
+          new engine.services.event.EventPublisherService(
+              new ApplicationEventPublisher() {
+                @Override
+                public void publishEvent(Object event) {
+                  /* no-op */
+                }
+              }));
       this.zone = z;
     }
-    @Override public Zone getCurrentZone() { return zone; }
+
+    @Override
+    public Zone getCurrentZone() {
+      return zone;
+    }
   }
 
   private SequenceSystem makeSystem(Zone zone, FadeService fade) {
-    // Use a real AudioSystem instance (it won't touch OpenAL unless started); playSoundEffect only adds a component
+    // Use a real AudioSystem instance (it won't touch OpenAL unless started); playSoundEffect only
+    // adds a component
     var audioSystem = new AudioSystem(new AudioService(), new AssetCacheService());
     // Keep ActiveSequenceComponent present after completion so ITs can assert state
     return new SequenceSystem(new TestZoneService(zone), audioSystem, fade, false);
@@ -101,7 +168,8 @@ public class SequenceSystemIT {
 
   @Test
   void teleportEntity_updatesTransform_and_advances() {
-    var ev = new TestEvent("TELEPORT_ENTITY", Map.of("entityId", "self", "x", 3.0, "y", 4.0, "z", 0.0));
+    var ev =
+        new TestEvent("TELEPORT_ENTITY", Map.of("entityId", "self", "x", 3.0, "y", 4.0, "z", 0.0));
     var seq = new TestSequence("seq2", List.of(ev));
     var zone = new TestZone("zone2", List.of(seq));
 
@@ -124,7 +192,9 @@ public class SequenceSystemIT {
 
   @Test
   void moveEntity_blocks_until_arrival_then_advances() {
-    var ev = new TestEvent("MOVE_ENTITY", Map.of("x", 2.0, "y", 0.0, "z", 0.0, "speed", 10.0, "tolerance", 0.001));
+    var ev =
+        new TestEvent(
+            "MOVE_ENTITY", Map.of("x", 2.0, "y", 0.0, "z", 0.0, "speed", 10.0, "tolerance", 0.001));
     var seq = new TestSequence("seq3", List.of(ev));
     var zone = new TestZone("zone3", List.of(seq));
 

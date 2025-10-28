@@ -1,14 +1,5 @@
 package engine.services.audio;
 
-import engine.IService;
-import jakarta.inject.Singleton;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.ALCapabilities;
-
 import static org.lwjgl.openal.AL10.AL_GAIN;
 import static org.lwjgl.openal.AL10.AL_ORIENTATION;
 import static org.lwjgl.openal.AL10.AL_POSITION;
@@ -22,6 +13,15 @@ import static org.lwjgl.openal.ALC10.alcDestroyContext;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 
+import engine.IService;
+import jakarta.inject.Singleton;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
+
 /** Manage OpenAL context and basic audio operations. */
 @Singleton
 @Slf4j
@@ -29,8 +29,7 @@ public final class AudioService implements IService {
   private long device;
   private long context;
 
-  @Getter
-  private boolean initialized = false;
+  @Getter private boolean initialized = false;
 
   @Override
   public int executionOrder() {
@@ -117,8 +116,8 @@ public final class AudioService implements IService {
   }
 
   /** Set listener orientation (forward xyz, up xyz). */
-  public void setListenerOrientation(float forwardX, float forwardY, float forwardZ,
-                                     float upX, float upY, float upZ) {
+  public void setListenerOrientation(
+      float forwardX, float forwardY, float forwardZ, float upX, float upY, float upZ) {
     if (!initialized) {
       throw new IllegalStateException("AudioService is not initialized");
     }

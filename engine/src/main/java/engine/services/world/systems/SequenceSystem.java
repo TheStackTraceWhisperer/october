@@ -1,25 +1,22 @@
 package engine.services.world.systems;
 
+import engine.services.rendering.FadeService;
 import engine.services.world.ISystem;
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
-import engine.services.world.components.TransformComponent;
 import engine.services.world.components.MoveToTargetComponent;
-import engine.services.rendering.FadeService;
+import engine.services.world.components.TransformComponent;
 import engine.services.zone.Zone;
 import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Sequence;
 import io.micronaut.context.annotation.Prototype;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * A stateless system that interprets ActiveSequence components and executes GameEvent commands.
- */
+/** A stateless system that interprets ActiveSequence components and executes GameEvent commands. */
 @Slf4j
 @Prototype
 public class SequenceSystem implements ISystem {
@@ -33,7 +30,11 @@ public class SequenceSystem implements ISystem {
     this(zoneService, audioSystem, fadeService, true);
   }
 
-  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, boolean removeOnComplete) {
+  public SequenceSystem(
+      ZoneService zoneService,
+      AudioSystem audioSystem,
+      FadeService fadeService,
+      boolean removeOnComplete) {
     this.zoneService = zoneService;
     this.audioSystem = audioSystem;
     this.fadeService = fadeService;
@@ -51,7 +52,8 @@ public class SequenceSystem implements ISystem {
     Set<Integer> entitiesToRemove = new HashSet<>();
 
     for (int entityId : entities) {
-      ActiveSequenceComponent activeSequence = world.getComponent(entityId, ActiveSequenceComponent.class);
+      ActiveSequenceComponent activeSequence =
+          world.getComponent(entityId, ActiveSequenceComponent.class);
 
       // Resolve the sequence first (required for completion check)
       Sequence sequence = findSequenceById(currentZone, activeSequence.getSequenceId());
@@ -129,9 +131,7 @@ public class SequenceSystem implements ISystem {
     }
   }
 
-  /**
-   * Finds a sequence by its ID in the current zone.
-   */
+  /** Finds a sequence by its ID in the current zone. */
   private Sequence findSequenceById(Zone zone, String sequenceId) {
     for (Sequence sequence : zone.getSequences()) {
       if (sequence.getId().equals(sequenceId)) {
@@ -141,16 +141,16 @@ public class SequenceSystem implements ISystem {
     return null;
   }
 
-  /**
-   * Executes a single GameEvent.
-   */
-  private void executeEvent(World world, int entityId, ActiveSequenceComponent activeSequence, GameEvent event) {
+  /** Executes a single GameEvent. */
+  private void executeEvent(
+      World world, int entityId, ActiveSequenceComponent activeSequence, GameEvent event) {
     String type = event.getType();
-    
+
     switch (type) {
       case "WAIT" -> {
         // Set the wait timer
-        float duration = ((Number) event.getProperties().getOrDefault("duration", 1.0)).floatValue();
+        float duration =
+            ((Number) event.getProperties().getOrDefault("duration", 1.0)).floatValue();
         activeSequence.setWaitTimer(duration);
         log.debug("Waiting for {} seconds", duration);
       }
@@ -176,7 +176,9 @@ public class SequenceSystem implements ISystem {
         // Expect properties: entityId (optional: "self" or numeric ID), x, y, z (optional)
         String targetEntityProp = (String) event.getProperties().get("entityId");
         int targetEntity = entityId; // default to self
-        if (targetEntityProp != null && !targetEntityProp.isBlank() && !"self".equalsIgnoreCase(targetEntityProp)) {
+        if (targetEntityProp != null
+            && !targetEntityProp.isBlank()
+            && !"self".equalsIgnoreCase(targetEntityProp)) {
           try {
             targetEntity = Integer.parseInt(targetEntityProp);
           } catch (NumberFormatException nfe) {
@@ -204,7 +206,9 @@ public class SequenceSystem implements ISystem {
         String targetEntityProp = (String) event.getProperties().get("entityId");
         int targetEntity = entityId; // default to self
         boolean targetResolved = true;
-        if (targetEntityProp != null && !targetEntityProp.isBlank() && !"self".equalsIgnoreCase(targetEntityProp)) {
+        if (targetEntityProp != null
+            && !targetEntityProp.isBlank()
+            && !"self".equalsIgnoreCase(targetEntityProp)) {
           try {
             targetEntity = Integer.parseInt(targetEntityProp);
           } catch (NumberFormatException nfe) {
@@ -217,13 +221,16 @@ public class SequenceSystem implements ISystem {
         Number ny = (Number) event.getProperties().getOrDefault("y", 0.0f);
         Number nz = (Number) event.getProperties().getOrDefault("z", 0.0f);
         float speed = ((Number) event.getProperties().getOrDefault("speed", 2.0f)).floatValue();
-        float tolerance = ((Number) event.getProperties().getOrDefault("tolerance", 0.05f)).floatValue();
+        float tolerance =
+            ((Number) event.getProperties().getOrDefault("tolerance", 0.05f)).floatValue();
 
         if (!targetResolved || !world.hasComponent(targetEntity, TransformComponent.class)) {
           if (!targetResolved) {
             log.warn("MOVE_ENTITY target could not be resolved; blocking without advancing index");
           } else {
-            log.warn("MOVE_ENTITY target has no TransformComponent: {}; blocking without advancing index", targetEntity);
+            log.warn(
+                "MOVE_ENTITY target has no TransformComponent: {}; blocking without advancing index",
+                targetEntity);
           }
           // Block the sequence to satisfy tests that expect blocking behavior on MOVE_ENTITY
           activeSequence.setBlocked(true);
@@ -234,7 +241,10 @@ public class SequenceSystem implements ISystem {
 
         // Attach/replace MoveToTargetComponent
         world.removeComponent(targetEntity, MoveToTargetComponent.class);
-        world.addComponent(targetEntity, new MoveToTargetComponent(nx.floatValue(), ny.floatValue(), nz.floatValue(), speed, tolerance));
+        world.addComponent(
+            targetEntity,
+            new MoveToTargetComponent(
+                nx.floatValue(), ny.floatValue(), nz.floatValue(), speed, tolerance));
 
         // Block until movement completes
         activeSequence.setBlocked(true);
@@ -244,7 +254,8 @@ public class SequenceSystem implements ISystem {
       case "FADE_SCREEN" -> {
         // Blocking fade: properties: fadeType, duration
         String fadeType = (String) event.getProperties().get("fadeType");
-        float duration = ((Number) event.getProperties().getOrDefault("duration", 1.0)).floatValue();
+        float duration =
+            ((Number) event.getProperties().getOrDefault("duration", 1.0)).floatValue();
         log.debug("Starting fade: type={}, duration={}", fadeType, duration);
         fadeService.startFade(fadeType, duration);
         // Use a minimum block time to align with IT expectations

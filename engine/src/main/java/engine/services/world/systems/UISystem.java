@@ -41,7 +41,8 @@ public class UISystem implements ISystem {
     renderUI(world, uiEntities);
   }
 
-  private void calculateLayout(World world, Iterable<Integer> entities, int windowWidth, int windowHeight) {
+  private void calculateLayout(
+      World world, Iterable<Integer> entities, int windowWidth, int windowHeight) {
     Vector2f parentSize = new Vector2f(windowWidth, windowHeight);
 
     for (int entityId : entities) {
@@ -87,7 +88,8 @@ public class UISystem implements ISystem {
       var button = world.getComponent(entityId, UIButtonComponent.class);
 
       float[] bounds = transform.screenBounds;
-      boolean isHovered = mouseX >= bounds[0] && mouseX <= bounds[2] && mouseY >= bounds[1] && mouseY <= bounds[3];
+      boolean isHovered =
+          mouseX >= bounds[0] && mouseX <= bounds[2] && mouseY >= bounds[1] && mouseY <= bounds[3];
 
       UIButtonComponent.ButtonState previousState = button.currentState;
       if (isHovered) {
@@ -111,11 +113,12 @@ public class UISystem implements ISystem {
       var transform = world.getComponent(entityId, UITransformComponent.class);
       if (world.hasComponent(entityId, UIButtonComponent.class)) {
         var button = world.getComponent(entityId, UIButtonComponent.class);
-        String textureHandle = switch (button.currentState) {
-          case HOVERED -> button.hoveredTexture;
-          case PRESSED -> button.pressedTexture;
-          default -> button.normalTexture;
-        };
+        String textureHandle =
+            switch (button.currentState) {
+              case HOVERED -> button.hoveredTexture;
+              case PRESSED -> button.pressedTexture;
+              default -> button.normalTexture;
+            };
         uiRendererService.submit(transform, textureHandle);
       } else if (world.hasComponent(entityId, UIImageComponent.class)) {
         var image = world.getComponent(entityId, UIImageComponent.class);

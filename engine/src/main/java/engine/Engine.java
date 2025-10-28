@@ -4,12 +4,11 @@ import engine.services.state.ApplicationStateService;
 import engine.services.time.SystemTimeService;
 import engine.services.window.WindowService;
 import jakarta.inject.Singleton;
+import java.util.Comparator;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Comparator;
-import java.util.List;
 
 @Slf4j
 @Singleton
@@ -25,8 +24,7 @@ public final class Engine implements Runnable {
   private final ApplicationLoopPolicy loopPolicy;
   private final ApplicationStateService applicationStateService;
   private final List<IService> services;
-  @Getter
-  private final WindowService windowService;
+  @Getter private final WindowService windowService;
   private final SystemTimeService systemTimeService;
 
   private State state = State.NEW;
@@ -42,10 +40,11 @@ public final class Engine implements Runnable {
 
       services.sort(Comparator.comparingInt(IService::executionOrder));
 
-      services.forEach(iService -> {
-        log.debug("Starting service {}", iService.getClass().getSimpleName());
-        iService.start();
-      });
+      services.forEach(
+          iService -> {
+            log.debug("Starting service {}", iService.getClass().getSimpleName());
+            iService.start();
+          });
 
       log.info("September Engine initialized successfully");
       state = State.INITIALIZED;
@@ -89,10 +88,11 @@ public final class Engine implements Runnable {
 
     services.sort(Comparator.comparingInt(IService::executionOrder).reversed());
 
-    services.forEach(iService -> {
-      log.debug("Stopping service {}", iService.getClass().getSimpleName());
-      iService.stop();
-    });
+    services.forEach(
+        iService -> {
+          log.debug("Stopping service {}", iService.getClass().getSimpleName());
+          iService.stop();
+        });
 
     state = State.SHUTDOWN;
   }

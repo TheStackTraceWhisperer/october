@@ -1,23 +1,21 @@
 package engine.services.input;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.lwjgl.glfw.GLFW.*;
+
 import engine.game.GameAction;
+import java.lang.reflect.Field;
+import org.joml.Vector2d;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.joml.Vector2d;
-
-import java.lang.reflect.Field;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.lwjgl.glfw.GLFW.*;
 
 @ExtendWith(MockitoExtension.class)
 class InputServiceTest {
 
-  @Mock
-  private engine.services.window.WindowService windowService;
+  @Mock private engine.services.window.WindowService windowService;
 
   private InputService input;
 
@@ -75,21 +73,23 @@ class InputServiceTest {
   @Test
   void isActionJustPressed_maps_all_actions() throws Exception {
     // Mark all mapped keys as pressed this frame but not last frame
-    int[] keys = new int[] {
-      GLFW_KEY_W, // MOVE_UP
-      GLFW_KEY_S, // MOVE_DOWN
-      GLFW_KEY_A, // MOVE_LEFT
-      GLFW_KEY_D, // MOVE_RIGHT
-      GLFW_KEY_SPACE, // ATTACK
-      GLFW_KEY_E, // INTERACT
-      GLFW_KEY_ESCAPE // OPEN_MENU
-    };
+    int[] keys =
+        new int[] {
+          GLFW_KEY_W, // MOVE_UP
+          GLFW_KEY_S, // MOVE_DOWN
+          GLFW_KEY_A, // MOVE_LEFT
+          GLFW_KEY_D, // MOVE_RIGHT
+          GLFW_KEY_SPACE, // ATTACK
+          GLFW_KEY_E, // INTERACT
+          GLFW_KEY_ESCAPE // OPEN_MENU
+        };
     GameAction[] actions = GameAction.values();
 
     for (int i = 0; i < actions.length; i++) {
       setBooleanArray("keys", keys[i], true);
       setBooleanArray("keysLastFrame", keys[i], false);
-      assertTrue(input.isActionJustPressed(actions[i]), "Expected just pressed for action " + actions[i]);
+      assertTrue(
+          input.isActionJustPressed(actions[i]), "Expected just pressed for action " + actions[i]);
     }
 
     // After update, none should be just-pressed anymore without state change
@@ -128,4 +128,3 @@ class InputServiceTest {
     assertFalse(input.isButtonPressed(0, GLFW_GAMEPAD_BUTTON_A));
   }
 }
-

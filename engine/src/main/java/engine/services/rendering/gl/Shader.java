@@ -1,18 +1,15 @@
 package engine.services.rendering.gl;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
+import static org.lwjgl.opengl.GL20.*;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
 
-import static org.lwjgl.opengl.GL20.*;
-
-/**
- * Manages an OpenGL shader program, including compiling, linking, and setting uniforms.
- */
+/** Manages an OpenGL shader program, including compiling, linking, and setting uniforms. */
 public class Shader implements AutoCloseable {
   private final int programId;
   // Individual shader IDs are no longer needed as fields after linking
@@ -28,7 +25,8 @@ public class Shader implements AutoCloseable {
     glLinkProgram(programId);
 
     if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
-      throw new RuntimeException("Error linking shader code: " + glGetProgramInfoLog(programId, 1024));
+      throw new RuntimeException(
+          "Error linking shader code: " + glGetProgramInfoLog(programId, 1024));
     }
     // Validate program (useful during development)
     glValidateProgram(programId); // added for test expectations
@@ -52,7 +50,7 @@ public class Shader implements AutoCloseable {
   /**
    * Caches and sets a Matrix4f uniform.
    *
-   * @param name  The name of the uniform in the shader code.
+   * @param name The name of the uniform in the shader code.
    * @param value The Matrix4f value to set.
    */
   public void setUniform(String name, Matrix4f value) {
@@ -73,7 +71,7 @@ public class Shader implements AutoCloseable {
   /**
    * Caches and sets an integer uniform. This is essential for setting texture samplers.
    *
-   * @param name  The name of the uniform in the shader code (e.g., "uTextureSampler").
+   * @param name The name of the uniform in the shader code (e.g., "uTextureSampler").
    * @param value The integer value to set (e.g., 0 for texture unit GL_TEXTURE0).
    */
   public void setUniform(String name, int value) {
@@ -81,9 +79,7 @@ public class Shader implements AutoCloseable {
     glUniform1i(location, value);
   }
 
-  /**
-   * Sets a vec4 uniform (e.g., color RGBA).
-   */
+  /** Sets a vec4 uniform (e.g., color RGBA). */
   public void setUniform(String name, float x, float y, float z, float w) {
     int location = getUniformLocation(name);
     glUniform4f(location, x, y, z, w);
@@ -103,7 +99,8 @@ public class Shader implements AutoCloseable {
     glCompileShader(shaderId);
 
     if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
-      throw new RuntimeException("Error compiling shader code: " + glGetShaderInfoLog(shaderId, 1024));
+      throw new RuntimeException(
+          "Error compiling shader code: " + glGetShaderInfoLog(shaderId, 1024));
     }
     return shaderId;
   }

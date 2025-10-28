@@ -1,14 +1,14 @@
 package engine.services.rendering;
 
-import engine.services.rendering.gl.Shader;
-import engine.services.resources.AssetCacheService;
-import lombok.RequiredArgsConstructor;
-import org.joml.Matrix4f;
-
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+
+import engine.services.rendering.gl.Shader;
+import engine.services.resources.AssetCacheService;
+import lombok.RequiredArgsConstructor;
+import org.joml.Matrix4f;
 
 @RequiredArgsConstructor
 public class Renderer {
@@ -20,20 +20,17 @@ public class Renderer {
   private InstancedMesh quadMesh;
 
   public void start() {
-    this.instancedShader = assetCacheService.loadShader(
-      "default",
-      "/shaders/default.vert",
-      "/shaders/default.frag"
-    );
+    this.instancedShader =
+        assetCacheService.loadShader("default", "/shaders/default.vert", "/shaders/default.frag");
     this.spriteBatch = new SpriteBatch();
 
     float[] vertices = {
-      -0.5f, 0.5f, 0.0f,   0.0f, 1.0f,
-      0.5f, 0.5f, 0.0f,    1.0f, 1.0f,
-      0.5f, -0.5f, 0.0f,   1.0f, 0.0f,
-      -0.5f, -0.5f, 0.0f,  0.0f, 0.0f
+      -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+      0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+      0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f
     };
-    int[] indices = { 0, 3, 2, 2, 1, 0 };
+    int[] indices = {0, 3, 2, 2, 1, 0};
     this.quadMesh = new InstancedMesh(vertices, indices);
   }
 

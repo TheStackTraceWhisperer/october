@@ -1,9 +1,9 @@
 package application.ui;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.micronaut.context.BeanProvider;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TimerOverlayProviderTest {
 
@@ -37,4 +37,3 @@ class TimerOverlayProviderTest {
     assertEquals(20f, sys.getMargin());
   }
 }
-

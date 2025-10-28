@@ -8,18 +8,18 @@ import engine.services.zone.sequence.Sequence;
 import engine.services.zone.sequence.Trigger;
 import engine.services.zone.tilemap.Tilemap;
 import jakarta.inject.Singleton;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
- * A core service responsible for loading, managing, and providing access to the currently active Zone.
+ * A core service responsible for loading, managing, and providing access to the currently active
+ * Zone.
  */
 @Slf4j
 @Singleton
@@ -29,8 +29,7 @@ public class ZoneService implements IService {
 
   private final EventPublisherService eventPublisherService;
 
-  @Getter
-  private Zone currentZone;
+  @Getter private Zone currentZone;
 
   @Override
   public int executionOrder() {
@@ -39,8 +38,8 @@ public class ZoneService implements IService {
 
   /**
    * Loads a zone from the given zone ID by attempting to read a JSON file from classpath at
-   * "/zones/{zoneId}.json". On success, sets it as current and publishes ZoneLoadedEvent.
-   * If the resource is not found or fails to parse, falls back to a minimal BasicZone.
+   * "/zones/{zoneId}.json". On success, sets it as current and publishes ZoneLoadedEvent. If the
+   * resource is not found or fails to parse, falls back to a minimal BasicZone.
    */
   public void loadZone(String zoneId) {
     log.debug("Loading zone: {}", zoneId);
@@ -70,9 +69,7 @@ public class ZoneService implements IService {
     log.info("Zone loaded and event published: {}", currentZone.getId());
   }
 
-  /**
-   * Minimal Zone implementation used if no resource is available.
-   */
+  /** Minimal Zone implementation used if no resource is available. */
   private static class BasicZone implements Zone {
     private final String id;
     private final String name;
@@ -83,22 +80,34 @@ public class ZoneService implements IService {
     }
 
     @Override
-    public String getId() { return id; }
+    public String getId() {
+      return id;
+    }
 
     @Override
-    public String getName() { return name; }
+    public String getName() {
+      return name;
+    }
 
     @Override
-    public Tilemap getTilemap() { return null; }
+    public Tilemap getTilemap() {
+      return null;
+    }
 
     @Override
-    public List<Sequence> getSequences() { return Collections.emptyList(); }
+    public List<Sequence> getSequences() {
+      return Collections.emptyList();
+    }
 
     @Override
-    public List<Trigger> getTriggers() { return Collections.emptyList(); }
+    public List<Trigger> getTriggers() {
+      return Collections.emptyList();
+    }
 
     @Override
-    public Map<String, Object> getProperties() { return Collections.emptyMap(); }
+    public Map<String, Object> getProperties() {
+      return Collections.emptyMap();
+    }
   }
 
   // --- JSON data classes for simple zone deserialization ---
@@ -110,9 +119,9 @@ public class ZoneService implements IService {
 
     public JsonGameEvent() {}
 
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -124,9 +133,9 @@ public class ZoneService implements IService {
 
     public JsonSequence() {}
 
-    @Override 
-    public List<GameEvent> getEvents() { 
-      return events != null ? List.copyOf(events) : List.of(); 
+    @Override
+    public List<GameEvent> getEvents() {
+      return events != null ? List.copyOf(events) : List.of();
     }
   }
 
@@ -140,14 +149,14 @@ public class ZoneService implements IService {
 
     public JsonTrigger() {}
 
-    @Override 
-    public List<GameEvent> getEvents() { 
-      return events != null ? List.copyOf(events) : List.of(); 
+    @Override
+    public List<GameEvent> getEvents() {
+      return events != null ? List.copyOf(events) : List.of();
     }
-    
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -161,9 +170,9 @@ public class ZoneService implements IService {
 
     public JsonTile() {}
 
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -178,12 +187,12 @@ public class ZoneService implements IService {
 
     public JsonTileset() {}
 
-    @Override 
-    public List<engine.services.zone.tilemap.Tile> getTiles() { 
-      return tiles != null ? List.copyOf(tiles) : List.of(); 
+    @Override
+    public List<engine.services.zone.tilemap.Tile> getTiles() {
+      return tiles != null ? List.copyOf(tiles) : List.of();
     }
-    
-    @Override 
+
+    @Override
     public engine.services.zone.tilemap.Tile getTileById(int id) {
       if (tiles == null) return null;
       return tiles.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
@@ -216,19 +225,19 @@ public class ZoneService implements IService {
 
     public JsonTilemap() {}
 
-    @Override 
+    @Override
     public List<engine.services.zone.tilemap.Tileset> getTilesets() {
       return tilesets != null ? List.copyOf(tilesets) : List.of();
     }
-    
-    @Override 
+
+    @Override
     public List<engine.services.zone.tilemap.Tilelayer> getTilelayers() {
       return tilelayers != null ? List.copyOf(tilelayers) : List.of();
     }
-    
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -244,19 +253,19 @@ public class ZoneService implements IService {
 
     public JsonZone() {}
 
-    @Override 
-    public List<Sequence> getSequences() { 
-      return sequences != null ? List.copyOf(sequences) : List.of(); 
+    @Override
+    public List<Sequence> getSequences() {
+      return sequences != null ? List.copyOf(sequences) : List.of();
     }
-    
-    @Override 
-    public List<Trigger> getTriggers() { 
-      return triggers != null ? List.copyOf(triggers) : List.of(); 
+
+    @Override
+    public List<Trigger> getTriggers() {
+      return triggers != null ? List.copyOf(triggers) : List.of();
     }
-    
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 }

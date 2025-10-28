@@ -3,6 +3,7 @@ package engine.services.window;
 import engine.IService;
 import engine.services.rendering.gl.OpenGLDebugger;
 import jakarta.inject.Singleton;
+import java.nio.IntBuffer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.lwjgl.glfw.GLFW;
@@ -13,8 +14,6 @@ import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.IntBuffer;
-
 /** GLFW window wrapper that creates an OpenGL 4.6 core context. */
 @Singleton
 @RequiredArgsConstructor
@@ -23,8 +22,7 @@ public final class WindowService implements IService {
 
   private final WindowDefaults defaults;
 
-  @Getter
-  private long handle = 0L;
+  @Getter private long handle = 0L;
 
   @Override
   public int executionOrder() {
@@ -48,7 +46,7 @@ public final class WindowService implements IService {
     long window = GLFW.glfwCreateWindow(width, height, title, 0L, 0L);
     if (window == 0L) {
       throw new IllegalStateException(
-        "Unable to create GLFW window (requested OpenGL 4.6 core profile)");
+          "Unable to create GLFW window (requested OpenGL 4.6 core profile)");
     }
 
     this.handle = window;
@@ -116,15 +114,15 @@ public final class WindowService implements IService {
   /** Set a resize listener; also updates GL viewport. */
   public void setResizeListener(WindowResizeListener listener) {
     GLFW.glfwSetFramebufferSizeCallback(
-      handle,
-      (win, w, h) -> {
-        if (w > 0 && h > 0) {
-          GL30.glViewport(0, 0, w, h);
-          if (listener != null) {
-            listener.onResize(w, h);
+        handle,
+        (win, w, h) -> {
+          if (w > 0 && h > 0) {
+            GL30.glViewport(0, 0, w, h);
+            if (listener != null) {
+              listener.onResize(w, h);
+            }
           }
-        }
-      });
+        });
   }
 
   public void stop() {
@@ -135,5 +133,4 @@ public final class WindowService implements IService {
     }
     OpenGLDebugger.cleanup();
   }
-
 }

@@ -1,29 +1,27 @@
 package engine.services.input;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+
 import engine.game.GameAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.lwjgl.glfw.GLFW;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.lwjgl.glfw.GLFW;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DeviceMappingServiceHotplugTest {
 
-  @Mock
-  InputService inputService;
+  @Mock InputService inputService;
 
-  @InjectMocks
-  DeviceMappingService mappingService;
+  @InjectMocks DeviceMappingService mappingService;
 
   @BeforeEach
   void baseline() {

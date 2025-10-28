@@ -35,7 +35,8 @@ public class UIRendererService implements IService {
     renderer.submit(transform, textureHandle);
   }
 
-  public void submitColored(UITransformComponent transform, String textureHandle, float r, float g, float b, float a) {
+  public void submitColored(
+      UITransformComponent transform, String textureHandle, float r, float g, float b, float a) {
     renderer.submitColored(transform, textureHandle, r, g, b, a);
   }
 

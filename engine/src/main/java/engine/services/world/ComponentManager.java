@@ -9,9 +9,7 @@ class ComponentManager implements IComponentManager {
   @Override
   public <T> void addComponent(int entityId, T component) {
     Class<?> componentClass = component.getClass();
-    componentStores
-      .computeIfAbsent(componentClass, k -> new HashMap<>())
-      .put(entityId, component);
+    componentStores.computeIfAbsent(componentClass, k -> new HashMap<>()).put(entityId, component);
   }
 
   public <T> T getComponent(int entityId, Class<T> componentClass) {
@@ -39,5 +37,4 @@ class ComponentManager implements IComponentManager {
       store.remove(entityId);
     }
   }
-
 }

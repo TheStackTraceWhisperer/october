@@ -3,9 +3,7 @@ package engine.services.zone.tilemap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The complete, multi-layered map structure.
- */
+/** The complete, multi-layered map structure. */
 public interface Tilemap {
   /**
    * @return The overall map width in tile units.

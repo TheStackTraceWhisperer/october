@@ -36,7 +36,8 @@ public class MoveToTargetSystem implements ISystem {
         continue;
       }
 
-      // Move toward target this frame: dt-based step tuned so 10 updates reach 2.0 at speed=10, dt=0.016
+      // Move toward target this frame: dt-based step tuned so 10 updates reach 2.0 at speed=10,
+      // dt=0.016
       if (dist > 0f) {
         tmpDir.div(dist); // normalize
         float step = m.speed * deltaTime * 1.25f; // ~0.2 per frame at speed=10, dt=0.016

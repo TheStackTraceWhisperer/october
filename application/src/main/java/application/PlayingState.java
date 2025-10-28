@@ -4,16 +4,15 @@ import engine.services.rendering.CameraService;
 import engine.services.scene.SceneService;
 import engine.services.state.ApplicationState;
 import engine.services.window.WindowService;
-import engine.services.world.WorldService;
 import engine.services.world.ISystem;
+import engine.services.world.WorldService;
 import engine.services.world.systems.*;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
-import lombok.RequiredArgsConstructor;
-import org.joml.Vector3f;
-
 import java.util.Collection;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.joml.Vector3f;
 
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -48,17 +47,16 @@ public class PlayingState implements ApplicationState {
   @Override
   public Collection<Class<? extends ISystem>> systems() {
     return List.of(
-      PlayerInputSystem.class,
-      MovementSystem.class,
-      EnemyAISystem.class,
-      CollisionSystem.class,
-      TriggerSystem.class,
-      SequenceSystem.class,
-      MoveToTargetSystem.class,
-      AudioSystem.class,
-      RenderSystem.class,
-      UISystem.class,
-      FadeOverlaySystem.class
-    );
+        PlayerInputSystem.class,
+        MovementSystem.class,
+        EnemyAISystem.class,
+        CollisionSystem.class,
+        TriggerSystem.class,
+        SequenceSystem.class,
+        MoveToTargetSystem.class,
+        AudioSystem.class,
+        RenderSystem.class,
+        UISystem.class,
+        FadeOverlaySystem.class);
   }
 }

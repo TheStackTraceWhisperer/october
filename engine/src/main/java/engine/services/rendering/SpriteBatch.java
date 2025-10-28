@@ -1,23 +1,19 @@
 package engine.services.rendering;
 
-import org.joml.Matrix4f;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.joml.Matrix4f;
 
 /**
  * Groups sprites by their texture for efficient instanced rendering.
- * <p>
- * This class batches sprites that share the same texture so they can be rendered
- * together using instanced rendering, reducing the number of draw calls from
- * one-per-sprite to one-per-texture.
- * <p>
- * Usage pattern:
- * 1. Clear the batch at the start of the frame
- * 2. Add sprites throughout the frame
- * 3. Render all batches at the end of the frame
+ *
+ * <p>This class batches sprites that share the same texture so they can be rendered together using
+ * instanced rendering, reducing the number of draw calls from one-per-sprite to one-per-texture.
+ *
+ * <p>Usage pattern: 1. Clear the batch at the start of the frame 2. Add sprites throughout the
+ * frame 3. Render all batches at the end of the frame
  */
 public class SpriteBatch {
 
@@ -34,9 +30,7 @@ public class SpriteBatch {
     this.batches = new HashMap<>();
   }
 
-  /**
-   * Creates a new sprite batch with a default maximum instances per batch.
-   */
+  /** Creates a new sprite batch with a default maximum instances per batch. */
   public SpriteBatch() {
     this(1000); // Default to 1000 instances per batch
   }
@@ -44,7 +38,7 @@ public class SpriteBatch {
   /**
    * Adds a sprite to the batch for the given texture.
    *
-   * @param texture   The texture used by this sprite.
+   * @param texture The texture used by this sprite.
    * @param transform The transformation matrix for this sprite.
    */
   public void addSprite(Texture texture, Matrix4f transform) {
@@ -108,8 +102,8 @@ public class SpriteBatch {
   }
 
   /**
-   * Checks if any sprites exceed the maximum instances per batch.
-   * This can help detect when batching might not be optimal.
+   * Checks if any sprites exceed the maximum instances per batch. This can help detect when
+   * batching might not be optimal.
    *
    * @return True if any texture has more sprites than the maximum.
    */
@@ -117,9 +111,7 @@ public class SpriteBatch {
     return batches.values().stream().anyMatch(sprites -> sprites.size() > maxInstancesPerBatch);
   }
 
-  /**
-   * Clears all batches, preparing for a new frame.
-   */
+  /** Clears all batches, preparing for a new frame. */
   public void clear() {
     batches.clear();
   }

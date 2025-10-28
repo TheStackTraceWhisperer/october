@@ -1,14 +1,11 @@
 package engine.services.zone.sequence;
 
+import java.util.List;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * Simple implementation of Trigger for testing purposes.
- */
+/** Simple implementation of Trigger for testing purposes. */
 @Getter
 @Builder
 public class SimpleTrigger implements Trigger {

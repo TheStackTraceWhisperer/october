@@ -1,16 +1,15 @@
 package engine.services.rendering;
 
-
 import engine.services.rendering.gl.Shader;
 
 /**
  * Represents a material that defines how a mesh should be rendered.
- * <p>
- * A material encapsulates the shader program, textures, and other rendering properties
- * that determine the visual appearance of a rendered object. This provides a higher-level
- * abstraction over individual rendering components.
- * <p>
- * This is a basic material system that is not yet integrated into the main rendering pipeline.
+ *
+ * <p>A material encapsulates the shader program, textures, and other rendering properties that
+ * determine the visual appearance of a rendered object. This provides a higher-level abstraction
+ * over individual rendering components.
+ *
+ * <p>This is a basic material system that is not yet integrated into the main rendering pipeline.
  */
 public interface Material extends AutoCloseable {
 
@@ -29,14 +28,12 @@ public interface Material extends AutoCloseable {
   Texture getTexture();
 
   /**
-   * Binds this material for rendering. This typically involves binding the shader
-   * and setting up any textures or uniforms.
+   * Binds this material for rendering. This typically involves binding the shader and setting up
+   * any textures or uniforms.
    */
   void bind();
 
-  /**
-   * Unbinds this material after rendering.
-   */
+  /** Unbinds this material after rendering. */
   void unbind();
 
   /**

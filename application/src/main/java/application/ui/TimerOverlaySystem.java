@@ -7,16 +7,20 @@ import engine.services.world.World;
 import engine.services.world.components.UITransformComponent;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
-import lombok.RequiredArgsConstructor;
-
 import java.util.function.Supplier;
+import lombok.RequiredArgsConstructor;
 
 /** Render a simple progress bar overlay in a screen corner. */
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class TimerOverlaySystem implements ISystem {
 
-  public enum AnchorCorner { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT }
+  public enum AnchorCorner {
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+  }
 
   private final WindowService windowService;
   private final UIRendererService uiRendererService;
@@ -45,28 +49,51 @@ public class TimerOverlaySystem implements ISystem {
   }
 
   public void setFillColor(float r, float g, float b, float a) {
-    this.fillR = r; this.fillG = g; this.fillB = b; this.fillA = a;
+    this.fillR = r;
+    this.fillG = g;
+    this.fillB = b;
+    this.fillA = a;
   }
 
   public void setBackgroundColor(float r, float g, float b, float a) {
-    this.bgR = r; this.bgG = g; this.bgB = b; this.bgA = a;
+    this.bgR = r;
+    this.bgG = g;
+    this.bgB = b;
+    this.bgA = a;
   }
 
   public void setBorderColor(float r, float g, float b, float a) {
-    this.borderR = r; this.borderG = g; this.borderB = b; this.borderA = a;
+    this.borderR = r;
+    this.borderG = g;
+    this.borderB = b;
+    this.borderA = a;
   }
 
   public void setDimensions(float width, float height) {
-    this.barWidth = width; this.barHeight = height;
+    this.barWidth = width;
+    this.barHeight = height;
   }
 
-  public void setMargin(float margin) { this.margin = margin; }
+  public void setMargin(float margin) {
+    this.margin = margin;
+  }
 
   // --- Minimal getters for tests ---
-  public AnchorCorner getAnchorCorner() { return anchorCorner; }
-  public float getBarWidth() { return barWidth; }
-  public float getBarHeight() { return barHeight; }
-  public float getMargin() { return margin; }
+  public AnchorCorner getAnchorCorner() {
+    return anchorCorner;
+  }
+
+  public float getBarWidth() {
+    return barWidth;
+  }
+
+  public float getBarHeight() {
+    return barHeight;
+  }
+
+  public float getMargin() {
+    return margin;
+  }
 
   @Override
   public int priority() {
@@ -81,9 +108,12 @@ public class TimerOverlaySystem implements ISystem {
     try {
       Float v = (ps != null) ? ps.get() : 0f;
       p = (v != null) ? v : 0f;
-    } catch (Exception ignored) { p = 0f; }
+    } catch (Exception ignored) {
+      p = 0f;
+    }
     if (Float.isNaN(p) || Float.isInfinite(p)) p = 0f;
-    if (p < 0f) p = 0f; if (p > 1f) p = 1f;
+    if (p < 0f) p = 0f;
+    if (p > 1f) p = 1f;
 
     int width = windowService.getWidth();
     int height = windowService.getHeight();
@@ -94,11 +124,26 @@ public class TimerOverlaySystem implements ISystem {
 
     float minX, minY;
     switch (anchorCorner) {
-      case TOP_LEFT -> { minX = margin; minY = height - margin - outerH; }
-      case TOP_RIGHT -> { minX = width - margin - outerW; minY = height - margin - outerH; }
-      case BOTTOM_LEFT -> { minX = margin; minY = margin; }
-      case BOTTOM_RIGHT -> { minX = width - margin - outerW; minY = margin; }
-      default -> { minX = width - margin - outerW; minY = margin; }
+      case TOP_LEFT -> {
+        minX = margin;
+        minY = height - margin - outerH;
+      }
+      case TOP_RIGHT -> {
+        minX = width - margin - outerW;
+        minY = height - margin - outerH;
+      }
+      case BOTTOM_LEFT -> {
+        minX = margin;
+        minY = margin;
+      }
+      case BOTTOM_RIGHT -> {
+        minX = width - margin - outerW;
+        minY = margin;
+      }
+      default -> {
+        minX = width - margin - outerW;
+        minY = margin;
+      }
     }
 
     float maxX = minX + outerW;

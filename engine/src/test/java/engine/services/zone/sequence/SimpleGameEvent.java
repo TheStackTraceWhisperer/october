@@ -1,13 +1,10 @@
 package engine.services.zone.sequence;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Map;
-
-/**
- * Simple implementation of GameEvent for testing purposes.
- */
+/** Simple implementation of GameEvent for testing purposes. */
 @Getter
 @Builder
 public class SimpleGameEvent implements GameEvent {

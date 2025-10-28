@@ -1,10 +1,9 @@
 package engine.services.world;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class SystemManager {
@@ -23,7 +22,7 @@ class SystemManager {
   }
 
   public void update() {
-    if(!sorted) {
+    if (!sorted) {
       systems.sort(Comparator.comparingInt(ISystem::priority));
       sorted = true;
     }
@@ -34,7 +33,7 @@ class SystemManager {
   }
 
   public void update(float dt) {
-    if(!sorted) {
+    if (!sorted) {
       systems.sort(Comparator.comparingInt(ISystem::priority));
       sorted = true;
     }

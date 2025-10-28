@@ -1,8 +1,7 @@
 package engine;
 
-import org.lwjgl.glfw.GLFW;
-
 import java.time.Duration;
+import org.lwjgl.glfw.GLFW;
 
 public interface ApplicationLoopPolicy {
   boolean continueRunning(int frames, long windowHandle);

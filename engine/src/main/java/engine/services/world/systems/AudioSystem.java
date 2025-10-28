@@ -12,13 +12,12 @@ import engine.services.world.components.SoundEffectComponent;
 import engine.services.world.components.TransformComponent;
 import io.micronaut.context.annotation.Prototype;
 import jakarta.inject.Inject;
-import lombok.RequiredArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -38,7 +37,8 @@ public class AudioSystem implements ISystem {
     updateSoundEffects(world, deltaTime);
   }
 
-  private static void applySourceProperties(AudioSource source, float volume, float pitch, boolean looping) {
+  private static void applySourceProperties(
+      AudioSource source, float volume, float pitch, boolean looping) {
     source.setVolume(volume);
     source.setPitch(pitch);
     source.setLooping(looping);
@@ -58,7 +58,8 @@ public class AudioSystem implements ISystem {
         applySourceProperties(audioSource, audioComp.volume, audioComp.pitch, audioComp.looping);
 
         if (audioComp.autoPlay && !audioComp.isPlaying) {
-          AudioBuffer buffer = resourceManager.resolveAudioBufferHandle(audioComp.audioBufferHandle);
+          AudioBuffer buffer =
+              resourceManager.resolveAudioBufferHandle(audioComp.audioBufferHandle);
           audioSource.play(buffer);
           audioComp.isPlaying = true;
         }
@@ -98,7 +99,8 @@ public class AudioSystem implements ISystem {
         musicSource.setLooping(musicComp.looping);
 
         if (musicComp.autoPlay && !musicComp.isPlaying) {
-          AudioBuffer buffer = resourceManager.resolveAudioBufferHandle(musicComp.musicBufferHandle);
+          AudioBuffer buffer =
+              resourceManager.resolveAudioBufferHandle(musicComp.musicBufferHandle);
           musicSource.play(buffer);
           musicComp.isPlaying = true;
 
@@ -108,7 +110,8 @@ public class AudioSystem implements ISystem {
         }
       }
 
-      // If we just created and started fade-in, skip progression this frame so tests see fadingIn=true
+      // If we just created and started fade-in, skip progression this frame so tests see
+      // fadingIn=true
       if (!justCreated) {
         updateMusicFades(musicComp, musicSource, deltaTime);
       }
@@ -127,7 +130,8 @@ public class AudioSystem implements ISystem {
     cleanupAudioSources(entities, musicSourceMap);
   }
 
-  private void updateMusicFades(MusicComponent musicComp, AudioSource musicSource, float deltaTime) {
+  private void updateMusicFades(
+      MusicComponent musicComp, AudioSource musicSource, float deltaTime) {
     if (musicComp.fadingIn) {
       musicComp.fadeTimer += deltaTime;
       float fadeProgress = Math.min(musicComp.fadeTimer / musicComp.fadeDuration, 1.0f);
@@ -170,7 +174,8 @@ public class AudioSystem implements ISystem {
         soundSource.setLooping(false);
 
         if (soundComp.autoPlay) {
-          AudioBuffer buffer = resourceManager.resolveAudioBufferHandle(soundComp.soundBufferHandle);
+          AudioBuffer buffer =
+              resourceManager.resolveAudioBufferHandle(soundComp.soundBufferHandle);
           soundSource.play(buffer);
           soundComp.hasBeenTriggered = true;
         }
@@ -194,19 +199,26 @@ public class AudioSystem implements ISystem {
     cleanupAudioSources(world.getEntitiesWith(SoundEffectComponent.class), soundEffectSourceMap);
   }
 
-
-  private void cleanupAudioSources(Set<Integer> currentEntities, Map<Integer, AudioSource> sourceMap) {
-    sourceMap.entrySet().removeIf(entry -> {
-      if (!currentEntities.contains(entry.getKey())) {
-        entry.getValue().close();
-        return true;
-      }
-      return false;
-    });
+  private void cleanupAudioSources(
+      Set<Integer> currentEntities, Map<Integer, AudioSource> sourceMap) {
+    sourceMap
+        .entrySet()
+        .removeIf(
+            entry -> {
+              if (!currentEntities.contains(entry.getKey())) {
+                entry.getValue().close();
+                return true;
+              }
+              return false;
+            });
   }
 
-  public void playSoundEffect(World world, int entityId, String bufferHandle,
-                              SoundEffectComponent.SoundEffectType soundType, float volume) {
+  public void playSoundEffect(
+      World world,
+      int entityId,
+      String bufferHandle,
+      SoundEffectComponent.SoundEffectType soundType,
+      float volume) {
     SoundEffectComponent soundComp = new SoundEffectComponent(bufferHandle, soundType);
     soundComp.volume = volume;
     world.addComponent(entityId, soundComp);

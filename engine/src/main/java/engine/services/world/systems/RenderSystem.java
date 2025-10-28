@@ -15,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * The system responsible for rendering all sprite entities.
- * <p>
- * This system acts as the bridge between the ECS and the rendering engine.
- * It queries the world for entities with a Transform and a Sprite, resolves their
- * texture and mesh resources, and submits them to the Renderer to be drawn.
+ *
+ * <p>This system acts as the bridge between the ECS and the rendering engine. It queries the world
+ * for entities with a Transform and a Sprite, resolves their texture and mesh resources, and
+ * submits them to the Renderer to be drawn.
  */
 @Prototype
 @RequiredArgsConstructor(onConstructor_ = @Inject)

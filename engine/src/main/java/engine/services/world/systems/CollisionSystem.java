@@ -1,13 +1,11 @@
 package engine.services.world.systems;
 
-
 import engine.game.GameColliderType;
 import engine.services.world.ISystem;
 import engine.services.world.World;
 import engine.services.world.components.ColliderComponent;
 import engine.services.world.components.TransformComponent;
 import io.micronaut.context.annotation.Prototype;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +14,8 @@ public class CollisionSystem implements ISystem {
 
   @Override
   public void update(World world, float delta) {
-    List<Integer> entities = new ArrayList<>(world.getEntitiesWith(TransformComponent.class, ColliderComponent.class));
+    List<Integer> entities =
+        new ArrayList<>(world.getEntitiesWith(TransformComponent.class, ColliderComponent.class));
 
     for (int i = 0; i < entities.size(); i++) {
       for (int j = i + 1; j < entities.size(); j++) {

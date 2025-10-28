@@ -4,20 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import engine.IService;
 import engine.services.resources.AssetCacheService;
 import engine.services.world.ComponentRegistry;
-import engine.services.world.IComponent;
 import engine.services.world.WorldService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Singleton
 public class SceneService implements IService {
-  private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new CustomJomlModule());
+  private static final ObjectMapper MAPPER =
+      new ObjectMapper().registerModule(new CustomJomlModule());
 
   private final WorldService worldService;
   private final AssetCacheService resourceManager;
@@ -25,10 +24,9 @@ public class SceneService implements IService {
 
   @Inject
   public SceneService(
-    WorldService worldService,
-    AssetCacheService resourceManager,
-    ComponentRegistry componentRegistry
-  ) {
+      WorldService worldService,
+      AssetCacheService resourceManager,
+      ComponentRegistry componentRegistry) {
     this.worldService = worldService;
     this.resourceManager = resourceManager;
     this.componentRegistry = componentRegistry;
@@ -64,7 +62,8 @@ public class SceneService implements IService {
             Object component = MAPPER.convertValue(componentEntity.getValue(), componentClass);
             worldService.addComponent(entity, component);
           } else {
-            log.warn("Unknown component type \'{}\' for entity \'{}\'", componentName, template.name());
+            log.warn(
+                "Unknown component type \'{}\' for entity \'{}\'", componentName, template.name());
           }
         }
       }

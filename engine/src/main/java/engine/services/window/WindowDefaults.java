@@ -16,5 +16,4 @@ public class WindowDefaults {
   public String title() {
     return "October";
   }
-
 }
