@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+@Introspected
 public class UITransformComponent implements IComponent {
 
   public final Vector2f anchor;
