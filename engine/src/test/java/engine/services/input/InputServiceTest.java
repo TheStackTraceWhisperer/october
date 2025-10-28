@@ -128,4 +128,3 @@ class InputServiceTest {
     assertFalse(input.isButtonPressed(0, GLFW_GAMEPAD_BUTTON_A));
   }
 }
-

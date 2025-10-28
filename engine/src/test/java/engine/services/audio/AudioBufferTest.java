@@ -12,4 +12,3 @@ class AudioBufferTest {
     assertTrue(ex.getMessage().contains("Failed to load audio file"));
   }
 }
-

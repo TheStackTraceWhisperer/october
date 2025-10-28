@@ -112,7 +112,7 @@ class HealthComponentTest {
         HealthComponent health = new HealthComponent(100);
         health.takeDamage(100);
         assertFalse(health.isAlive());
-        
+
         // Trying to "heal" with negative damage should not work
         health.takeDamage(-50);
         assertFalse(health.isAlive());

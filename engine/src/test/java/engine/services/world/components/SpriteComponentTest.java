@@ -11,7 +11,7 @@ class SpriteComponentTest {
     @Test
     void constructor_shouldSetTextureHandleAndDefaultColor() {
         SpriteComponent sprite = new SpriteComponent("test_texture");
-        
+
         assertEquals("test_texture", sprite.textureHandle());
         assertEquals(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), sprite.color());
     }
@@ -20,7 +20,7 @@ class SpriteComponentTest {
     void constructor_shouldSetTextureHandleAndCustomColor() {
         Vector4f customColor = new Vector4f(0.5f, 0.5f, 0.5f, 0.8f);
         SpriteComponent sprite = new SpriteComponent("test_texture", customColor);
-        
+
         assertEquals("test_texture", sprite.textureHandle());
         assertEquals(customColor, sprite.color());
     }
@@ -28,7 +28,7 @@ class SpriteComponentTest {
     @Test
     void constructor_shouldDefaultToWhiteColorWhenNullProvided() {
         SpriteComponent sprite = new SpriteComponent("test_texture", null);
-        
+
         assertEquals("test_texture", sprite.textureHandle());
         assertEquals(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), sprite.color());
     }
@@ -44,7 +44,7 @@ class SpriteComponentTest {
         Vector4f color = new Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
         SpriteComponent sprite1 = new SpriteComponent("test_texture", color);
         SpriteComponent sprite2 = new SpriteComponent("test_texture", new Vector4f(0.5f, 0.5f, 0.5f, 1.0f));
-        
+
         assertEquals(sprite1, sprite2);
     }
 
@@ -52,7 +52,7 @@ class SpriteComponentTest {
     void equals_shouldReturnFalseForDifferentTextures() {
         SpriteComponent sprite1 = new SpriteComponent("texture1");
         SpriteComponent sprite2 = new SpriteComponent("texture2");
-        
+
         assertNotEquals(sprite1, sprite2);
     }
 
@@ -60,7 +60,7 @@ class SpriteComponentTest {
     void equals_shouldReturnFalseForDifferentColors() {
         SpriteComponent sprite1 = new SpriteComponent("test_texture", new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         SpriteComponent sprite2 = new SpriteComponent("test_texture", new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        
+
         assertNotEquals(sprite1, sprite2);
     }
 
@@ -69,7 +69,7 @@ class SpriteComponentTest {
         Vector4f color = new Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
         SpriteComponent sprite1 = new SpriteComponent("test_texture", color);
         SpriteComponent sprite2 = new SpriteComponent("test_texture", new Vector4f(0.5f, 0.5f, 0.5f, 1.0f));
-        
+
         assertEquals(sprite1.hashCode(), sprite2.hashCode());
     }
 }

@@ -110,9 +110,9 @@ public class ZoneService implements IService {
 
     public JsonGameEvent() {}
 
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -124,9 +124,9 @@ public class ZoneService implements IService {
 
     public JsonSequence() {}
 
-    @Override 
-    public List<GameEvent> getEvents() { 
-      return events != null ? List.copyOf(events) : List.of(); 
+    @Override
+    public List<GameEvent> getEvents() {
+      return events != null ? List.copyOf(events) : List.of();
     }
   }
 
@@ -140,14 +140,14 @@ public class ZoneService implements IService {
 
     public JsonTrigger() {}
 
-    @Override 
-    public List<GameEvent> getEvents() { 
-      return events != null ? List.copyOf(events) : List.of(); 
+    @Override
+    public List<GameEvent> getEvents() {
+      return events != null ? List.copyOf(events) : List.of();
     }
-    
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -161,9 +161,9 @@ public class ZoneService implements IService {
 
     public JsonTile() {}
 
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -178,12 +178,12 @@ public class ZoneService implements IService {
 
     public JsonTileset() {}
 
-    @Override 
-    public List<engine.services.zone.tilemap.Tile> getTiles() { 
-      return tiles != null ? List.copyOf(tiles) : List.of(); 
+    @Override
+    public List<engine.services.zone.tilemap.Tile> getTiles() {
+      return tiles != null ? List.copyOf(tiles) : List.of();
     }
-    
-    @Override 
+
+    @Override
     public engine.services.zone.tilemap.Tile getTileById(int id) {
       if (tiles == null) return null;
       return tiles.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
@@ -216,19 +216,19 @@ public class ZoneService implements IService {
 
     public JsonTilemap() {}
 
-    @Override 
+    @Override
     public List<engine.services.zone.tilemap.Tileset> getTilesets() {
       return tilesets != null ? List.copyOf(tilesets) : List.of();
     }
-    
-    @Override 
+
+    @Override
     public List<engine.services.zone.tilemap.Tilelayer> getTilelayers() {
       return tilelayers != null ? List.copyOf(tilelayers) : List.of();
     }
-    
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 
@@ -244,19 +244,19 @@ public class ZoneService implements IService {
 
     public JsonZone() {}
 
-    @Override 
-    public List<Sequence> getSequences() { 
-      return sequences != null ? List.copyOf(sequences) : List.of(); 
+    @Override
+    public List<Sequence> getSequences() {
+      return sequences != null ? List.copyOf(sequences) : List.of();
     }
-    
-    @Override 
-    public List<Trigger> getTriggers() { 
-      return triggers != null ? List.copyOf(triggers) : List.of(); 
+
+    @Override
+    public List<Trigger> getTriggers() {
+      return triggers != null ? List.copyOf(triggers) : List.of();
     }
-    
-    @Override 
-    public Map<String, Object> getProperties() { 
-      return properties != null ? properties : Collections.emptyMap(); 
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return properties != null ? properties : Collections.emptyMap();
     }
   }
 }

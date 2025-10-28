@@ -146,7 +146,7 @@ public class SequenceSystem implements ISystem {
    */
   private void executeEvent(World world, int entityId, ActiveSequenceComponent activeSequence, GameEvent event) {
     String type = event.getType();
-    
+
     switch (type) {
       case "WAIT" -> {
         // Set the wait timer

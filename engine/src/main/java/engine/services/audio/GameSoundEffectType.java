@@ -11,26 +11,26 @@ public enum GameSoundEffectType implements SoundEffectComponent.SoundEffectType 
   UI_MENU_OPEN,
   UI_MENU_CLOSE,
   UI_ERROR,
-  
+
   // Player
   PLAYER_JUMP,
   PLAYER_LAND,
   PLAYER_FOOTSTEP,
   PLAYER_DAMAGE,
   PLAYER_HEAL,
-  
+
   // Combat
   WEAPON_SWING,
   WEAPON_HIT,
   PROJECTILE_FIRE,
   PROJECTILE_HIT,
-  
+
   // Environment
   ITEM_PICKUP,
   DOOR_OPEN,
   DOOR_CLOSE,
   SWITCH_ACTIVATE,
-  
+
   // Enemy
   ENEMY_DAMAGE,
   ENEMY_DEATH,

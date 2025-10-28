@@ -59,10 +59,10 @@ class TransformComponentTest {
     void revertPosition_shouldHandleMultipleReverts() {
         transform.previousPosition.set(10, 20, 30);
         transform.position.set(100, 200, 300);
-        
+
         transform.revertPosition();
         assertEquals(new Vector3f(10, 20, 30), transform.position);
-        
+
         // Revert again - should still use same previous position
         transform.revertPosition();
         assertEquals(new Vector3f(10, 20, 30), transform.position);
@@ -98,7 +98,7 @@ class TransformComponentTest {
         transform.scale.set(2, 0.5f, 3);
 
         Matrix4f result = transform.getTransformMatrix();
-        
+
         // Verify that the matrix is not null and has reasonable values
         assertTrue(result != null);
     }
@@ -129,10 +129,10 @@ class TransformComponentTest {
         transform.scale.set(0.5f, 2.0f, 1.5f);
 
         Matrix4f result = transform.getTransformMatrix();
-        
+
         // Verify the matrix was computed
         assertTrue(result != null);
-        
+
         // Verify it's different from identity
         Matrix4f identity = new Matrix4f();
         assertTrue(!identity.equals(result, 0.001f));

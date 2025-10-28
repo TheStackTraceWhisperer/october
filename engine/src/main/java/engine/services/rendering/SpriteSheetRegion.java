@@ -31,7 +31,7 @@ public record SpriteSheetRegion(int x, int y, int width, int height) {
 
   /**
    * Returns the normalized texture coordinates for this region within a sprite sheet.
-   * 
+   *
    * @param sheetWidth The total width of the sprite sheet texture
    * @param sheetHeight The total height of the sprite sheet texture
    * @return An array of 4 floats: [u_min, v_min, u_max, v_max] in range [0.0, 1.0]

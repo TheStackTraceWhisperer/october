@@ -60,4 +60,3 @@ public class FadeOverlaySystem implements ISystem {
     uiRendererService.end();
   }
 }
-

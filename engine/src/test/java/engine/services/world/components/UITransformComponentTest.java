@@ -96,10 +96,10 @@ class UITransformComponentTest {
     @Test
     void relativeSize_canBeModified() {
         UITransformComponent transform = new UITransformComponent();
-        
+
         transform.relativeSize = true;
         assertTrue(transform.relativeSize);
-        
+
         transform.relativeSize = false;
         assertFalse(transform.relativeSize);
     }
@@ -107,19 +107,19 @@ class UITransformComponentTest {
     @Test
     void screenBounds_shouldBeInitializedWithZeros() {
         UITransformComponent transform = new UITransformComponent();
-        
+
         assertArrayEquals(new float[]{0.0f, 0.0f, 0.0f, 0.0f}, transform.screenBounds);
     }
 
     @Test
     void screenBounds_canBeModified() {
         UITransformComponent transform = new UITransformComponent();
-        
+
         transform.screenBounds[0] = 10.0f;
         transform.screenBounds[1] = 20.0f;
         transform.screenBounds[2] = 100.0f;
         transform.screenBounds[3] = 50.0f;
-        
+
         assertArrayEquals(new float[]{10.0f, 20.0f, 100.0f, 50.0f}, transform.screenBounds);
     }
 }

@@ -23,56 +23,56 @@ public enum Direction {
    * Facing upward (North).
    */
   UP,
-  
+
   /**
    * Facing up and to the right (Northeast).
    */
   UP_RIGHT,
-  
+
   /**
    * Facing right (East).
    */
   RIGHT,
-  
+
   /**
    * Facing down and to the right (Southeast).
    */
   DOWN_RIGHT,
-  
+
   /**
    * Facing downward (South).
    */
   DOWN,
-  
+
   /**
    * Facing down and to the left (Southwest).
    */
   DOWN_LEFT,
-  
+
   /**
    * Facing left (West).
    */
   LEFT,
-  
+
   /**
    * Facing up and to the left (Northwest).
    */
   UP_LEFT;
-  
+
   /**
    * Converts an angle in degrees to the nearest direction.
-   * 
+   *
    * @param angleDegrees The angle in degrees, where 0° is UP and increases clockwise
    * @return The nearest direction
    */
   public static Direction fromAngle(float angleDegrees) {
     // Normalize angle to 0-360 range
     float normalized = ((angleDegrees % 360) + 360) % 360;
-    
+
     // Divide into 8 segments of 45 degrees each
     float segment = normalized / 45.0f;
     int index = Math.round(segment) % 8;
-    
+
     return switch (index) {
       case 0 -> UP;
       case 1 -> UP_RIGHT;

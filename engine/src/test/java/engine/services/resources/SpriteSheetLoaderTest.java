@@ -24,12 +24,12 @@ class SpriteSheetLoaderTest {
 
   @Test
   void loadAnimations_shouldLoadValidAnimations() {
-    Map<String, SpriteAnimation> animations = 
+    Map<String, SpriteAnimation> animations =
         SpriteSheetLoader.loadAnimations("spritesheets/valid_spritesheet.yml");
-    
+
     assertNotNull(animations);
     assertEquals(3, animations.size());
-    
+
     // Verify idle animation
     assertTrue(animations.containsKey("idle"));
     SpriteAnimation idle = animations.get("idle");
@@ -38,7 +38,7 @@ class SpriteSheetLoaderTest {
     assertEquals(0.1f, idle.getFrameDuration(), 0.001f);
     assertTrue(idle.isLoop());
     assertEquals("idle_0", idle.getFrameName(0));
-    
+
     // Verify walk animation
     assertTrue(animations.containsKey("walk"));
     SpriteAnimation walk = animations.get("walk");
@@ -49,7 +49,7 @@ class SpriteSheetLoaderTest {
     assertEquals("walk_0", walk.getFrameName(0));
     assertEquals("walk_1", walk.getFrameName(1));
     assertEquals("walk_2", walk.getFrameName(2));
-    
+
     // Verify attack animation (non-looping)
     assertTrue(animations.containsKey("attack"));
     SpriteAnimation attack = animations.get("attack");
@@ -61,9 +61,9 @@ class SpriteSheetLoaderTest {
 
   @Test
   void loadAnimations_shouldReturnEmptyMapForNoAnimations() {
-    Map<String, SpriteAnimation> animations = 
+    Map<String, SpriteAnimation> animations =
         SpriteSheetLoader.loadAnimations("spritesheets/no_regions.yml");
-    
+
     assertNotNull(animations);
     assertTrue(animations.isEmpty());
   }
@@ -72,21 +72,21 @@ class SpriteSheetLoaderTest {
   void loadAnimations_shouldThrowExceptionForNonexistentFile() {
     RuntimeException exception = assertThrows(RuntimeException.class, () ->
         SpriteSheetLoader.loadAnimations("spritesheets/nonexistent.yml"));
-    
+
     assertTrue(exception.getMessage().contains("Failed to load animations from"));
   }
 
   @Test
   void loadDirectionalAnimations_shouldLoadValidMappings() {
-    Map<String, Map<String, String>> dirAnimations = 
+    Map<String, Map<String, String>> dirAnimations =
         SpriteSheetLoader.loadDirectionalAnimations("spritesheets/valid_spritesheet.yml");
-    
+
     assertNotNull(dirAnimations);
     assertEquals(1, dirAnimations.size());
-    
+
     assertTrue(dirAnimations.containsKey("walk"));
     Map<String, String> walkMappings = dirAnimations.get("walk");
-    
+
     assertEquals(4, walkMappings.size());
     assertEquals("walk", walkMappings.get("DOWN"));
     assertEquals("walk", walkMappings.get("UP"));
@@ -96,9 +96,9 @@ class SpriteSheetLoaderTest {
 
   @Test
   void loadDirectionalAnimations_shouldReturnEmptyMapForNoDirectionalAnimations() {
-    Map<String, Map<String, String>> dirAnimations = 
+    Map<String, Map<String, String>> dirAnimations =
         SpriteSheetLoader.loadDirectionalAnimations("spritesheets/minimal_spritesheet.yml");
-    
+
     assertNotNull(dirAnimations);
     assertTrue(dirAnimations.isEmpty());
   }
@@ -107,38 +107,38 @@ class SpriteSheetLoaderTest {
   void loadDirectionalAnimations_shouldThrowExceptionForNonexistentFile() {
     RuntimeException exception = assertThrows(RuntimeException.class, () ->
         SpriteSheetLoader.loadDirectionalAnimations("spritesheets/nonexistent.yml"));
-    
+
     assertTrue(exception.getMessage().contains("Failed to load directional animations from"));
   }
 
   @Test
   void loadAnimations_shouldHandleAnimationsWithDifferentFrameCounts() {
-    Map<String, SpriteAnimation> animations = 
+    Map<String, SpriteAnimation> animations =
         SpriteSheetLoader.loadAnimations("spritesheets/valid_spritesheet.yml");
-    
+
     SpriteAnimation idle = animations.get("idle");
     assertEquals(1, idle.getFrameCount());
-    
+
     SpriteAnimation walk = animations.get("walk");
     assertEquals(3, walk.getFrameCount());
   }
 
   @Test
   void loadAnimations_shouldPreserveFrameOrder() {
-    Map<String, SpriteAnimation> animations = 
+    Map<String, SpriteAnimation> animations =
         SpriteSheetLoader.loadAnimations("spritesheets/valid_spritesheet.yml");
-    
+
     SpriteAnimation walk = animations.get("walk");
     assertEquals("walk_0", walk.getFrameName(0));
     assertEquals("walk_1", walk.getFrameName(1));
     assertEquals("walk_2", walk.getFrameName(2));
   }
-  
+
   @Test
   void loadAnimations_shouldHandleLeadingSlashInPath() {
-    Map<String, SpriteAnimation> animations = 
+    Map<String, SpriteAnimation> animations =
         SpriteSheetLoader.loadAnimations("/spritesheets/valid_spritesheet.yml");
-    
+
     assertNotNull(animations);
     assertEquals(3, animations.size());
     assertTrue(animations.containsKey("idle"));
@@ -146,9 +146,9 @@ class SpriteSheetLoaderTest {
 
   @Test
   void loadDirectionalAnimations_shouldHandleLeadingSlashInPath() {
-    Map<String, Map<String, String>> dirAnimations = 
+    Map<String, Map<String, String>> dirAnimations =
         SpriteSheetLoader.loadDirectionalAnimations("/spritesheets/valid_spritesheet.yml");
-    
+
     assertNotNull(dirAnimations);
     assertEquals(1, dirAnimations.size());
     assertTrue(dirAnimations.containsKey("walk"));

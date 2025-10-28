@@ -11,7 +11,7 @@ class AnimatedSpriteComponentTest {
   void constructor_shouldCreateValidComponent() {
     AnimatedSpriteComponent component = new AnimatedSpriteComponent(
         "player_sheet", "walk", Direction.DOWN, 0.5f, true);
-    
+
     assertEquals("player_sheet", component.spriteSheetHandle());
     assertEquals("walk", component.currentAnimation());
     assertEquals(Direction.DOWN, component.currentDirection());
@@ -21,32 +21,32 @@ class AnimatedSpriteComponentTest {
 
   @Test
   void constructor_shouldThrowExceptionForNullSpriteSheetHandle() {
-    assertThrows(NullPointerException.class, () -> 
+    assertThrows(NullPointerException.class, () ->
         new AnimatedSpriteComponent(null, "walk", Direction.DOWN, 0.0f, true));
   }
 
   @Test
   void constructor_shouldThrowExceptionForNullAnimation() {
-    assertThrows(NullPointerException.class, () -> 
+    assertThrows(NullPointerException.class, () ->
         new AnimatedSpriteComponent("sheet", null, Direction.DOWN, 0.0f, true));
   }
 
   @Test
   void constructor_shouldThrowExceptionForNullDirection() {
-    assertThrows(NullPointerException.class, () -> 
+    assertThrows(NullPointerException.class, () ->
         new AnimatedSpriteComponent("sheet", "walk", null, 0.0f, true));
   }
 
   @Test
   void constructor_shouldThrowExceptionForNegativeAnimationTime() {
-    assertThrows(IllegalArgumentException.class, () -> 
+    assertThrows(IllegalArgumentException.class, () ->
         new AnimatedSpriteComponent("sheet", "walk", Direction.DOWN, -0.1f, true));
   }
 
   @Test
   void simpleConstructor_shouldSetDefaultValues() {
     AnimatedSpriteComponent component = new AnimatedSpriteComponent("player_sheet", "idle");
-    
+
     assertEquals("player_sheet", component.spriteSheetHandle());
     assertEquals("idle", component.currentAnimation());
     assertEquals(Direction.DOWN, component.currentDirection());
@@ -58,15 +58,15 @@ class AnimatedSpriteComponentTest {
   void withAnimation_shouldCreateNewComponentWithDifferentAnimation() {
     AnimatedSpriteComponent original = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.LEFT, 1.5f, true);
-    
+
     AnimatedSpriteComponent updated = original.withAnimation("run");
-    
+
     assertEquals("run", updated.currentAnimation());
     assertEquals("sheet", updated.spriteSheetHandle());
     assertEquals(Direction.LEFT, updated.currentDirection());
     assertEquals(0.0f, updated.animationTime()); // Time should reset
     assertTrue(updated.playing());
-    
+
     // Original should be unchanged
     assertEquals("walk", original.currentAnimation());
   }
@@ -75,13 +75,13 @@ class AnimatedSpriteComponentTest {
   void withDirection_shouldCreateNewComponentWithDifferentDirection() {
     AnimatedSpriteComponent original = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.DOWN, 1.0f, true);
-    
+
     AnimatedSpriteComponent updated = original.withDirection(Direction.UP);
-    
+
     assertEquals(Direction.UP, updated.currentDirection());
     assertEquals("walk", updated.currentAnimation());
     assertEquals(1.0f, updated.animationTime()); // Time should be preserved
-    
+
     // Original should be unchanged
     assertEquals(Direction.DOWN, original.currentDirection());
   }
@@ -90,11 +90,11 @@ class AnimatedSpriteComponentTest {
   void withTimeAdvanced_shouldAddDeltaTimeToAnimationTime() {
     AnimatedSpriteComponent original = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.DOWN, 1.0f, true);
-    
+
     AnimatedSpriteComponent updated = original.withTimeAdvanced(0.5f);
-    
+
     assertEquals(1.5f, updated.animationTime(), 0.001f);
-    
+
     // Original should be unchanged
     assertEquals(1.0f, original.animationTime());
   }
@@ -103,12 +103,12 @@ class AnimatedSpriteComponentTest {
   void withPlaying_shouldChangePlayingState() {
     AnimatedSpriteComponent original = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.DOWN, 1.0f, true);
-    
+
     AnimatedSpriteComponent paused = original.withPlaying(false);
-    
+
     assertFalse(paused.playing());
     assertEquals(1.0f, paused.animationTime()); // Time should be preserved
-    
+
     // Original should be unchanged
     assertTrue(original.playing());
   }
@@ -117,14 +117,14 @@ class AnimatedSpriteComponentTest {
   void withReset_shouldResetAnimationTime() {
     AnimatedSpriteComponent original = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.DOWN, 5.5f, true);
-    
+
     AnimatedSpriteComponent reset = original.withReset();
-    
+
     assertEquals(0.0f, reset.animationTime());
     assertEquals("walk", reset.currentAnimation());
     assertEquals(Direction.DOWN, reset.currentDirection());
     assertTrue(reset.playing());
-    
+
     // Original should be unchanged
     assertEquals(5.5f, original.animationTime());
   }
@@ -135,7 +135,7 @@ class AnimatedSpriteComponentTest {
         "sheet", "walk", Direction.DOWN, 1.0f, true);
     AnimatedSpriteComponent component2 = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.DOWN, 1.0f, true);
-    
+
     assertEquals(component1, component2);
   }
 
@@ -145,7 +145,7 @@ class AnimatedSpriteComponentTest {
         "sheet", "walk", Direction.DOWN, 1.0f, true);
     AnimatedSpriteComponent component2 = new AnimatedSpriteComponent(
         "sheet", "run", Direction.DOWN, 1.0f, true);
-    
+
     assertNotEquals(component1, component2);
   }
 
@@ -155,7 +155,7 @@ class AnimatedSpriteComponentTest {
         "sheet", "walk", Direction.DOWN, 1.0f, true);
     AnimatedSpriteComponent component2 = new AnimatedSpriteComponent(
         "sheet", "walk", Direction.DOWN, 1.0f, true);
-    
+
     assertEquals(component1.hashCode(), component2.hashCode());
   }
 
@@ -166,7 +166,7 @@ class AnimatedSpriteComponentTest {
         .withDirection(Direction.UP)
         .withTimeAdvanced(0.5f)
         .withPlaying(false);
-    
+
     assertEquals("walk", component.currentAnimation());
     assertEquals(Direction.UP, component.currentDirection());
     assertEquals(0.5f, component.animationTime(), 0.001f);

@@ -27,10 +27,10 @@ class SoundEffectComponentTest {
     @Test
     void volume_canBeModified() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", TestSoundEffectType.JUMP);
-        
+
         sound.volume = 0.5f;
         assertEquals(0.5f, sound.volume);
-        
+
         sound.volume = 0.0f;
         assertEquals(0.0f, sound.volume);
     }
@@ -38,10 +38,10 @@ class SoundEffectComponentTest {
     @Test
     void pitch_canBeModified() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", TestSoundEffectType.JUMP);
-        
+
         sound.pitch = 1.5f;
         assertEquals(1.5f, sound.pitch);
-        
+
         sound.pitch = 0.5f;
         assertEquals(0.5f, sound.pitch);
     }
@@ -49,10 +49,10 @@ class SoundEffectComponentTest {
     @Test
     void autoPlay_canBeModified() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", TestSoundEffectType.JUMP);
-        
+
         sound.autoPlay = false;
         assertFalse(sound.autoPlay);
-        
+
         sound.autoPlay = true;
         assertTrue(sound.autoPlay);
     }
@@ -60,10 +60,10 @@ class SoundEffectComponentTest {
     @Test
     void removeAfterPlay_canBeModified() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", TestSoundEffectType.JUMP);
-        
+
         sound.removeAfterPlay = false;
         assertFalse(sound.removeAfterPlay);
-        
+
         sound.removeAfterPlay = true;
         assertTrue(sound.removeAfterPlay);
     }
@@ -71,14 +71,14 @@ class SoundEffectComponentTest {
     @Test
     void hasBeenTriggered_defaultsToFalse() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", TestSoundEffectType.COLLECT);
-        
+
         assertFalse(sound.hasBeenTriggered);
     }
 
     @Test
     void hasBeenTriggered_canBeSet() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", TestSoundEffectType.COLLECT);
-        
+
         sound.hasBeenTriggered = true;
         assertTrue(sound.hasBeenTriggered);
     }
@@ -86,7 +86,7 @@ class SoundEffectComponentTest {
     @Test
     void constructor_shouldAcceptNullSoundType() {
         SoundEffectComponent sound = new SoundEffectComponent("test_sound", null);
-        
+
         assertEquals("test_sound", sound.soundBufferHandle);
         assertNull(sound.soundType);
     }

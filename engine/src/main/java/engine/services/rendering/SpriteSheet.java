@@ -19,10 +19,10 @@ import java.util.Objects;
  * </pre>
  */
 public class SpriteSheet {
-  
+
   private final Texture texture;
   private final Map<String, SpriteSheetRegion> regions;
-  
+
   /**
    * Creates a new sprite sheet with the given texture.
    *
@@ -32,7 +32,7 @@ public class SpriteSheet {
     this.texture = Objects.requireNonNull(texture, "texture must not be null");
     this.regions = new HashMap<>();
   }
-  
+
   /**
    * Adds a named region to this sprite sheet.
    *
@@ -46,7 +46,7 @@ public class SpriteSheet {
     regions.put(name, region);
     return this;
   }
-  
+
   /**
    * Gets a region by name.
    *
@@ -56,7 +56,7 @@ public class SpriteSheet {
   public SpriteSheetRegion getRegion(String name) {
     return regions.get(name);
   }
-  
+
   /**
    * Gets the underlying texture.
    *
@@ -65,7 +65,7 @@ public class SpriteSheet {
   public Texture getTexture() {
     return texture;
   }
-  
+
   /**
    * Gets all region names defined in this sprite sheet.
    *
@@ -74,7 +74,7 @@ public class SpriteSheet {
   public Map<String, SpriteSheetRegion> getRegions() {
     return Collections.unmodifiableMap(regions);
   }
-  
+
   /**
    * Checks if a region with the given name exists.
    *

@@ -55,7 +55,7 @@ class CollisionSystemTest {
     void testCollision_revertsPositionWhenOverlapping() {
         // Given: Two entities setup
         setupTwoEntityCollisionScenario();
-        
+
         // And: The player and wall are positioned to overlap
         playerTransform.position.set(0.5f, 0, 0);
         wallTransform.position.set(1.0f, 0, 0);
@@ -71,7 +71,7 @@ class CollisionSystemTest {
     void testCollision_doesNothingWhenNotOverlapping() {
         // Given: Two entities setup
         setupTwoEntityCollisionScenario();
-        
+
         // And: The player and wall are positioned far apart
         playerTransform.position.set(-5.0f, 0, 0);
         wallTransform.position.set(5.0f, 0, 0);
@@ -118,7 +118,7 @@ class CollisionSystemTest {
     void testCollision_handlesEdgeTouching() {
         // Given: Two entities setup
         setupTwoEntityCollisionScenario();
-        
+
         // And: Entities are positioned at exact edge boundaries
         playerTransform.position.set(0.0f, 0, 0);
         wallTransform.position.set(1.0f, 0, 0);
@@ -134,7 +134,7 @@ class CollisionSystemTest {
     void testCollision_handlesVerticalOverlap() {
         // Given: Two entities setup
         setupTwoEntityCollisionScenario();
-        
+
         // And: Entities overlapping vertically
         playerTransform.position.set(0, 0.5f, 0);
         wallTransform.position.set(0, 1.0f, 0);
@@ -150,7 +150,7 @@ class CollisionSystemTest {
     void testCollision_handlesCompleteOverlap() {
         // Given: Two entities setup
         setupTwoEntityCollisionScenario();
-        
+
         // And: Entities at the same position (complete overlap)
         playerTransform.position.set(0, 0, 0);
         wallTransform.position.set(0, 0, 0);

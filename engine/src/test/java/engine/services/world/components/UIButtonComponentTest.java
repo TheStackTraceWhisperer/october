@@ -53,7 +53,7 @@ class UIButtonComponentTest {
     @Test
     void constructor_shouldAllowPartialNullColors() {
         Vector4f customNormal = new Vector4f(0.5f, 0.5f, 0.5f, 1.0f);
-        
+
         UIButtonComponent button = new UIButtonComponent(
             "ACTION",
             "normal.png",

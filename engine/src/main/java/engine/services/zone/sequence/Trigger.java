@@ -18,7 +18,7 @@ public interface Trigger {
   String getType();
 
   /**
-   * @return The list of events to execute when triggered. 
+   * @return The list of events to execute when triggered.
    * This is often just a single START_SEQUENCE event.
    */
   List<GameEvent> getEvents();

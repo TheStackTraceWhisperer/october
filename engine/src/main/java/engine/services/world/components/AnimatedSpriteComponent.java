@@ -78,7 +78,7 @@ public record AnimatedSpriteComponent(
    * @return A new component with the time updated
    */
   public AnimatedSpriteComponent withTimeAdvanced(float deltaTime) {
-    return new AnimatedSpriteComponent(spriteSheetHandle, currentAnimation, currentDirection, 
+    return new AnimatedSpriteComponent(spriteSheetHandle, currentAnimation, currentDirection,
                                       animationTime + deltaTime, playing);
   }
 
@@ -89,7 +89,7 @@ public record AnimatedSpriteComponent(
    * @return A new component with the playing state changed
    */
   public AnimatedSpriteComponent withPlaying(boolean isPlaying) {
-    return new AnimatedSpriteComponent(spriteSheetHandle, currentAnimation, currentDirection, 
+    return new AnimatedSpriteComponent(spriteSheetHandle, currentAnimation, currentDirection,
                                       animationTime, isPlaying);
   }
 
@@ -99,7 +99,7 @@ public record AnimatedSpriteComponent(
    * @return A new component with animation time reset to 0
    */
   public AnimatedSpriteComponent withReset() {
-    return new AnimatedSpriteComponent(spriteSheetHandle, currentAnimation, currentDirection, 
+    return new AnimatedSpriteComponent(spriteSheetHandle, currentAnimation, currentDirection,
                                       0.0f, playing);
   }
 }

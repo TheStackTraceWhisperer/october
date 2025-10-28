@@ -25,7 +25,7 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
 
   // Track which triggers have already fired (for non-repeatable triggers)
   private final Map<String, Boolean> firedTriggers = new HashMap<>();
-  
+
   // Track time since zone loaded (for ON_LOAD triggers with delay)
   private float timeSinceZoneLoaded = 0.0f;
   private boolean zoneJustLoaded = false;
@@ -76,7 +76,7 @@ public class TriggerSystem implements ISystem, ApplicationEventListener<ZoneLoad
    */
   private boolean isTriggerConditionMet(Trigger trigger) {
     String type = trigger.getType();
-    
+
     return switch (type) {
       case "ON_LOAD" -> {
         // Check if enough time has passed since zone load

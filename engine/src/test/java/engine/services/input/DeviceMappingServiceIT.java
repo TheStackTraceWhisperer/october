@@ -71,4 +71,3 @@ public class DeviceMappingServiceIT extends EngineTestHarness {
     assertFalse(mappingService.isActionActive(0, GameAction.MOVE_DOWN));
   }
 }
-

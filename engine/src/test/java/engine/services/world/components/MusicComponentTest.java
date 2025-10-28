@@ -43,7 +43,7 @@ class MusicComponentTest {
     void baseVolume_canBeModified() {
         music.baseVolume = 0.5f;
         assertEquals(0.5f, music.baseVolume);
-        
+
         music.baseVolume = 0.0f;
         assertEquals(0.0f, music.baseVolume);
     }
@@ -52,7 +52,7 @@ class MusicComponentTest {
     void fadeDuration_canBeModified() {
         music.fadeDuration = 5.0f;
         assertEquals(5.0f, music.fadeDuration);
-        
+
         music.fadeDuration = 0.1f;
         assertEquals(0.1f, music.fadeDuration);
     }
@@ -61,13 +61,13 @@ class MusicComponentTest {
     void playbackFlags_canBeToggled() {
         music.looping = false;
         assertFalse(music.looping);
-        
+
         music.autoPlay = false;
         assertFalse(music.autoPlay);
-        
+
         music.isPlaying = true;
         assertTrue(music.isPlaying);
-        
+
         music.isPaused = true;
         assertTrue(music.isPaused);
     }
@@ -87,9 +87,9 @@ class MusicComponentTest {
     void startFadeIn_shouldOverrideFadeOut() {
         music.fadingOut = true;
         music.fadeTimer = 1.5f;
-        
+
         music.startFadeIn();
-        
+
         assertTrue(music.fadingIn);
         assertFalse(music.fadingOut);
         assertEquals(0.0f, music.fadeTimer);
@@ -109,9 +109,9 @@ class MusicComponentTest {
     void startFadeOut_shouldOverrideFadeIn() {
         music.fadingIn = true;
         music.fadeTimer = 1.0f;
-        
+
         music.startFadeOut();
-        
+
         assertFalse(music.fadingIn);
         assertTrue(music.fadingOut);
         assertEquals(0.0f, music.fadeTimer);

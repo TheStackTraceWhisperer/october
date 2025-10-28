@@ -19,4 +19,3 @@ public class MoveToTargetComponent implements IComponent {
     this.tolerance = tolerance;
   }
 }
-

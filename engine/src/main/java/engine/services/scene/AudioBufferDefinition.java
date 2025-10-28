@@ -6,4 +6,3 @@ public record AudioBufferDefinition(
   @JsonProperty("handle") String handle,
   @JsonProperty("path") String path
 ) {}
-

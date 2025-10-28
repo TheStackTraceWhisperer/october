@@ -36,7 +36,7 @@ class MovementStatsComponentTest {
     void equals_shouldReturnTrueForSameSpeed() {
         MovementStatsComponent stats1 = new MovementStatsComponent(100.0f);
         MovementStatsComponent stats2 = new MovementStatsComponent(100.0f);
-        
+
         assertEquals(stats1, stats2);
     }
 
@@ -44,7 +44,7 @@ class MovementStatsComponentTest {
     void equals_shouldReturnFalseForDifferentSpeed() {
         MovementStatsComponent stats1 = new MovementStatsComponent(100.0f);
         MovementStatsComponent stats2 = new MovementStatsComponent(50.0f);
-        
+
         assertNotEquals(stats1, stats2);
     }
 
@@ -52,14 +52,14 @@ class MovementStatsComponentTest {
     void hashCode_shouldBeConsistentForEqualComponents() {
         MovementStatsComponent stats1 = new MovementStatsComponent(100.0f);
         MovementStatsComponent stats2 = new MovementStatsComponent(100.0f);
-        
+
         assertEquals(stats1.hashCode(), stats2.hashCode());
     }
 
     @Test
     void toString_shouldContainSpeed() {
         MovementStatsComponent stats = new MovementStatsComponent(75.5f);
-        
+
         String toString = stats.toString();
         assertTrue(toString.contains("75.5"));
     }

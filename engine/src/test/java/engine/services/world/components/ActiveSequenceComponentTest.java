@@ -11,10 +11,10 @@ class ActiveSequenceComponentTest {
   void testActiveSequenceComponentInitialization() {
     // Given a sequence ID
     String sequenceId = "test_sequence";
-    
+
     // When we create an ActiveSequenceComponent
     ActiveSequenceComponent component = new ActiveSequenceComponent(sequenceId);
-    
+
     // Then it should be initialized with correct default values
     assertThat(component.getSequenceId()).isEqualTo(sequenceId);
     assertThat(component.getCurrentIndex()).isEqualTo(0);
@@ -26,12 +26,12 @@ class ActiveSequenceComponentTest {
   void testActiveSequenceComponentSetters() {
     // Given an ActiveSequenceComponent
     ActiveSequenceComponent component = new ActiveSequenceComponent("test");
-    
+
     // When we update its properties
     component.setCurrentIndex(5);
     component.setWaitTimer(2.5f);
     component.setBlocked(true);
-    
+
     // Then the values should be updated
     assertThat(component.getCurrentIndex()).isEqualTo(5);
     assertThat(component.getWaitTimer()).isEqualTo(2.5f);
@@ -42,7 +42,7 @@ class ActiveSequenceComponentTest {
   void testActiveSequenceComponentImplementsIComponent() {
     // Given an ActiveSequenceComponent
     ActiveSequenceComponent component = new ActiveSequenceComponent("test");
-    
+
     // Then it should implement IComponent
     assertThat(component).isInstanceOf(IComponent.class);
   }

@@ -43,9 +43,9 @@ class UIImageComponentTest {
     @Test
     void textureHandle_canBeModified() {
         UIImageComponent image = new UIImageComponent("original_texture");
-        
+
         image.textureHandle = "new_texture";
-        
+
         assertEquals("new_texture", image.textureHandle);
     }
 

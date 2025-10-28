@@ -29,7 +29,7 @@ public class ActiveSequenceComponent implements IComponent {
   private float waitTimer;
 
   /**
-   * A flag set to true when the sequence is waiting for another system 
+   * A flag set to true when the sequence is waiting for another system
    * (e.g., MovementSystem) to complete a long-running task.
    */
   private boolean isBlocked;

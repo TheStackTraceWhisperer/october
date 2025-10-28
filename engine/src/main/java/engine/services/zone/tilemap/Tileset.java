@@ -34,7 +34,7 @@ public interface Tileset {
 
   /**
    * Returns the tile definition for a given ID.
-   * 
+   *
    * @param id The tile ID to look up
    * @return The tile with the given ID, or null if not found
    */

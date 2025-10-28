@@ -23,10 +23,10 @@ class AudioSourceComponentTest {
     @Test
     void volume_canBeModified() {
         AudioSourceComponent audio = new AudioSourceComponent("test_sound");
-        
+
         audio.volume = 0.5f;
         assertEquals(0.5f, audio.volume);
-        
+
         audio.volume = 0.0f;
         assertEquals(0.0f, audio.volume);
     }
@@ -34,10 +34,10 @@ class AudioSourceComponentTest {
     @Test
     void pitch_canBeModified() {
         AudioSourceComponent audio = new AudioSourceComponent("test_sound");
-        
+
         audio.pitch = 1.5f;
         assertEquals(1.5f, audio.pitch);
-        
+
         audio.pitch = 0.5f;
         assertEquals(0.5f, audio.pitch);
     }
@@ -45,10 +45,10 @@ class AudioSourceComponentTest {
     @Test
     void looping_canBeToggled() {
         AudioSourceComponent audio = new AudioSourceComponent("test_sound");
-        
+
         audio.looping = true;
         assertTrue(audio.looping);
-        
+
         audio.looping = false;
         assertFalse(audio.looping);
     }
@@ -56,10 +56,10 @@ class AudioSourceComponentTest {
     @Test
     void autoPlay_canBeToggled() {
         AudioSourceComponent audio = new AudioSourceComponent("test_sound");
-        
+
         audio.autoPlay = true;
         assertTrue(audio.autoPlay);
-        
+
         audio.autoPlay = false;
         assertFalse(audio.autoPlay);
     }
@@ -67,10 +67,10 @@ class AudioSourceComponentTest {
     @Test
     void isPlaying_canBeSet() {
         AudioSourceComponent audio = new AudioSourceComponent("test_sound");
-        
+
         audio.isPlaying = true;
         assertTrue(audio.isPlaying);
-        
+
         audio.isPlaying = false;
         assertFalse(audio.isPlaying);
     }
@@ -79,7 +79,7 @@ class AudioSourceComponentTest {
     void constructor_shouldAcceptNullHandle() {
         // While not recommended, the constructor doesn't validate null
         AudioSourceComponent audio = new AudioSourceComponent(null);
-        
+
         assertNull(audio.audioBufferHandle);
         assertEquals(1.0f, audio.volume);
         assertEquals(1.0f, audio.pitch);

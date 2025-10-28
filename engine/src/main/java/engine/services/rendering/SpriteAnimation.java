@@ -21,12 +21,12 @@ import java.util.Objects;
  * </pre>
  */
 public class SpriteAnimation {
-  
+
   private final String name;
   private final List<String> frameNames;
   private final float frameDuration;
   private final boolean loop;
-  
+
   /**
    * Creates a new sprite animation.
    *
@@ -48,7 +48,7 @@ public class SpriteAnimation {
     this.frameDuration = frameDuration;
     this.loop = loop;
   }
-  
+
   /**
    * Gets the animation name.
    *
@@ -57,7 +57,7 @@ public class SpriteAnimation {
   public String getName() {
     return name;
   }
-  
+
   /**
    * Gets the frame names for this animation.
    *
@@ -66,7 +66,7 @@ public class SpriteAnimation {
   public List<String> getFrameNames() {
     return Collections.unmodifiableList(frameNames);
   }
-  
+
   /**
    * Gets the duration of each frame in seconds.
    *
@@ -75,7 +75,7 @@ public class SpriteAnimation {
   public float getFrameDuration() {
     return frameDuration;
   }
-  
+
   /**
    * Checks if this animation loops.
    *
@@ -84,7 +84,7 @@ public class SpriteAnimation {
   public boolean isLoop() {
     return loop;
   }
-  
+
   /**
    * Gets the total number of frames in this animation.
    *
@@ -93,7 +93,7 @@ public class SpriteAnimation {
   public int getFrameCount() {
     return frameNames.size();
   }
-  
+
   /**
    * Gets the total duration of the animation in seconds.
    *
@@ -102,7 +102,7 @@ public class SpriteAnimation {
   public float getTotalDuration() {
     return frameNames.size() * frameDuration;
   }
-  
+
   /**
    * Gets the frame name at the specified index.
    *
@@ -113,7 +113,7 @@ public class SpriteAnimation {
   public String getFrameName(int frameIndex) {
     return frameNames.get(frameIndex);
   }
-  
+
   /**
    * Calculates which frame should be displayed at the given time.
    *
@@ -124,10 +124,10 @@ public class SpriteAnimation {
     if (elapsedTime < 0) {
       return 0;
     }
-    
+
     int totalFrames = frameNames.size();
     int frameIndex = (int) (elapsedTime / frameDuration);
-    
+
     if (loop) {
       return frameIndex % totalFrames;
     } else {

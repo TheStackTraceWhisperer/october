@@ -136,7 +136,7 @@ class TilemapDeserializationTest {
   void jsonTilemap_shouldReturnEmptyCollectionsWhenNull() {
     // Given
     ZoneService.JsonTilemap tilemap = new ZoneService.JsonTilemap();
-    
+
     // When/Then
     assertThat(tilemap.getTilesets()).isEmpty();
     assertThat(tilemap.getTilelayers()).isEmpty();
