@@ -93,8 +93,9 @@ public class MyEngineIT extends EngineTestHarness {
 **Cause**: GLFW cannot initialize, indicating no display is available.
 
 **Solutions**:
-- On Linux: Install and configure Xvfb, then run tests with `xvfb-run mvn verify`
-- On Mac/Windows: Ensure you have a display session running
+- On Linux: Install and configure Xvfb (`sudo apt-get install xvfb`), then run tests with `xvfb-run mvn verify`
+- On Mac: Ensure you have a display session running (tests should work in normal terminal sessions with GUI)
+- On Windows: Ensure you have a display session running (tests should work in normal terminal sessions)
 - In CI: Verify Docker container has Xvfb configured and running
 
 ### Tests fail with "Unable to initialize GLFW"
@@ -105,4 +106,4 @@ public class MyEngineIT extends EngineTestHarness {
 
 ### Want to force tests to run in headless mode
 
-Currently, there's no override mechanism. Integration tests requiring GLFW must have a display available. Consider whether the test truly requires GLFW initialization or could be refactored as a unit test with mocked dependencies.
+At present, there is no override mechanism to force execution in headless environments. Integration tests requiring GLFW must have a display available. Consider whether the test truly requires GLFW initialization or could be refactored as a unit test with mocked dependencies.

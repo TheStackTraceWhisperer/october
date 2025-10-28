@@ -53,7 +53,7 @@ Integration tests verify that different parts of the system work together as int
 
 ### Headless Environment Handling
 
-Some integration tests require a display/graphics environment (e.g., tests that initialize GLFW or OpenGL). These tests will fail in headless environments (such as CI builds without Xvfb).
+Some integration tests require a display/graphics environment (e.g., tests that initialize GLFW or OpenGL). These tests will fail in headless environments (such as developer machines without display servers, CI builds without Xvfb, or Docker containers without virtual display setup).
 
 To handle this:
 
