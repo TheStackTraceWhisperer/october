@@ -51,6 +51,19 @@ Integration tests verify that different parts of the system work together as int
 *   **Location:** `src/test/java`, typically using a `*IT.java` naming convention (e.g., `SceneLoadingIT.java`).
 *   **Execution:** Run via `mvn verify` (using the Maven Failsafe plugin).
 
+### Headless Environment Handling
+
+Some integration tests require a display/graphics environment (e.g., tests that initialize GLFW or OpenGL). These tests will fail in headless environments (such as CI builds without Xvfb).
+
+To handle this:
+
+*   **Use `@EnabledIfDisplayAvailable` annotation**: Tests that extend `EngineTestHarness` are automatically marked with this annotation and will be skipped in headless environments.
+*   **Behavior in headless mode**: Tests requiring a display are automatically detected and skipped with a clear message indicating the reason.
+*   **Behavior with display**: Tests run normally when a display server is available (local development, Docker with Xvfb, CI with virtual display).
+*   **Example**: When running `mvn verify` on a developer's machine without Xvfb, integration tests requiring GLFW will be skipped rather than failing.
+
+**Note**: The CI environment is configured to run tests in Docker with Xvfb, ensuring all integration tests execute in the CI pipeline.
+
 ---
 
 ## 3. Distinguishing Unit from Integration Test Contexts
