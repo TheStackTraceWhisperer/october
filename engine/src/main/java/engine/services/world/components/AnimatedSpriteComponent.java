@@ -2,6 +2,7 @@ package engine.services.world.components;
 
 import engine.services.rendering.Direction;
 import engine.services.world.IComponent;
+import io.micronaut.core.annotation.Introspected;
 
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ import java.util.Objects;
  * Unlike the basic SpriteComponent, this component is mutable to support
  * animation state changes during gameplay.
  */
+@Introspected
 public record AnimatedSpriteComponent(
     String spriteSheetHandle,
     String currentAnimation,
