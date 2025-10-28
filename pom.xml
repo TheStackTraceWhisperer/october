@@ -39,6 +39,8 @@
     <joml.version>1.10.5</joml.version>
     <byte-buddy.version>1.14.17</byte-buddy.version>
     <archunit.version>1.3.0</archunit.version>
+    <spotless-maven-plugin.version>2.45.0</spotless-maven-plugin.version>
+    <versions-maven-plugin.version>2.16.1</versions-maven-plugin.version>
 
     <!-- JaCoCo Properties -->
     <jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
@@ -204,6 +206,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
+            <!--suppress MavenModelInspection -->
             <argLine>${jacoco.surefire.argLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
           </configuration>
         </plugin>
@@ -212,6 +215,7 @@
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${maven-failsafe-plugin.version}</version>
           <configuration>
+            <!--suppress MavenModelInspection -->
             <argLine>${jacoco.failsafe.argLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
           </configuration>
           <executions>
@@ -308,10 +312,53 @@
             </execution>
           </executions>
         </plugin>
+        <!-- Spotless code style plugin: configured but not bound to lifecycle (informational only) -->
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless-maven-plugin.version}</version>
+          <configuration>
+            <!-- Do not enforce in lifecycle; run manually with `mvn spotless:check` or `mvn spotless:apply` -->
+            <lineEndings>GIT_ATTRIBUTES</lineEndings>
+            <encoding>${project.build.sourceEncoding}</encoding>
+            <java>
+              <includes>
+                <include>src/*/java/**/*.java</include>
+              </includes>
+              <!-- Minimal, non-invasive checks -->
+              <trimTrailingWhitespace/>
+              <endWithNewline/>
+            </java>
+            <pom>
+              <trimTrailingWhitespace/>
+              <endWithNewline/>
+            </pom>
+          </configuration>
+        </plugin>
+        <!-- Versions plugin: available for manual use, no lifecycle bindings -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${versions-maven-plugin.version}</version>
+          <configuration>
+            <!-- When running update goals manually, avoid creating backup poms by default -->
+            <generateBackupPoms>false</generateBackupPoms>
+            <processAllModules>true</processAllModules>
+            <allowSnapshots>false</allowSnapshots>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
-  </build>
 
+    <!-- Make versions plugin available via short form (e.g., `mvn versions:display-dependency-updates`) -->
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 
   <distributionManagement>
     <repository>
