@@ -16,7 +16,11 @@ import org.junit.jupiter.api.TestInstance;
  * An abstract base class that bootstraps a live, fully-functional game engine
  * within a JUnit 5 test environment. Tests requiring a live OpenGL context
  * should extend this class.
+ * 
+ * Note: Tests extending this class are automatically disabled in headless environments
+ * (environments without a display server) via the @EnabledIfDisplayAvailable annotation.
  */
+@EnabledIfDisplayAvailable
 @MicronautTest(packages = "engine")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class EngineTestHarness {
