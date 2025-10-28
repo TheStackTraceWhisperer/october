@@ -30,9 +30,15 @@ jobs:
       run: |
         docker build -t october-ci .
         docker run --name october-test october-ci
-        mkdir -p ./target
-        docker cp october-test:/workspace/application/target/. ./application/target/
-        docker cp october-test:/workspace/engine/target/. ./engine/target/
+        mkdir -p ./application/target ./engine/target
+        docker cp october-test:/workspace/application/target/surefire-reports ./application/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/application/target/failsafe-reports ./application/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/application/target/site ./application/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/application/target/application-*.jar ./application/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/engine/target/surefire-reports ./engine/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/engine/target/failsafe-reports ./engine/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/engine/target/site ./engine/target/ 2>/dev/null || true
+        docker cp october-test:/workspace/engine/target/engine-*.jar ./engine/target/ 2>/dev/null || true
         docker rm october-test
         sudo chown -R runner:runner ./application ./engine
 
