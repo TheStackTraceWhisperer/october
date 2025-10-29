@@ -8,6 +8,12 @@
         { "type": "WAIT", "properties": { "duration": 0.5 } },
         { "type": "FADE_SCREEN", "properties": { "fadeType": "OUT", "duration": 1.0 } }
       ]
+    },
+    {
+      "id": "cutscene_timeout",
+      "events": [
+        { "type": "WAIT", "properties": { "duration": 10.0 } }
+      ]
     }
   ],
   "triggers": [

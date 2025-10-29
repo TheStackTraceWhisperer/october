@@ -14,6 +14,7 @@ import engine.services.world.systems.MoveToTargetSystem;
 import engine.services.world.systems.FadeOverlaySystem;
 import engine.services.world.systems.RenderSystem;
 import engine.services.world.systems.UISystem;
+import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.zone.ZoneService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -40,22 +41,25 @@ public class IntroCutsceneState implements ApplicationState {
   private final ZoneService zoneService;
   private final TimerOverlayProvider timerOverlayProvider;
 
-  private float cutsceneTimer;
+  private int cutsceneTimeoutEntityId = -1;
 
   @Override
   public void onEnter() {
     log.debug("Entering IntroCutsceneState");
-    this.cutsceneTimer = 0.0f;
 
     // Clear any existing entities (e.g., main menu UI) so the cutscene fully takes over
     sceneService.load("/scenes/cutscene-blank.json");
 
-    // Configure progress overlay; WorldService will enable the system using classes
-    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureIntroCutscene(overlay, () -> cutsceneTimer / CUTSCENE_DURATION);
-
     // Load the intro cutscene zone (publishes ZoneLoadedEvent)
     zoneService.loadZone("intro_cutscene_zone");
+
+    // Create cutscene timeout entity with sequence
+    cutsceneTimeoutEntityId = worldService.createEntity();
+    worldService.addComponent(cutsceneTimeoutEntityId, new ActiveSequenceComponent("cutscene_timeout"));
+
+    // Configure progress overlay; WorldService will enable the system using classes
+    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
+    timerOverlayProvider.configureIntroCutscene(overlay, () -> getCutsceneProgress());
 
     log.debug("IntroCutsceneState systems registered and zone loading initiated");
   }
@@ -63,6 +67,12 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
+
+    // Cancel cutscene timeout entity if still active
+    if (cutsceneTimeoutEntityId >= 0 && worldService.hasComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class)) {
+      worldService.destroyEntity(cutsceneTimeoutEntityId);
+      cutsceneTimeoutEntityId = -1;
+    }
   }
 
   @Override
@@ -87,9 +97,11 @@ public class IntroCutsceneState implements ApplicationState {
   }
 
   public void update(float deltaTime) {
-    this.cutsceneTimer += deltaTime;
-    if (this.cutsceneTimer >= CUTSCENE_DURATION) {
+    // Check if cutscene timeout entity still exists (sequence not complete yet)
+    if (cutsceneTimeoutEntityId >= 0 && !worldService.hasComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class)) {
+      // Timeout reached - sequence completed and entity was destroyed
       applicationStateService.popState();
+      cutsceneTimeoutEntityId = -1; // Reset for next time
     }
   }
 
@@ -98,5 +110,22 @@ public class IntroCutsceneState implements ApplicationState {
     if (inputService.isAnyKeyJustPressed() || inputService.isAnyMouseButtonJustPressed() || inputService.isAnyGamepadButtonJustPressed()) {
       applicationStateService.popState();
     }
+  }
+
+  private float getCutsceneProgress() {
+    if (cutsceneTimeoutEntityId < 0 || !worldService.hasComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class)) {
+      return 1.0f; // Timeout complete
+    }
+
+    ActiveSequenceComponent component = worldService.getComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class);
+    if (component == null) {
+      return 1.0f;
+    }
+
+    // Calculate progress: elapsed time / total duration
+    // The WAIT event sets waitTimer to the duration, then counts down
+    // So elapsed = CUTSCENE_DURATION - waitTimer
+    float elapsed = CUTSCENE_DURATION - component.getWaitTimer();
+    return elapsed / CUTSCENE_DURATION;
   }
 }
