@@ -59,6 +59,18 @@ jobs:
         job_summary: true
         include_passed: true
 
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Test Reports
+        path: |
+          application/target/surefire-reports/**
+          application/target/failsafe-reports/**
+          engine/target/surefire-reports/**
+          engine/target/failsafe-reports/**
+        retention-days: 30
+
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       if: always()
