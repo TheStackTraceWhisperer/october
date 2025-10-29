@@ -345,9 +345,8 @@
             <generateBackupPoms>false</generateBackupPoms>
             <processAllModules>true</processAllModules>
             <allowSnapshots>false</allowSnapshots>
-            <!-- Rules to ignore unstable versions (alpha, beta, milestone, RC, snapshot, preview) -->
-            <!-- Note: Run from project root directory for rules to work across all modules -->
-            <rulesUri>file:///${project.basedir}/maven-version-rules.xml</rulesUri>
+            <!-- Ignore unstable versions (alpha, beta, milestone, RC, snapshot, preview) -->
+            <ignoredVersions>.*[-_\.](alpha|Alpha|ALPHA).*,.*[-_\.](beta|Beta|BETA|b).*,.*[-_\.](milestone|Milestone|MILESTONE|m|M).*,.*[-_\.](rc|RC|cr|CR).*,.*[-_\.](snapshot|Snapshot|SNAPSHOT).*,.*[-_\.](preview|Preview|PREVIEW|ea|EA).*</ignoredVersions>
           </configuration>
         </plugin>
       </plugins>
