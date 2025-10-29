@@ -64,7 +64,7 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
-    
+
     // Disable timeout when exiting
     SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
     sequenceSystem.disableIdleTimeout();
