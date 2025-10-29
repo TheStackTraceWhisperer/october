@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A stateless system that interprets ActiveSequence components and executes GameEvent commands.
+ * A system that interprets ActiveSequence components and executes GameEvent commands.
  * Also supports idle timeout tracking for application states.
  */
 @Slf4j
