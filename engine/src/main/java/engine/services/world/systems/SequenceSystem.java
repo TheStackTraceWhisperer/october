@@ -19,6 +19,7 @@ import java.util.Set;
 
 /**
  * A stateless system that interprets ActiveSequence components and executes GameEvent commands.
+ * Also supports idle timeout tracking for application states.
  */
 @Slf4j
 @Prototype
@@ -27,6 +28,11 @@ public class SequenceSystem implements ISystem {
   private final AudioSystem audioSystem; // Use the ECS AudioSystem bean
   private final FadeService fadeService;
   private final boolean removeOnComplete;
+
+  // Idle timeout tracking
+  private float idleTimer;
+  private float idleTimeout;
+  private boolean idleTimeoutEnabled;
 
   // Default constructor keeps legacy behavior (remove on complete)
   public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService) {
@@ -38,10 +44,18 @@ public class SequenceSystem implements ISystem {
     this.audioSystem = audioSystem;
     this.fadeService = fadeService;
     this.removeOnComplete = removeOnComplete;
+    this.idleTimer = 0.0f;
+    this.idleTimeout = 0.0f;
+    this.idleTimeoutEnabled = false;
   }
 
   @Override
   public void update(World world, float deltaTime) {
+    // Update idle timeout timer if enabled
+    if (idleTimeoutEnabled) {
+      idleTimer += deltaTime;
+    }
+
     Zone currentZone = zoneService.getCurrentZone();
     if (currentZone == null) {
       return;
@@ -259,5 +273,59 @@ public class SequenceSystem implements ISystem {
         activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
       }
     }
+  }
+
+  /**
+   * Configures idle timeout tracking. When enabled, the system tracks an idle timer.
+   *
+   * @param timeout The timeout duration in seconds
+   */
+  public void configureIdleTimeout(float timeout) {
+    this.idleTimeout = timeout;
+    this.idleTimer = 0.0f;
+    this.idleTimeoutEnabled = true;
+  }
+
+  /**
+   * Disables idle timeout tracking.
+   */
+  public void disableIdleTimeout() {
+    this.idleTimeoutEnabled = false;
+    this.idleTimer = 0.0f;
+    this.idleTimeout = 0.0f;
+  }
+
+  /**
+   * Resets the idle timer to 0.
+   */
+  public void resetIdleTimer() {
+    this.idleTimer = 0.0f;
+  }
+
+  /**
+   * Checks if the idle timeout has been reached.
+   *
+   * @return true if idle timeout is enabled and the timer has exceeded the timeout
+   */
+  public boolean hasIdleTimedOut() {
+    return idleTimeoutEnabled && idleTimer >= idleTimeout;
+  }
+
+  /**
+   * Gets the current idle timer value.
+   *
+   * @return The current idle timer in seconds
+   */
+  public float getIdleTimer() {
+    return idleTimer;
+  }
+
+  /**
+   * Gets the configured idle timeout value.
+   *
+   * @return The idle timeout in seconds
+   */
+  public float getIdleTimeout() {
+    return idleTimeout;
   }
 }

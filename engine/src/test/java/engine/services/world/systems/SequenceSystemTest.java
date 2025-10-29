@@ -213,4 +213,72 @@ class SequenceSystemTest {
     // Then the index should advance (to avoid getting stuck)
     assertThat(component.getCurrentIndex()).isEqualTo(1);
   }
+
+  @Test
+  void testIdleTimeoutTracking() {
+    // Given a sequence system with idle timeout configured
+    when(zoneService.getCurrentZone()).thenReturn(null);
+
+    sequenceSystem.configureIdleTimeout(5.0f);
+
+    // When we update for 3 seconds
+    sequenceSystem.update(world, 1.5f);
+    sequenceSystem.update(world, 1.5f);
+
+    // Then the idle timeout should not be reached
+    assertThat(sequenceSystem.hasIdleTimedOut()).isFalse();
+    assertThat(sequenceSystem.getIdleTimer()).isGreaterThan(2.9f);
+    assertThat(sequenceSystem.getIdleTimer()).isLessThan(3.1f);
+
+    // When we update for another 3 seconds
+    sequenceSystem.update(world, 1.5f);
+    sequenceSystem.update(world, 1.5f);
+
+    // Then the idle timeout should be reached
+    assertThat(sequenceSystem.hasIdleTimedOut()).isTrue();
+    assertThat(sequenceSystem.getIdleTimer()).isGreaterThanOrEqualTo(5.0f);
+  }
+
+  @Test
+  void testIdleTimeoutReset() {
+    // Given a sequence system with idle timeout configured
+    when(zoneService.getCurrentZone()).thenReturn(null);
+
+    sequenceSystem.configureIdleTimeout(5.0f);
+
+    // When we update for 3 seconds
+    sequenceSystem.update(world, 3.0f);
+    assertThat(sequenceSystem.getIdleTimer()).isGreaterThan(2.9f);
+
+    // And reset the timer
+    sequenceSystem.resetIdleTimer();
+
+    // Then the timer should be reset
+    assertThat(sequenceSystem.getIdleTimer()).isEqualTo(0.0f);
+    assertThat(sequenceSystem.hasIdleTimedOut()).isFalse();
+
+    // When we update for 2 more seconds
+    sequenceSystem.update(world, 2.0f);
+
+    // Then it should still not have timed out
+    assertThat(sequenceSystem.hasIdleTimedOut()).isFalse();
+  }
+
+  @Test
+  void testIdleTimeoutDisable() {
+    // Given a sequence system with idle timeout configured
+    when(zoneService.getCurrentZone()).thenReturn(null);
+
+    sequenceSystem.configureIdleTimeout(5.0f);
+    sequenceSystem.update(world, 3.0f);
+
+    // When we disable idle timeout
+    sequenceSystem.disableIdleTimeout();
+
+    // Then the timer should stop updating
+    float timerBefore = sequenceSystem.getIdleTimer();
+    sequenceSystem.update(world, 2.0f);
+    assertThat(sequenceSystem.getIdleTimer()).isEqualTo(timerBefore);
+    assertThat(sequenceSystem.hasIdleTimedOut()).isFalse();
+  }
 }

@@ -40,19 +40,20 @@ public class IntroCutsceneState implements ApplicationState {
   private final ZoneService zoneService;
   private final TimerOverlayProvider timerOverlayProvider;
 
-  private float cutsceneTimer;
-
   @Override
   public void onEnter() {
     log.debug("Entering IntroCutsceneState");
-    this.cutsceneTimer = 0.0f;
 
     // Clear any existing entities (e.g., main menu UI) so the cutscene fully takes over
     sceneService.load("/scenes/cutscene-blank.json");
 
+    // Configure cutscene timeout tracking in SequenceSystem
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    sequenceSystem.configureIdleTimeout(CUTSCENE_DURATION);
+
     // Configure progress overlay; WorldService will enable the system using classes
     TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureIntroCutscene(overlay, () -> cutsceneTimer / CUTSCENE_DURATION);
+    timerOverlayProvider.configureIntroCutscene(overlay, () -> sequenceSystem.getIdleTimer() / CUTSCENE_DURATION);
 
     // Load the intro cutscene zone (publishes ZoneLoadedEvent)
     zoneService.loadZone("intro_cutscene_zone");
@@ -63,6 +64,10 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
+    
+    // Disable timeout when exiting
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    sequenceSystem.disableIdleTimeout();
   }
 
   @Override
@@ -87,8 +92,9 @@ public class IntroCutsceneState implements ApplicationState {
   }
 
   public void update(float deltaTime) {
-    this.cutsceneTimer += deltaTime;
-    if (this.cutsceneTimer >= CUTSCENE_DURATION) {
+    // Check if cutscene timeout has been reached
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    if (sequenceSystem.hasIdleTimedOut()) {
       applicationStateService.popState();
     }
   }

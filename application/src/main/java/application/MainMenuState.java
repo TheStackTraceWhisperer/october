@@ -7,6 +7,7 @@ import engine.services.state.ApplicationStateService;
 import engine.services.world.WorldService;
 import engine.services.world.ISystem;
 import engine.services.world.systems.UISystem;
+import engine.services.world.systems.SequenceSystem;
 import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -34,27 +35,31 @@ public class MainMenuState implements ApplicationState {
   private final BeanProvider<PlayingState> playingStateProvider;
   private final TimerOverlayProvider timerOverlayProvider;
 
-  private float idleTimer;
-
   @Override
   public void onEnter() {
-    resetIdleTimer();
     sceneService.load("/scenes/main_menu.json");
+
+    // Configure idle timeout tracking in SequenceSystem
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    sequenceSystem.configureIdleTimeout(IDLE_TIMEOUT);
 
     // Configure overlay system instance now that WorldService has enabled it
     TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureMainMenu(overlay, () -> idleTimer / IDLE_TIMEOUT);
+    timerOverlayProvider.configureMainMenu(overlay, () -> sequenceSystem.getIdleTimer() / IDLE_TIMEOUT);
   }
 
   @Override
   public void onResume() {
     // Reset idle tracking and reload the main menu scene (cutscene cleared entities)
-    resetIdleTimer();
     sceneService.load("/scenes/main_menu.json");
+
+    // Reset idle timeout in SequenceSystem
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    sequenceSystem.resetIdleTimer();
 
     // Reconfigure overlay in case it was recreated
     TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureMainMenu(overlay, () -> idleTimer / IDLE_TIMEOUT);
+    timerOverlayProvider.configureMainMenu(overlay, () -> sequenceSystem.getIdleTimer() / IDLE_TIMEOUT);
   }
 
   @Override
@@ -64,12 +69,14 @@ public class MainMenuState implements ApplicationState {
 
   @Override
   public void onExit() {
-    // No manual system clearing; managed by WorldService
+    // Disable idle timeout when exiting
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    sequenceSystem.disableIdleTimeout();
   }
 
   @Override
   public Collection<Class<? extends ISystem>> systems() {
-    return List.of(UISystem.class, TimerOverlaySystem.class);
+    return List.of(UISystem.class, TimerOverlaySystem.class, SequenceSystem.class);
   }
 
   @EventListener
@@ -83,20 +90,18 @@ public class MainMenuState implements ApplicationState {
   public void onUpdate(float deltaTime) {
     handleInput();
 
-    this.idleTimer += deltaTime;
-    if (this.idleTimer >= IDLE_TIMEOUT) {
+    // Check if idle timeout has been reached
+    SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+    if (sequenceSystem.hasIdleTimedOut()) {
       applicationStateService.pushState(introCutsceneStateProvider::get);
     }
-  }
-
-  private void resetIdleTimer() {
-    this.idleTimer = 0.0f;
   }
 
   private void handleInput() {
     // Ignore cursor movement; only reset idle on keyboard or mouse button clicks
     if (inputService.isAnyKeyJustPressed() || inputService.isAnyMouseButtonJustPressed()) {
-      resetIdleTimer();
+      SequenceSystem sequenceSystem = worldService.getSystem(SequenceSystem.class);
+      sequenceSystem.resetIdleTimer();
     }
   }
 }
