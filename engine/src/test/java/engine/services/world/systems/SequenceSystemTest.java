@@ -1,6 +1,7 @@
 package engine.services.world.systems;
 
 import engine.services.event.EventPublisherService;
+import engine.services.state.ApplicationStateService;
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.zone.Zone;
@@ -8,6 +9,8 @@ import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Sequence;
 import engine.services.rendering.FadeService;
+import io.micronaut.context.BeanProvider;
+import io.micronaut.context.ApplicationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +36,12 @@ class SequenceSystemTest {
 
   @Mock
   private EventPublisherService eventPublisherService;
+
+  @Mock
+  private BeanProvider<ApplicationStateService> applicationStateServiceProvider;
+
+  @Mock
+  private ApplicationContext applicationContext;
 
   private World world;
   private SequenceSystem sequenceSystem;
@@ -64,7 +73,7 @@ class SequenceSystemTest {
   @BeforeEach
   void setUp() {
     world = new World();
-    sequenceSystem = new SequenceSystem(zoneService, audioSystem, fadeService, eventPublisherService);
+    sequenceSystem = new SequenceSystem(zoneService, audioSystem, fadeService, eventPublisherService, applicationStateServiceProvider, applicationContext);
   }
 
   @Test

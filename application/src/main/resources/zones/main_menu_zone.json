@@ -6,7 +6,7 @@
       "id": "idle_timeout",
       "events": [
         { "type": "WAIT", "properties": { "duration": 30.0 } },
-        { "type": "PUBLISH_EVENT", "properties": { "eventName": "IDLE_TIMEOUT_REACHED" } }
+        { "type": "PUSH_STATE", "properties": { "stateName": "introCutscene" } }
       ]
     }
   ],

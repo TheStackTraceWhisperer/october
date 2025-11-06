@@ -16,6 +16,7 @@ import engine.services.world.systems.RenderSystem;
 import engine.services.world.systems.UISystem;
 import engine.services.zone.ZoneService;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import java.util.List;
 /** Intro cutscene that ties together zone, tilemap, and sequences. */
 @Singleton
 @Slf4j
+@Named("introCutscene")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class IntroCutsceneState implements ApplicationState {
 
@@ -81,13 +83,6 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onUpdate(float deltaTime) {
     handleInput();
-  }
-
-  @EventListener
-  public void onCutsceneTimeout(String event) {
-    if ("CUTSCENE_TIMEOUT_REACHED".equals(event)) {
-      applicationStateService.popState();
-    }
   }
 
   public void handleInput() {

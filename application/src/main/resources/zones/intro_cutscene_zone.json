@@ -13,7 +13,7 @@
       "id": "cutscene_timeout",
       "events": [
         { "type": "WAIT", "properties": { "duration": 10.0 } },
-        { "type": "PUBLISH_EVENT", "properties": { "eventName": "CUTSCENE_TIMEOUT_REACHED" } }
+        { "type": "POP_STATE", "properties": {} }
       ]
     }
   ],

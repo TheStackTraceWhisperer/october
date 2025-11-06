@@ -30,7 +30,6 @@ public class MainMenuState implements ApplicationState {
   private final WorldService worldService;
   private final ApplicationStateService applicationStateService;
   private final InputService inputService;
-  private final BeanProvider<IntroCutsceneState> introCutsceneStateProvider;
   private final BeanProvider<PlayingState> playingStateProvider;
   private final TimerOverlayProvider timerOverlayProvider;
   private final ZoneService zoneService;
@@ -76,13 +75,6 @@ public class MainMenuState implements ApplicationState {
   public void onStartGame(String event) {
     if ("START_NEW_GAME".equals(event)) {
       applicationStateService.changeState(playingStateProvider::get);
-    }
-  }
-
-  @EventListener
-  public void onIdleTimeout(String event) {
-    if ("IDLE_TIMEOUT_REACHED".equals(event)) {
-      applicationStateService.pushState(introCutsceneStateProvider::get);
     }
   }
 

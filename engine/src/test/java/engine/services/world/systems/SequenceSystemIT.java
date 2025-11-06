@@ -3,6 +3,7 @@ package engine.services.world.systems;
 import engine.services.rendering.FadeService;
 import engine.services.resources.AssetCacheService;
 import engine.services.audio.AudioService;
+import engine.services.state.ApplicationStateService;
 import engine.services.world.WorldService;
 import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.world.components.SoundEffectComponent;
@@ -11,11 +12,14 @@ import engine.services.zone.Zone;
 import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Sequence;
+import io.micronaut.context.BeanProvider;
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.*;
 
@@ -73,8 +77,11 @@ public class SequenceSystemIT {
     var eventPublisher = new engine.services.event.EventPublisherService(new ApplicationEventPublisher() {
       @Override public void publishEvent(Object event) { /* no-op */ }
     });
+    @SuppressWarnings("unchecked")
+    BeanProvider<ApplicationStateService> stateServiceProvider = Mockito.mock(BeanProvider.class);
+    ApplicationContext appContext = Mockito.mock(ApplicationContext.class);
     // Keep ActiveSequenceComponent present after completion so ITs can assert state
-    return new SequenceSystem(new TestZoneService(zone), audioSystem, fade, eventPublisher, false);
+    return new SequenceSystem(new TestZoneService(zone), audioSystem, fade, eventPublisher, stateServiceProvider, appContext, false);
   }
 
   @Test
