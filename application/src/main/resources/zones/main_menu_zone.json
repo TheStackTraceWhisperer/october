@@ -5,10 +5,20 @@
     {
       "id": "idle_timeout",
       "events": [
-        { "type": "WAIT", "properties": { "duration": 30.0 } }
+        { "type": "WAIT", "properties": { "duration": 30.0 } },
+        { "type": "PUBLISH_EVENT", "properties": { "eventName": "IDLE_TIMEOUT_REACHED" } }
       ]
     }
   ],
-  "triggers": [],
+  "triggers": [
+    {
+      "id": "start_idle_timer",
+      "type": "ON_LOAD",
+      "properties": { "delay": 0.0, "isRepeatable": false },
+      "events": [
+        { "type": "START_SEQUENCE", "properties": { "sequenceId": "idle_timeout" } }
+      ]
+    }
+  ],
   "properties": {}
 }

@@ -70,8 +70,11 @@ public class SequenceSystemIT {
   private SequenceSystem makeSystem(Zone zone, FadeService fade) {
     // Use a real AudioSystem instance (it won't touch OpenAL unless started); playSoundEffect only adds a component
     var audioSystem = new AudioSystem(new AudioService(), new AssetCacheService());
+    var eventPublisher = new engine.services.event.EventPublisherService(new ApplicationEventPublisher() {
+      @Override public void publishEvent(Object event) { /* no-op */ }
+    });
     // Keep ActiveSequenceComponent present after completion so ITs can assert state
-    return new SequenceSystem(new TestZoneService(zone), audioSystem, fade, false);
+    return new SequenceSystem(new TestZoneService(zone), audioSystem, fade, eventPublisher, false);
   }
 
   @Test

@@ -14,12 +14,12 @@ import engine.services.world.systems.MoveToTargetSystem;
 import engine.services.world.systems.FadeOverlaySystem;
 import engine.services.world.systems.RenderSystem;
 import engine.services.world.systems.UISystem;
-import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.zone.ZoneService;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import io.micronaut.runtime.event.annotation.EventListener;
 import application.ui.TimerOverlaySystem;
 import application.ui.TimerOverlayProvider;
 
@@ -32,16 +32,12 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class IntroCutsceneState implements ApplicationState {
 
-  private static final float CUTSCENE_DURATION = 10.0f;
-
   private final ApplicationStateService applicationStateService;
   private final InputService inputService;
   private final WorldService worldService;
   private final SceneService sceneService;
   private final ZoneService zoneService;
   private final TimerOverlayProvider timerOverlayProvider;
-
-  private int cutsceneTimeoutEntityId = -1;
 
   @Override
   public void onEnter() {
@@ -53,13 +49,10 @@ public class IntroCutsceneState implements ApplicationState {
     // Load the intro cutscene zone (publishes ZoneLoadedEvent)
     zoneService.loadZone("intro_cutscene_zone");
 
-    // Create cutscene timeout entity with sequence
-    cutsceneTimeoutEntityId = worldService.createEntity();
-    worldService.addComponent(cutsceneTimeoutEntityId, new ActiveSequenceComponent("cutscene_timeout"));
-
     // Configure progress overlay; WorldService will enable the system using classes
     TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureIntroCutscene(overlay, () -> getCutsceneProgress());
+    // TODO: Progress tracking needs to be updated to use components
+    timerOverlayProvider.configureIntroCutscene(overlay, () -> 0.0f);
 
     log.debug("IntroCutsceneState systems registered and zone loading initiated");
   }
@@ -67,12 +60,7 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
-
-    // Cancel cutscene timeout entity if still active
-    if (cutsceneTimeoutEntityId >= 0 && worldService.hasComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class)) {
-      worldService.destroyEntity(cutsceneTimeoutEntityId);
-      cutsceneTimeoutEntityId = -1;
-    }
+    // No manual cleanup needed - systems and entities managed by framework
   }
 
   @Override
@@ -93,15 +81,12 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onUpdate(float deltaTime) {
     handleInput();
-    update(deltaTime);
   }
 
-  public void update(float deltaTime) {
-    // Check if cutscene timeout entity still exists (sequence not complete yet)
-    if (cutsceneTimeoutEntityId >= 0 && !worldService.hasComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class)) {
-      // Timeout reached - sequence completed and entity was destroyed
+  @EventListener
+  public void onCutsceneTimeout(String event) {
+    if ("CUTSCENE_TIMEOUT_REACHED".equals(event)) {
       applicationStateService.popState();
-      cutsceneTimeoutEntityId = -1; // Reset for next time
     }
   }
 
@@ -110,22 +95,5 @@ public class IntroCutsceneState implements ApplicationState {
     if (inputService.isAnyKeyJustPressed() || inputService.isAnyMouseButtonJustPressed() || inputService.isAnyGamepadButtonJustPressed()) {
       applicationStateService.popState();
     }
-  }
-
-  private float getCutsceneProgress() {
-    if (cutsceneTimeoutEntityId < 0 || !worldService.hasComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class)) {
-      return 1.0f; // Timeout complete
-    }
-
-    ActiveSequenceComponent component = worldService.getComponent(cutsceneTimeoutEntityId, ActiveSequenceComponent.class);
-    if (component == null) {
-      return 1.0f;
-    }
-
-    // Calculate progress: elapsed time / total duration
-    // The WAIT event sets waitTimer to the duration, then counts down
-    // So elapsed = CUTSCENE_DURATION - waitTimer
-    float elapsed = CUTSCENE_DURATION - component.getWaitTimer();
-    return elapsed / CUTSCENE_DURATION;
   }
 }

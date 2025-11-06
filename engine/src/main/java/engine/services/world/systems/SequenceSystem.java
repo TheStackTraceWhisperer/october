@@ -1,5 +1,6 @@
 package engine.services.world.systems;
 
+import engine.services.event.EventPublisherService;
 import engine.services.world.ISystem;
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
@@ -26,17 +27,19 @@ public class SequenceSystem implements ISystem {
   private final ZoneService zoneService;
   private final AudioSystem audioSystem; // Use the ECS AudioSystem bean
   private final FadeService fadeService;
+  private final EventPublisherService eventPublisherService;
   private final boolean removeOnComplete;
 
   // Default constructor keeps legacy behavior (remove on complete)
-  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService) {
-    this(zoneService, audioSystem, fadeService, true);
+  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, EventPublisherService eventPublisherService) {
+    this(zoneService, audioSystem, fadeService, eventPublisherService, true);
   }
 
-  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, boolean removeOnComplete) {
+  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, EventPublisherService eventPublisherService, boolean removeOnComplete) {
     this.zoneService = zoneService;
     this.audioSystem = audioSystem;
     this.fadeService = fadeService;
+    this.eventPublisherService = eventPublisherService;
     this.removeOnComplete = removeOnComplete;
   }
 
@@ -252,6 +255,18 @@ public class SequenceSystem implements ISystem {
         activeSequence.setWaitTimer(blockFor);
         activeSequence.setBlocked(true);
         activeSequence.setWaitForAction("FADE_SCREEN");
+      }
+      case "PUBLISH_EVENT" -> {
+        // Publish an application event
+        String eventName = (String) event.getProperties().get("eventName");
+        if (eventName == null || eventName.isEmpty()) {
+          log.warn("PUBLISH_EVENT event missing eventName");
+        } else {
+          log.debug("Publishing event: {}", eventName);
+          eventPublisherService.publish(eventName);
+        }
+        // Move to next event
+        activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
       }
       default -> {
         log.warn("Unknown event type: {}", type);

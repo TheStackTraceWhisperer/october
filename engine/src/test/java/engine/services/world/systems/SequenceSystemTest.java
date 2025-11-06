@@ -1,5 +1,6 @@
 package engine.services.world.systems;
 
+import engine.services.event.EventPublisherService;
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
 import engine.services.zone.Zone;
@@ -29,6 +30,9 @@ class SequenceSystemTest {
 
   @Mock
   private FadeService fadeService;
+
+  @Mock
+  private EventPublisherService eventPublisherService;
 
   private World world;
   private SequenceSystem sequenceSystem;
@@ -60,7 +64,7 @@ class SequenceSystemTest {
   @BeforeEach
   void setUp() {
     world = new World();
-    sequenceSystem = new SequenceSystem(zoneService, audioSystem, fadeService);
+    sequenceSystem = new SequenceSystem(zoneService, audioSystem, fadeService, eventPublisherService);
   }
 
   @Test
