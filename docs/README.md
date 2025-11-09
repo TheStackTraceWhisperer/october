@@ -4,9 +4,7 @@ This directory contains comprehensive documentation for the October game engine.
 
 ## Quick Start
 
-New to the project? Start here:
-- See the root [README.md](../README.md) for build and run instructions
-- [GitHub Issues Guide](github-issues/README.md) - Creating GitHub issues from TODOs
+New to the project? See the root [README.md](../README.md) for build and run instructions.
 
 ## Architecture & Design
 
@@ -24,15 +22,6 @@ New to the project? Start here:
 - [Tilemap Configuration](tilemap-configuration.md) - Configuration format and usage
 - [Zone, Tilemap, and Sequence Architecture](zone-tilemap-sequence.md) - Architecture for zones, tilemaps, triggers, and sequences
 
-## Development
-
-- [Integration TODOs](development/integration-todos.md) - Integration tasks and completion status
-- [General TODOs](development/todos.md) - Ongoing development tasks
-
-## GitHub Issues
-
-- [GitHub Issues Documentation](github-issues/) - Tools and documentation for creating GitHub issues from TODOs
-
 ## Directory Structure
 
 ```
@@ -44,17 +33,7 @@ docs/
 ├── TILEMAP_IMPLEMENTATION_SUMMARY.md      # Tilemap overview
 ├── tilemap-configuration.md               # Tilemap config
 ├── zone-tilemap-sequence.md               # Zone/tilemap/sequence architecture
-├── overview.puml                          # System diagram
-├── development/                           # Development documentation
-│   ├── integration-todos.md
-│   └── todos.md
-└── github-issues/                         # GitHub issues tools
-    ├── README.md
-    ├── QUICK_START_GUIDE.md
-    ├── GITHUB_ISSUES_README.md
-    ├── README_GITHUB_ISSUES.md
-    ├── TODO_CONVERSION_SUMMARY.md
-    └── ISSUE_ORGANIZATION_MAP.md
+└── overview.puml                          # System diagram
 ```
 
 ## Contributing
