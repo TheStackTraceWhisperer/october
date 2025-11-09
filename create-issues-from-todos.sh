@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Script to create GitHub issues from integration-todos.md and zone-tilemap-sequence.md
+# Script to create GitHub issues from TODO documents
+# Source documents are in docs/development/ and docs/
 # Run this script with: GH_TOKEN=<your-token> ./create-issues-from-todos.sh
 
 set -e
@@ -47,10 +48,10 @@ create_issue() {
 }
 
 # ============================================================================
-# ISSUES FROM integration-todos.md
+# ISSUES FROM docs/development/integration-todos.md
 # ============================================================================
 
-echo "Creating issues from integration-todos.md..."
+echo "Creating issues from docs/development/integration-todos.md..."
 echo "=============================================="
 echo ""
 
@@ -67,7 +68,7 @@ Implement a TilemapRenderSystem that draws visible tilemap layers with proper ca
 - Optimize rendering to only draw tiles visible in the camera viewport
 
 ## Context
-From integration-todos.md - High Priority item.
+From docs/development/integration-todos.md - High Priority item.
 
 ## Related Components
 - ZoneService (provides current zone and tilemap data)
@@ -100,7 +101,7 @@ Choose and implement a collision strategy for tilemap interactions.
 - Support collision properties from tilemap data
 
 ## Context
-From integration-todos.md - High Priority item.
+From docs/development/integration-todos.md - High Priority item.
 
 ## Related Components
 - CollisionSystem
@@ -129,7 +130,7 @@ Extend the ZoneService loader to parse tilemap and tileset data from zone files.
 - Handle missing or malformed tilemap data gracefully
 
 ## Context
-From integration-todos.md - Medium Priority item.
+From docs/development/integration-todos.md - Medium Priority item.
 
 ## Related Components
 - ZoneService
@@ -161,7 +162,7 @@ Create at least one real zone asset with a complete tilemap and triggers to vali
 - Include triggers to test sequence system
 
 ## Context
-From integration-todos.md - Medium Priority item.
+From docs/development/integration-todos.md - Medium Priority item.
 
 ## Related Components
 - Zone data format
@@ -194,7 +195,7 @@ Evaluate and potentially implement a switch from string-based UI events to typed
 - Reduced risk of typos
 
 ## Context
-From integration-todos.md - Low Priority/Polish item.
+From docs/development/integration-todos.md - Low Priority/Polish item.
 
 ## Trade-offs to Consider
 - Increased complexity vs. type safety benefits
@@ -231,7 +232,7 @@ Add comprehensive tests for fade overlay rendering path and zone JSON loading fu
 - Test trigger and sequence loading
 
 ## Context
-From integration-todos.md - Low Priority/Polish item.
+From docs/development/integration-todos.md - Low Priority/Polish item.
 
 ## Related Components
 - FadeOverlaySystem
@@ -248,14 +249,14 @@ From integration-todos.md - Low Priority/Polish item.
 "enhancement,low-priority,testing,polish"
 
 echo ""
-echo "✓ All integration-todos.md issues created"
+echo "✓ All docs/development/integration-todos.md issues created"
 echo ""
 
 # ============================================================================
-# ISSUES FROM zone-tilemap-sequence.md
+# ISSUES FROM docs/zone-tilemap-sequence.md
 # ============================================================================
 
-echo "Creating issues from zone-tilemap-sequence.md..."
+echo "Creating issues from docs/zone-tilemap-sequence.md..."
 echo "================================================="
 echo ""
 
@@ -284,7 +285,7 @@ Complete the implementation of trigger condition types beyond the current ON_LOA
 - ON_CONDITION: Fires when arbitrary game state condition is met
 
 ## Context
-From zone-tilemap-sequence.md - Future Enhancements section.
+From docs/zone-tilemap-sequence.md - Future Enhancements section.
 
 ## Related Components
 - TriggerSystem
@@ -323,7 +324,7 @@ Improve the sequence system's handling of blocking operations by implementing pr
 - Future operations: WAIT_FOR_INPUT, WAIT_FOR_ANIMATION, etc.
 
 ## Context
-From zone-tilemap-sequence.md - Future Enhancements section.
+From docs/zone-tilemap-sequence.md - Future Enhancements section.
 
 ## Related Components
 - SequenceSystem
@@ -372,7 +373,7 @@ Expand the set of supported GameEvent types to enable richer cutscenes and scrip
 - ENABLE_SYSTEM/DISABLE_SYSTEM: Toggle systems
 
 ## Context
-From zone-tilemap-sequence.md - Future Enhancements section.
+From docs/zone-tilemap-sequence.md - Future Enhancements section.
 
 ## Related Components
 - SequenceSystem
@@ -412,7 +413,7 @@ Implement asynchronous zone loading to prevent frame drops during zone transitio
 - Implement progress reporting for large zones
 
 ## Context
-From zone-tilemap-sequence.md - Future Enhancements and Notes sections.
+From docs/zone-tilemap-sequence.md - Future Enhancements and Notes sections.
 
 ## Related Components
 - ZoneService
@@ -449,7 +450,7 @@ Complete the integration of tilemap visualization into the main rendering pipeli
 - Lighting and effects should work with tilemaps
 
 ## Context
-From zone-tilemap-sequence.md - Future Enhancements section.
+From docs/zone-tilemap-sequence.md - Future Enhancements section.
 
 ## Related Components
 - TilemapRenderSystem (to be implemented)
@@ -487,7 +488,7 @@ Use tilemap properties to drive the collision detection system, enabling level g
 - Different collision layers
 
 ## Context
-From zone-tilemap-sequence.md - Future Enhancements section.
+From docs/zone-tilemap-sequence.md - Future Enhancements section.
 
 ## Related Components
 - CollisionSystem
@@ -504,7 +505,7 @@ From zone-tilemap-sequence.md - Future Enhancements section.
 "enhancement,high-priority,collision,tilemap"
 
 echo ""
-echo "✓ All zone-tilemap-sequence.md issues created"
+echo "✓ All docs/zone-tilemap-sequence.md issues created"
 echo ""
 
 # ============================================================================
@@ -516,8 +517,8 @@ echo "Issue Creation Complete!"
 echo "=============================================="
 echo ""
 echo "Created issues from:"
-echo "  - integration-todos.md (6 issues)"
-echo "  - zone-tilemap-sequence.md (6 issues)"
+echo "  - docs/development/integration-todos.md (6 issues)"
+echo "  - docs/zone-tilemap-sequence.md (6 issues)"
 echo ""
 echo "Total: 12 GitHub issues"
 echo ""

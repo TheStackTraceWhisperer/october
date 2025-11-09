@@ -1,58 +1,57 @@
 # October
 
-A Java-based game engine built with LWJGL, Micronaut, and OpenGL.
+A Java-based 2D game engine with entity-component-system architecture.
 
-## Structure
+## Project Structure
 
-The project consists of two modules:
-
-- **engine** - Core engine systems including rendering, audio, input, and game logic
-- **application** - Game implementation using the engine
+- **engine** - Core systems: rendering, audio, input, collision, entity management
+- **application** - Game implementation and demo
 
 ## Requirements
 
 - Java 21
 - Maven 3.x
-- OpenGL 4.6 compatible graphics
+- OpenGL 4.6 compatible graphics card
 - OpenAL audio library
 
-## Building
+## Build and Run
 
+Build the project:
 ```bash
 mvn clean verify
 ```
 
-## Running
-
+Run the application:
 ```bash
 mvn exec:java -pl application
 ```
 
-## Testing
+Run tests:
+```bash
+mvn test              # Unit tests
+mvn verify            # All tests including integration
+```
 
-The project follows a testing pyramid strategy with unit tests and integration tests.
+## Code Formatting
 
-- Unit tests: `mvn test`
-- Integration tests: `mvn verify`
+Check code formatting:
+```bash
+mvn spotless:check    # Report violations only
+mvn spotless:apply    # Apply formatting fixes
+```
 
-## Code Style (Spotless)
+## Technologies
 
-Spotless is configured in informational mode and is not bound to the Maven lifecycle. It will not fail regular builds unless invoked explicitly.
+- **LWJGL** - OpenGL and OpenAL bindings
+- **Micronaut** - Dependency injection framework
+- **JUnit 5** - Testing framework
+- **Lombok** - Code generation
 
-- Check formatting (reports violations, does not modify files):
-  ```bash
-  mvn spotless:check
-  ```
-- Apply formatting fixes:
-  ```bash
-  mvn spotless:apply
-  ```
+## Documentation
 
-The current configuration performs minimal, non-invasive checks (trim trailing whitespace, ensure newline at EOF) for Java sources and POM files.
-
-## Key Technologies
-
-- LWJGL for OpenGL and OpenAL bindings
-- Micronaut for dependency injection
-- JUnit 5 for testing
-- Lombok for code generation
+See the [docs/](docs/) directory for detailed documentation:
+- Architecture and design patterns
+- Testing strategy
+- Sprite sheets and animations
+- Tilemap system
+- Development guides
