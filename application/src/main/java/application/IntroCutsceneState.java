@@ -16,9 +16,11 @@ import engine.services.world.systems.RenderSystem;
 import engine.services.world.systems.UISystem;
 import engine.services.zone.ZoneService;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import io.micronaut.runtime.event.annotation.EventListener;
 import application.ui.TimerOverlaySystem;
 import application.ui.TimerOverlayProvider;
 
@@ -28,10 +30,9 @@ import java.util.List;
 /** Intro cutscene that ties together zone, tilemap, and sequences. */
 @Singleton
 @Slf4j
+@Named("introCutscene")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class IntroCutsceneState implements ApplicationState {
-
-  private static final float CUTSCENE_DURATION = 10.0f;
 
   private final ApplicationStateService applicationStateService;
   private final InputService inputService;
@@ -40,22 +41,20 @@ public class IntroCutsceneState implements ApplicationState {
   private final ZoneService zoneService;
   private final TimerOverlayProvider timerOverlayProvider;
 
-  private float cutsceneTimer;
-
   @Override
   public void onEnter() {
     log.debug("Entering IntroCutsceneState");
-    this.cutsceneTimer = 0.0f;
 
     // Clear any existing entities (e.g., main menu UI) so the cutscene fully takes over
     sceneService.load("/scenes/cutscene-blank.json");
 
-    // Configure progress overlay; WorldService will enable the system using classes
-    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureIntroCutscene(overlay, () -> cutsceneTimer / CUTSCENE_DURATION);
-
     // Load the intro cutscene zone (publishes ZoneLoadedEvent)
     zoneService.loadZone("intro_cutscene_zone");
+
+    // Configure progress overlay; WorldService will enable the system using classes
+    TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
+    // TODO: Progress tracking needs to be updated to use components
+    timerOverlayProvider.configureIntroCutscene(overlay, () -> 0.0f);
 
     log.debug("IntroCutsceneState systems registered and zone loading initiated");
   }
@@ -63,6 +62,7 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onExit() {
     log.debug("Exiting IntroCutsceneState");
+    // No manual cleanup needed - systems and entities managed by framework
   }
 
   @Override
@@ -83,14 +83,6 @@ public class IntroCutsceneState implements ApplicationState {
   @Override
   public void onUpdate(float deltaTime) {
     handleInput();
-    update(deltaTime);
-  }
-
-  public void update(float deltaTime) {
-    this.cutsceneTimer += deltaTime;
-    if (this.cutsceneTimer >= CUTSCENE_DURATION) {
-      applicationStateService.popState();
-    }
   }
 
   public void handleInput() {

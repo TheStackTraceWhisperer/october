@@ -37,4 +37,3 @@ class TimerOverlayProviderTest {
     assertEquals(20f, sys.getMargin());
   }
 }
-

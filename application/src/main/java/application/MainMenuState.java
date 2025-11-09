@@ -7,6 +7,8 @@ import engine.services.state.ApplicationStateService;
 import engine.services.world.WorldService;
 import engine.services.world.ISystem;
 import engine.services.world.systems.UISystem;
+import engine.services.world.systems.SequenceSystem;
+import engine.services.zone.ZoneService;
 import io.micronaut.context.BeanProvider;
 import io.micronaut.context.annotation.Prototype;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -24,37 +26,34 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MainMenuState implements ApplicationState {
 
-  private static final float IDLE_TIMEOUT = 30.0f;
-
   private final SceneService sceneService;
   private final WorldService worldService;
   private final ApplicationStateService applicationStateService;
   private final InputService inputService;
-  private final BeanProvider<IntroCutsceneState> introCutsceneStateProvider;
   private final BeanProvider<PlayingState> playingStateProvider;
   private final TimerOverlayProvider timerOverlayProvider;
-
-  private float idleTimer;
+  private final ZoneService zoneService;
 
   @Override
   public void onEnter() {
-    resetIdleTimer();
     sceneService.load("/scenes/main_menu.json");
+    zoneService.loadZone("main_menu_zone");
 
     // Configure overlay system instance now that WorldService has enabled it
     TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureMainMenu(overlay, () -> idleTimer / IDLE_TIMEOUT);
+    // TODO: Progress tracking needs to be updated to use components
+    timerOverlayProvider.configureMainMenu(overlay, () -> 0.0f);
   }
 
   @Override
   public void onResume() {
-    // Reset idle tracking and reload the main menu scene (cutscene cleared entities)
-    resetIdleTimer();
+    // Reload the main menu scene and zone
     sceneService.load("/scenes/main_menu.json");
+    zoneService.loadZone("main_menu_zone");
 
     // Reconfigure overlay in case it was recreated
     TimerOverlaySystem overlay = worldService.getSystem(TimerOverlaySystem.class);
-    timerOverlayProvider.configureMainMenu(overlay, () -> idleTimer / IDLE_TIMEOUT);
+    timerOverlayProvider.configureMainMenu(overlay, () -> 0.0f);
   }
 
   @Override
@@ -64,12 +63,12 @@ public class MainMenuState implements ApplicationState {
 
   @Override
   public void onExit() {
-    // No manual system clearing; managed by WorldService
+    // No manual cleanup needed - systems and entities managed by framework
   }
 
   @Override
   public Collection<Class<? extends ISystem>> systems() {
-    return List.of(UISystem.class, TimerOverlaySystem.class);
+    return List.of(UISystem.class, TimerOverlaySystem.class, SequenceSystem.class);
   }
 
   @EventListener
@@ -81,22 +80,7 @@ public class MainMenuState implements ApplicationState {
 
   @Override
   public void onUpdate(float deltaTime) {
-    handleInput();
-
-    this.idleTimer += deltaTime;
-    if (this.idleTimer >= IDLE_TIMEOUT) {
-      applicationStateService.pushState(introCutsceneStateProvider::get);
-    }
-  }
-
-  private void resetIdleTimer() {
-    this.idleTimer = 0.0f;
-  }
-
-  private void handleInput() {
-    // Ignore cursor movement; only reset idle on keyboard or mouse button clicks
-    if (inputService.isAnyKeyJustPressed() || inputService.isAnyMouseButtonJustPressed()) {
-      resetIdleTimer();
-    }
+    // Input handling moved to a dedicated system
+    // TODO: Implement InputResetSystem to handle resetting idle timer on input
   }
 }

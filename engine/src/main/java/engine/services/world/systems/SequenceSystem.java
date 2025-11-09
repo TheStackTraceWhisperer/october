@@ -1,5 +1,8 @@
 package engine.services.world.systems;
 
+import engine.services.event.EventPublisherService;
+import engine.services.state.ApplicationStateService;
+import engine.services.state.ApplicationState;
 import engine.services.world.ISystem;
 import engine.services.world.World;
 import engine.services.world.components.ActiveSequenceComponent;
@@ -10,7 +13,10 @@ import engine.services.zone.Zone;
 import engine.services.zone.ZoneService;
 import engine.services.zone.sequence.GameEvent;
 import engine.services.zone.sequence.Sequence;
+import io.micronaut.context.BeanProvider;
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.annotation.Prototype;
+import io.micronaut.inject.qualifiers.Qualifiers;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
@@ -26,17 +32,23 @@ public class SequenceSystem implements ISystem {
   private final ZoneService zoneService;
   private final AudioSystem audioSystem; // Use the ECS AudioSystem bean
   private final FadeService fadeService;
+  private final EventPublisherService eventPublisherService;
+  private final BeanProvider<ApplicationStateService> applicationStateServiceProvider;
+  private final ApplicationContext applicationContext;
   private final boolean removeOnComplete;
 
   // Default constructor keeps legacy behavior (remove on complete)
-  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService) {
-    this(zoneService, audioSystem, fadeService, true);
+  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, EventPublisherService eventPublisherService, BeanProvider<ApplicationStateService> applicationStateServiceProvider, ApplicationContext applicationContext) {
+    this(zoneService, audioSystem, fadeService, eventPublisherService, applicationStateServiceProvider, applicationContext, true);
   }
 
-  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, boolean removeOnComplete) {
+  public SequenceSystem(ZoneService zoneService, AudioSystem audioSystem, FadeService fadeService, EventPublisherService eventPublisherService, BeanProvider<ApplicationStateService> applicationStateServiceProvider, ApplicationContext applicationContext, boolean removeOnComplete) {
     this.zoneService = zoneService;
     this.audioSystem = audioSystem;
     this.fadeService = fadeService;
+    this.eventPublisherService = eventPublisherService;
+    this.applicationStateServiceProvider = applicationStateServiceProvider;
+    this.applicationContext = applicationContext;
     this.removeOnComplete = removeOnComplete;
   }
 
@@ -253,11 +265,80 @@ public class SequenceSystem implements ISystem {
         activeSequence.setBlocked(true);
         activeSequence.setWaitForAction("FADE_SCREEN");
       }
+      case "PUBLISH_EVENT" -> {
+        // Publish an application event
+        String eventName = (String) event.getProperties().get("eventName");
+        if (eventName == null || eventName.isEmpty()) {
+          log.warn("PUBLISH_EVENT event missing eventName");
+        } else {
+          log.debug("Publishing event: {}", eventName);
+          eventPublisherService.publish(eventName);
+        }
+        // Move to next event
+        activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
+      }
+      case "PUSH_STATE" -> {
+        // Push a new state onto the state stack
+        String stateName = (String) event.getProperties().get("stateName");
+        if (stateName == null || stateName.isEmpty()) {
+          log.warn("PUSH_STATE event missing stateName");
+        } else {
+          log.debug("Pushing state: {}", stateName);
+          ApplicationStateService stateService = applicationStateServiceProvider.get();
+          ApplicationState state = lookupStateByName(stateName);
+          if (state != null) {
+            stateService.pushState(state);
+          } else {
+            log.warn("Could not find state with name: {}", stateName);
+          }
+        }
+        // Move to next event
+        activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
+      }
+      case "POP_STATE" -> {
+        // Pop the current state from the state stack
+        log.debug("Popping state");
+        ApplicationStateService stateService = applicationStateServiceProvider.get();
+        stateService.popState();
+        // Move to next event
+        activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
+      }
+      case "CHANGE_STATE" -> {
+        // Change to a different state (pop current, push new)
+        String stateName = (String) event.getProperties().get("stateName");
+        if (stateName == null || stateName.isEmpty()) {
+          log.warn("CHANGE_STATE event missing stateName");
+        } else {
+          log.debug("Changing state to: {}", stateName);
+          ApplicationStateService stateService = applicationStateServiceProvider.get();
+          ApplicationState state = lookupStateByName(stateName);
+          if (state != null) {
+            stateService.changeState(state);
+          } else {
+            log.warn("Could not find state with name: {}", stateName);
+          }
+        }
+        // Move to next event
+        activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
+      }
       default -> {
         log.warn("Unknown event type: {}", type);
         // Move to next event to avoid getting stuck
         activeSequence.setCurrentIndex(activeSequence.getCurrentIndex() + 1);
       }
+    }
+  }
+
+  /**
+   * Look up an ApplicationState bean by its name qualifier.
+   * Returns null if not found.
+   */
+  private ApplicationState lookupStateByName(String stateName) {
+    try {
+      return applicationContext.getBean(ApplicationState.class, Qualifiers.byName(stateName));
+    } catch (Exception e) {
+      log.warn("Failed to lookup state by name '{}': {}", stateName, e.getMessage());
+      return null;
     }
   }
 }
